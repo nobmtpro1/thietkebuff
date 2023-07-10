@@ -1,0 +1,93 @@
+/*
+Theme Name: Flatsome Child
+Description: This is a child theme for Flatsome Theme
+Author: UX Themes
+Template: flatsome
+Version: 3.0
+*/
+
+/*************** ADD CUSTOM CSS HERE.   ***************/
+
+@media only screen and (max-width: 48em) {
+  /*************** ADD MOBILE ONLY CSS HERE  ***************/
+}
+
+p {
+  margin-bottom: 0;
+}
+
+.col {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.font-weight-600 {
+  font-weight: 600;
+}
+
+.mb-50 {
+  margin-bottom: 50px;
+}
+
+.mb-35 {
+  margin-bottom: 35px;
+}
+
+.mt-auto {
+  margin-top: auto !important;
+}
+
+.mt-50 {
+  margin-top: 50px;
+}
+
+.p-10 {
+  padding: 10px;
+}
+
+.pb-30 {
+  padding-bottom: 30px;
+}
+
+.pt-30 {
+  padding-top: 30px;
+}
+
+.border-radius-20 {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.border-1 {
+  border: 1px solid #dfdfdf;
+}
+
+.border-radius-10 {
+  border-radius: 10px;
+}
+
+.height-100per {
+  height: 100%;
+}
+
+.height-400 {
+  height: 250px;
+}
+
+.min-height-80 {
+  min-height: 80px;
+}
+
+.flex-center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ms-theme-cubic {
+  padding-bottom: 0 !important;
+}
+
+.line-space-20 p {
+  margin-bottom: 20px;
+}
