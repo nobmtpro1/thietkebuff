@@ -12,6 +12,10 @@ Version: 3.0
   /*************** ADD MOBILE ONLY CSS HERE  ***************/
 }
 
+:root {
+  --primary: #e17f26;
+}
+
 p {
   margin-bottom: 0;
 }
@@ -43,6 +47,10 @@ p {
 
 .p-10 {
   padding: 10px;
+}
+
+.p-25 {
+  padding: 25px;
 }
 
 .pb-30 {
@@ -78,7 +86,7 @@ p {
   min-height: 80px;
 }
 
-.flex-center{
+.flex-center {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -90,4 +98,27 @@ p {
 
 .line-space-20 p {
   margin-bottom: 20px;
+}
+
+.step {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.step p {
+  background: var(--primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  /* padding: 13px; */
+  color: white;
+  font-size: 35px;
+  font-weight: bolder;
+  width: 60px;
+  height: 60px;
+}
+
+.step-text {
 }
