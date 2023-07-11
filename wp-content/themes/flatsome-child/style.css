@@ -61,6 +61,15 @@ p {
   padding-top: 30px;
 }
 
+.pb-50 {
+  padding-bottom: 50px;
+}
+
+.pt-50 {
+  padding-top: 50px;
+}
+
+
 .border-radius-20 {
   border-radius: 20px;
   overflow: hidden;
@@ -68,6 +77,10 @@ p {
 
 .border-1 {
   border: 1px solid #dfdfdf;
+}
+
+.border-bottom-2 {
+  border-bottom: 2px solid white;
 }
 
 .border-radius-10 {
@@ -120,5 +133,11 @@ p {
   height: 60px;
 }
 
-.step-text {
+.footer {
+  background: linear-gradient(45deg, #2e7ed8, #16487f, #2e7ed8);
+  color: white;
+}
+
+.footer a {
+  color: white;
 }
