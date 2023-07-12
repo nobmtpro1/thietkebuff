@@ -32,7 +32,7 @@
 </div>
 <script>
     var swiper = new Swiper("#client_comments_slider .mySwiper", {
-        slidesPerView: 3,
+        slidesPerView: 1,
         spaceBetween: 50,
         centeredSlides: true,
         centeredSlidesBounds: true,
@@ -42,5 +42,11 @@
             delay: 2000,
         },
         speed: 1500,
+        breakpoints: {
+            1023: {
+            slidesPerView: 3,
+            spaceBetween: 50
+            }
+        }
     });
 </script>
