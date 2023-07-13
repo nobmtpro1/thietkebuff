@@ -1,7 +1,7 @@
 <?php
 // Add custom Theme Functions here
 
-define('THEME_URL',  get_stylesheet_directory_uri());
+define('THEME_URL', get_stylesheet_directory_uri());
 
 function add_styles()
 {
@@ -14,6 +14,14 @@ function add_styles()
 <?php
 }
 add_action('wp_head', 'add_styles', 999999999);
+
+function add_js()
+{
+?>
+    <script src="<?= THEME_URL . '/assets/js/main.js' ?>"></script>
+<?php
+}
+add_action('wp_footer', 'add_js', 999999999);
 
 function client_comments_slider($args, $content)
 {
@@ -34,3 +42,13 @@ function home_projects($args, $content)
     echo $file_content;
 }
 add_shortcode('home_projects', 'home_projects');
+
+function popup_contact($args, $content)
+{
+    ob_start();
+    include __DIR__ . '/components/popup_contact.php';
+    $file_content = ob_get_contents();
+    ob_end_clean();
+    echo $file_content;
+}
+add_shortcode('popup_contact', 'popup_contact');

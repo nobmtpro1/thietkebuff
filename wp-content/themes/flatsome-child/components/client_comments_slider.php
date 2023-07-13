@@ -5,7 +5,7 @@
                 'post_type' => 'client_comment',
                 'post_status' => 'publish',
                 'numberposts' => -1,
-                'order'    => 'DESC'
+                'order' => 'DESC',
             ]); ?>
             <?php foreach ($client_comments as $value) : ?>
                 <?php $data = get_post_meta($value->ID); ?>
@@ -44,8 +44,8 @@
         speed: 1500,
         breakpoints: {
             1023: {
-            slidesPerView: 3,
-            spaceBetween: 50
+                slidesPerView: 3,
+                spaceBetween: 50
             }
         }
     });
