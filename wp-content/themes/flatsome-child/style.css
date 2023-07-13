@@ -16,6 +16,10 @@ Version: 3.0
   --primary: #e17f26;
 }
 
+#comments {
+  display: none;
+}
+
 p {
   margin-bottom: 0;
 }
@@ -537,4 +541,9 @@ p {
   #popup_contact .container .left .infos .info .text {
     flex: 1;
   }
+}
+
+.wp-block-glsb-gosign-gallery-box-block.gosign-gallery-box-block-container{
+  width: 500px;
+  margin: auto;
 }
