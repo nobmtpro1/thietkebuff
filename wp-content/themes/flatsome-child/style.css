@@ -557,3 +557,7 @@ p {
 .featured-title .page-title-inner > div{
   flex-direction: column;
 }
+
+.featured-title .page-title-inner{
+  min-height: unset !important;
+}
