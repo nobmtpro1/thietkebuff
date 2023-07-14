@@ -547,3 +547,13 @@ p {
   width: 500px;
   margin: auto;
 }
+
+.fotorama-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.featured-title .page-title-inner > div{
+  flex-direction: column;
+}
