@@ -1,4 +1,5 @@
 <?php
+include 'env.php';
 // Email: web47thietkebuff@gmail.com / hfgbnoqeifdfzuvu
 /**
  * The base configuration for WordPress
@@ -22,14 +23,14 @@
 // ** Database settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
 define('WP_CACHE', true);
-define( 'WPCACHEHOME', 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/' );
-define('DB_NAME', 'thietkebuff');
+define('WPCACHEHOME', 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/');
+define('DB_NAME', $ENV_DB_NAME);
 
 /** Database username */
-define('DB_USER', 'root');
+define('DB_USER', $ENV_DB_USER);
 
 /** Database password */
-define('DB_PASSWORD', '');
+define('DB_PASSWORD', $ENV_DB_PASSWORD);
 
 /** Database hostname */
 define('DB_HOST', 'localhost');

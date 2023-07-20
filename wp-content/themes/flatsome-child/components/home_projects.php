@@ -41,7 +41,7 @@
                         <?= @$project->post_title ?>
                     </div>
                     <div class="description">
-                        Beauty
+                       <?= @$data['description'][0] ?>
                     </div>
                 </a>
             <?php endforeach ?>
