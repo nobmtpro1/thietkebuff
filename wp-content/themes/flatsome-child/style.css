@@ -35,7 +35,7 @@ p {
 }
 
 .box-list-view .box-vertical .box-text {
-  vertical-align: top;
+  vertical-align: top !important;
 }
 
 .font-weight-600 {
