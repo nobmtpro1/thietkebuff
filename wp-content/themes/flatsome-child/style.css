@@ -34,7 +34,7 @@ p {
   padding-bottom: 10px;
 }
 
-.box-list-view .box-vertical .box-text {
+.box-vertical .box-text {
   vertical-align: top !important;
 }
 
