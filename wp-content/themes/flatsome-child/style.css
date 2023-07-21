@@ -30,8 +30,12 @@ p {
 }
 
 .col {
-  padding-top: 0;
-  padding-bottom: 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.box-list-view .box-vertical .box-text {
+  vertical-align: top;
 }
 
 .font-weight-600 {
@@ -543,21 +547,21 @@ p {
   }
 }
 
-.wp-block-glsb-gosign-gallery-box-block.gosign-gallery-box-block-container{
+.wp-block-glsb-gosign-gallery-box-block.gosign-gallery-box-block-container {
   width: 500px;
   margin: auto;
 }
 
-.fotorama-container{
+.fotorama-container {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.featured-title .page-title-inner > div{
+.featured-title .page-title-inner > div {
   flex-direction: column;
 }
 
-.featured-title .page-title-inner{
+.featured-title .page-title-inner {
   min-height: unset !important;
 }
