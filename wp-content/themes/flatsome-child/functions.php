@@ -2,6 +2,16 @@
 // Add custom Theme Functions here
 
 define('THEME_URL', get_stylesheet_directory_uri());
+function is_bot()
+{
+    $bot = "googlebot|Yahoo! Slurp|bingbot|yandex|baiduspider|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest/0.|developers.google.com/+/web/snippet|slackbot|vkShare|W3C_Validator|redditbot|Applebot|WhatsApp|flipboard|tumblr|bitlybot|SkypeUriPreview|nuzzel|Discordbot|Google Page Speed|Qwantify|pinterestbot|Bitrix link preview|XING-contenttabreceiver|Chrome-Lighthouse|TelegramBot|SeznamBot|AhrefsSiteAudit|AhrefsBot";
+    $bot_array = explode("|", $bot);
+    if (in_array($_SERVER['HTTP_USER_AGENT'], $bot_array)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 function add_favicon()
 {
@@ -29,6 +39,7 @@ add_action('wp_head', 'add_favicon', 0);
 
 function add_styles()
 {
+
 ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,21 +48,23 @@ function add_styles()
     <link href="https://cdnjs.cloudflare.com/ajax/libs/fotorama/4.6.4/fotorama.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 <?php
+
 }
-add_action('wp_head', 'add_styles', 999999999);
+if (!is_bot()) {
+    add_action('wp_head', 'add_styles', 999999999);
+}
 
 function add_js()
 {
 ?>
-    <!-- jQuery 1.8 or later, 33 KB -->
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
-
-    <!-- Fotorama from CDNJS, 19 KB -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fotorama/4.6.4/fotorama.js"></script>
     <script src="<?= THEME_URL . '/assets/js/main.js' ?>"></script>
 <?php
 }
-add_action('wp_footer', 'add_js', 999999999);
+if (!is_bot()) {
+    add_action('wp_footer', 'add_js', 999999999);
+}
+
 
 function client_comments_slider($args, $content)
 {
