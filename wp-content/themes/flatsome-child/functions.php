@@ -1,5 +1,6 @@
 <?php
 // Add custom Theme Functions here
+require_once 'crawler.php';
 
 define('THEME_URL', get_stylesheet_directory_uri());
 function is_bot()
@@ -15,7 +16,7 @@ function is_bot()
 
 function add_favicon()
 {
-?>
+    ?>
     <link rel="apple-touch-icon" sizes="57x57" href="<?= THEME_URL . "/assets" ?>/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="<?= THEME_URL . "/assets" ?>/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="<?= THEME_URL . "/assets" ?>/apple-icon-72x72.png">
@@ -33,21 +34,24 @@ function add_favicon()
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="<?= THEME_URL . "/assets" ?>/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
-<?php
+    <meta name="author" content="author" />
+    <?php
 }
 add_action('wp_head', 'add_favicon', 0);
 
 function add_styles()
 {
 
-?>
+    ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/fotorama/4.6.4/fotorama.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-<?php
+    <?php
 
 }
 if (!is_bot()) {
@@ -56,10 +60,10 @@ if (!is_bot()) {
 
 function add_js()
 {
-?>
+    ?>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fotorama/4.6.4/fotorama.js"></script>
     <script src="<?= THEME_URL . '/assets/js/main.js' ?>"></script>
-<?php
+    <?php
 }
 if (!is_bot()) {
     add_action('wp_footer', 'add_js', 999999999);
@@ -95,3 +99,20 @@ function popup_contact($args, $content)
     echo $file_content;
 }
 add_shortcode('popup_contact', 'popup_contact');
+
+
+
+/* Crawler */
+// if (isset($_GET["crawl"])) {
+//     $html = file_get_html($_GET["crawl"]);
+//     $imgs = $html->find('img');
+//     foreach ($imgs as $img) {
+//         $img->remove();
+//     }
+//     $as = $html->find('a');
+//     foreach ($as as $a) {
+//         $a->href = "";
+//     }
+//     echo str_replace(["Sao Kim"], ["Chúng tôi"], $html->find('#ftwp-postcontent', 0));
+//     die;
+// }

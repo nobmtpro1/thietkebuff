@@ -569,3 +569,11 @@ p {
 .header-main .nav > li > a {
   font-weight: bold;
 }
+
+.row-large > .flickity-viewport > .flickity-slider > .col {
+  padding: 0 !important;
+}
+
+.slider-nav-push.slider-nav-reveal .flickity-prev-next-button svg {
+  margin-top: unset !important;
+}
