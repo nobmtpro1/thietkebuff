@@ -1,0 +1,207 @@
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include_once(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-phase1.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/advanced-cache.php on line 22
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include() /home/thietke9/public_html/wp-settings.php:95
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include_once(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-phase1.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/advanced-cache.php on line 22
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include() /home/thietke9/public_html/wp-settings.php:95
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include_once(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/ossdl-cdn.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 136
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include_once(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/ossdl-cdn.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 136
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include_once(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-phase1.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/advanced-cache.php on line 22
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include() /home/thietke9/public_html/wp-settings.php:95
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include_once(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-phase1.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/advanced-cache.php on line 22
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include() /home/thietke9/public_html/wp-settings.php:95
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include_once(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/ossdl-cdn.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 136
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include_once(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/ossdl-cdn.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 136
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include_once(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-phase1.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/advanced-cache.php on line 22
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/post.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/post.php:12
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   5. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   6. include() /home/thietke9/public_html/wp-settings.php:95
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include_once(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-phase1.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/advanced-cache.php on line 22
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/post.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/post.php:12
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   5. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   6. include() /home/thietke9/public_html/wp-settings.php:95
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/post.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/post.php:12
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   5. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   6. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/post.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/post.php:12
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   5. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   6. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/post.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/post.php:12
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   5. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   6. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include_once(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/ossdl-cdn.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 136
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/post.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/post.php:12
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   5. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   6. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include_once(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/ossdl-cdn.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 136
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/post.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/post.php:12
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-admin/admin.php:34
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   5. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   6. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include_once(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-phase1.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/advanced-cache.php on line 22
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include() /home/thietke9/public_html/wp-settings.php:95
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include_once(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-phase1.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/advanced-cache.php on line 22
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include() /home/thietke9/public_html/wp-settings.php:95
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include_once(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/ossdl-cdn.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 136
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:19 UTC] PHP Warning:  include_once(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/ossdl-cdn.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 136
+[21-Jul-2023 03:05:19 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:19 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-admin/admin-ajax.php:0
+[21-Jul-2023 03:05:19 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-admin/admin-ajax.php:22
+[21-Jul-2023 03:05:19 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:19 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:19 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[22-Jul-2023 04:52:57 UTC] Connection refused
+[22-Jul-2023 04:52:57 UTC] Connection refused
+[22-Jul-2023 04:52:57 UTC] Connection refused
+[22-Jul-2023 04:52:57 UTC] Connection refused

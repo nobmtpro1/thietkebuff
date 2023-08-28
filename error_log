@@ -1,0 +1,65 @@
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include_once(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-phase1.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/advanced-cache.php on line 22
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-cron.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-cron.php:46
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include() /home/thietke9/public_html/wp-settings.php:95
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include_once(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-phase1.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/advanced-cache.php on line 22
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-cron.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-cron.php:46
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include() /home/thietke9/public_html/wp-settings.php:95
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-cron.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-cron.php:46
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-cron.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-cron.php:46
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/wp-cache-base.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 113
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-cron.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-cron.php:46
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include_once(C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/ossdl-cdn.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 136
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-cron.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-cron.php:46
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[21-Jul-2023 03:05:12 UTC] PHP Warning:  include_once(): Failed opening 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/ossdl-cdn.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-content/plugins/wp-super-cache/wp-cache.php on line 136
+[21-Jul-2023 03:05:12 UTC] PHP Stack trace:
+[21-Jul-2023 03:05:12 UTC] PHP   1. {main}() /home/thietke9/public_html/wp-cron.php:0
+[21-Jul-2023 03:05:12 UTC] PHP   2. require_once() /home/thietke9/public_html/wp-cron.php:46
+[21-Jul-2023 03:05:12 UTC] PHP   3. require_once() /home/thietke9/public_html/wp-load.php:50
+[21-Jul-2023 03:05:12 UTC] PHP   4. require_once() /home/thietke9/public_html/wp-config.php:100
+[21-Jul-2023 03:05:12 UTC] PHP   5. include_once() /home/thietke9/public_html/wp-settings.php:453
+[22-Jul-2023 04:51:47 UTC] Connection refused
+[22-Jul-2023 04:51:47 UTC] Connection refused
+[22-Jul-2023 04:51:48 UTC] Connection refused
+[09-Aug-2023 01:29:40 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function _wp_die_process_input() in /home/thietke9/public_html/wp-includes/functions.php:3757
+Stack trace:
+#0 [internal function]: _default_wp_die_handler('Briefly unavail...', 'Maintenance', Array)
+#1 /home/thietke9/public_html/wp-includes/functions.php(3740): call_user_func('_default_wp_die...', 'Briefly unavail...', 'Maintenance', Array)
+#2 /home/thietke9/public_html/wp-includes/load.php(305): wp_die('Briefly unavail...', 'Maintenance', Array)
+#3 /home/thietke9/public_html/wp-settings.php(74): wp_maintenance()
+#4 /home/thietke9/public_html/wp-config.php(98): require_once('/home/thietke9/...')
+#5 /home/thietke9/public_html/wp-load.php(50): require_once('/home/thietke9/...')
+#6 /home/thietke9/public_html/wp-blog-header.php(13): require_once('/home/thietke9/...')
+#7 /home/thietke9/public_html/index.php(17): require('/home/thietke9/...')
+#8 {main}
+  thrown in /home/thietke9/public_html/wp-includes/functions.php on line 3757
+[11-Aug-2023 01:29:29 UTC] Cron reschedule event error for hook: action_scheduler_run_queue, Error code: could_not_set, Error message: The cron event list could not be saved., Data: {"schedule":"every_minute","args":["WP Cron"],"interval":60}

@@ -1,0 +1,66 @@
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/thietke9/public_html/wp-includes/class-wp-http.php on line 11
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/class-wp-http.php:0
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/thietke9/public_html/wp-includes/class-wp-http.php on line 11
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/class-wp-http.php:0
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP Warning:  require(ABSPATHWPINC/Requests/src/Autoload.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-includes/class-wp-http.php on line 11
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/class-wp-http.php:0
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP Warning:  require(ABSPATHWPINC/Requests/src/Autoload.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-includes/class-wp-http.php on line 11
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/class-wp-http.php:0
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/Requests/src/Autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-includes/class-wp-http.php on line 11
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:28:03 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/class-wp-http.php:0
+[27-Jul-2023 15:28:07 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class 'WP_Dependencies' not found in /home/thietke9/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietke9/public_html/wp-includes/class-wp-scripts.php on line 18
+[27-Jul-2023 15:28:07 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:28:07 Asia/Ho_Chi_Minh] PHP   1. newrelic_exception_handler($"exception" = class Error { protected $message = 'Class \'WP_Dependencies\' not found'; private $string = 'Error: Class \'WP_Dependencies\' not found in /home/thietke9/public_html/wp-includes/class-wp-scripts.php:18\nStack trace:\n#0 {main}'; protected $code = 0; protected $file = '/home/thietke9/public_html/wp-includes/class-wp-scripts.php'; protected $line = 18; private $trace = []; private $previous = NULL; public $xdebug_message = '<tr><th align=\'left\' bgcolor=\'#f57900\' colspan="5"><span style=\'background-color: #cc0000; color: #fce94f; font-size: x-large;\'>( ! )</span> Error: Class \'WP_Dependencies\' not found in /home/thietke9/public_html/wp-includes/class-wp-scripts.php on line <i>18</i></th></tr>\n<tr><th align=\'left\' bgcolor=\'#e9b96e\' colspan=\'5\'>Call Stack</th></tr>\n<tr><th align=\'center\' bgcolor=\'#eeeeec\'>#</th><th align=\'left\' bgcolor=\'#eeeeec\'>Time</th><th align=\'left\' bgcolor=\'#eeeeec\'>Memory</th><th align=\'left\' bgcolor=\'#eee'... }) Unknown:0
+[27-Jul-2023 15:28:12 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class 'WP_Dependencies' not found in /home/thietke9/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietke9/public_html/wp-includes/class-wp-styles.php on line 18
+[27-Jul-2023 15:28:12 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:28:12 Asia/Ho_Chi_Minh] PHP   1. newrelic_exception_handler($"exception" = class Error { protected $message = 'Class \'WP_Dependencies\' not found'; private $string = 'Error: Class \'WP_Dependencies\' not found in /home/thietke9/public_html/wp-includes/class-wp-styles.php:18\nStack trace:\n#0 {main}'; protected $code = 0; protected $file = '/home/thietke9/public_html/wp-includes/class-wp-styles.php'; protected $line = 18; private $trace = []; private $previous = NULL; public $xdebug_message = '<tr><th align=\'left\' bgcolor=\'#f57900\' colspan="5"><span style=\'background-color: #cc0000; color: #fce94f; font-size: x-large;\'>( ! )</span> Error: Class \'WP_Dependencies\' not found in /home/thietke9/public_html/wp-includes/class-wp-styles.php on line <i>18</i></th></tr>\n<tr><th align=\'left\' bgcolor=\'#e9b96e\' colspan=\'5\'>Call Stack</th></tr>\n<tr><th align=\'center\' bgcolor=\'#eeeeec\'>#</th><th align=\'left\' bgcolor=\'#eeeeec\'>Time</th><th align=\'left\' bgcolor=\'#eeeeec\'>Memory</th><th align=\'left\' bgcolor=\'#eeee'... }) Unknown:0
+[27-Jul-2023 15:28:45 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietke9/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietke9/public_html/wp-includes/template-canvas.php on line 12
+[27-Jul-2023 15:28:45 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:28:45 Asia/Ho_Chi_Minh] PHP   1. newrelic_exception_handler($"exception" = class Error { protected $message = 'Call to undefined function get_the_block_template_html()'; private $string = 'Error: Call to undefined function get_the_block_template_html() in /home/thietke9/public_html/wp-includes/template-canvas.php:12\nStack trace:\n#0 {main}'; protected $code = 0; protected $file = '/home/thietke9/public_html/wp-includes/template-canvas.php'; protected $line = 12; private $trace = []; private $previous = NULL; public $xdebug_message = '<tr><th align=\'left\' bgcolor=\'#f57900\' colspan="5"><span style=\'background-color: #cc0000; color: #fce94f; font-size: x-large;\'>( ! )</span> Error: Call to undefined function get_the_block_template_html() in /home/thietke9/public_html/wp-includes/template-canvas.php on line <i>12</i></th></tr>\n<tr><th align=\'left\' bgcolor=\'#e9b96e\' colspan=\'5\'>Call Stack</th></tr>\n<tr><th align=\'center\' bgcolor=\'#eeeeec\'>#</th><th align=\'left\' bgcolor=\'#eeeeec\'>Time</th><th align=\'left\' bgcolor=\'#eeeeec\'>Memory</th><th alig'... }) Unknown:0
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/thietke9/public_html/wp-includes/class-wp-http.php on line 11
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/class-wp-http.php:0
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/thietke9/public_html/wp-includes/class-wp-http.php on line 11
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/class-wp-http.php:0
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP Warning:  require(ABSPATHWPINC/Requests/src/Autoload.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-includes/class-wp-http.php on line 11
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/class-wp-http.php:0
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP Warning:  require(ABSPATHWPINC/Requests/src/Autoload.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-includes/class-wp-http.php on line 11
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/class-wp-http.php:0
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/Requests/src/Autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-includes/class-wp-http.php on line 11
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:18:20 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/class-wp-http.php:0
+[27-Jul-2023 23:18:21 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class 'WP_Dependencies' not found in /home/thietke9/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietke9/public_html/wp-includes/class-wp-scripts.php on line 18
+[27-Jul-2023 23:18:21 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:18:21 Asia/Ho_Chi_Minh] PHP   1. newrelic_exception_handler($"exception" = class Error { protected $message = 'Class \'WP_Dependencies\' not found'; private $string = 'Error: Class \'WP_Dependencies\' not found in /home/thietke9/public_html/wp-includes/class-wp-scripts.php:18\nStack trace:\n#0 {main}'; protected $code = 0; protected $file = '/home/thietke9/public_html/wp-includes/class-wp-scripts.php'; protected $line = 18; private $trace = []; private $previous = NULL; public $xdebug_message = '<tr><th align=\'left\' bgcolor=\'#f57900\' colspan="5"><span style=\'background-color: #cc0000; color: #fce94f; font-size: x-large;\'>( ! )</span> Error: Class \'WP_Dependencies\' not found in /home/thietke9/public_html/wp-includes/class-wp-scripts.php on line <i>18</i></th></tr>\n<tr><th align=\'left\' bgcolor=\'#e9b96e\' colspan=\'5\'>Call Stack</th></tr>\n<tr><th align=\'center\' bgcolor=\'#eeeeec\'>#</th><th align=\'left\' bgcolor=\'#eeeeec\'>Time</th><th align=\'left\' bgcolor=\'#eeeeec\'>Memory</th><th align=\'left\' bgcolor=\'#eee'... }) Unknown:0
+[27-Jul-2023 23:18:22 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class 'WP_Dependencies' not found in /home/thietke9/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietke9/public_html/wp-includes/class-wp-styles.php on line 18
+[27-Jul-2023 23:18:22 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:18:22 Asia/Ho_Chi_Minh] PHP   1. newrelic_exception_handler($"exception" = class Error { protected $message = 'Class \'WP_Dependencies\' not found'; private $string = 'Error: Class \'WP_Dependencies\' not found in /home/thietke9/public_html/wp-includes/class-wp-styles.php:18\nStack trace:\n#0 {main}'; protected $code = 0; protected $file = '/home/thietke9/public_html/wp-includes/class-wp-styles.php'; protected $line = 18; private $trace = []; private $previous = NULL; public $xdebug_message = '<tr><th align=\'left\' bgcolor=\'#f57900\' colspan="5"><span style=\'background-color: #cc0000; color: #fce94f; font-size: x-large;\'>( ! )</span> Error: Class \'WP_Dependencies\' not found in /home/thietke9/public_html/wp-includes/class-wp-styles.php on line <i>18</i></th></tr>\n<tr><th align=\'left\' bgcolor=\'#e9b96e\' colspan=\'5\'>Call Stack</th></tr>\n<tr><th align=\'center\' bgcolor=\'#eeeeec\'>#</th><th align=\'left\' bgcolor=\'#eeeeec\'>Time</th><th align=\'left\' bgcolor=\'#eeeeec\'>Memory</th><th align=\'left\' bgcolor=\'#eeee'... }) Unknown:0
+[27-Jul-2023 23:18:38 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietke9/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietke9/public_html/wp-includes/template-canvas.php on line 12
+[27-Jul-2023 23:18:38 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:18:38 Asia/Ho_Chi_Minh] PHP   1. newrelic_exception_handler($"exception" = class Error { protected $message = 'Call to undefined function get_the_block_template_html()'; private $string = 'Error: Call to undefined function get_the_block_template_html() in /home/thietke9/public_html/wp-includes/template-canvas.php:12\nStack trace:\n#0 {main}'; protected $code = 0; protected $file = '/home/thietke9/public_html/wp-includes/template-canvas.php'; protected $line = 12; private $trace = []; private $previous = NULL; public $xdebug_message = '<tr><th align=\'left\' bgcolor=\'#f57900\' colspan="5"><span style=\'background-color: #cc0000; color: #fce94f; font-size: x-large;\'>( ! )</span> Error: Call to undefined function get_the_block_template_html() in /home/thietke9/public_html/wp-includes/template-canvas.php on line <i>12</i></th></tr>\n<tr><th align=\'left\' bgcolor=\'#e9b96e\' colspan=\'5\'>Call Stack</th></tr>\n<tr><th align=\'center\' bgcolor=\'#eeeeec\'>#</th><th align=\'left\' bgcolor=\'#eeeeec\'>Time</th><th align=\'left\' bgcolor=\'#eeeeec\'>Memory</th><th alig'... }) Unknown:0

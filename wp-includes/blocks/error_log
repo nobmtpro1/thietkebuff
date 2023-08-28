@@ -1,0 +1,30 @@
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/thietke9/public_html/wp-includes/blocks/index.php on line 8
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/blocks/index.php:0
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/thietke9/public_html/wp-includes/blocks/index.php on line 8
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/blocks/index.php:0
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-includes/blocks/index.php on line 11
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/blocks/index.php:0
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-includes/blocks/index.php on line 11
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/blocks/index.php:0
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-includes/blocks/index.php on line 11
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 15:29:33 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/blocks/index.php:0
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP Warning:  Use of undefined constant ABSPATH - assumed 'ABSPATH' (this will throw an Error in a future version of PHP) in /home/thietke9/public_html/wp-includes/blocks/index.php on line 8
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/blocks/index.php:0
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP Warning:  Use of undefined constant WPINC - assumed 'WPINC' (this will throw an Error in a future version of PHP) in /home/thietke9/public_html/wp-includes/blocks/index.php on line 8
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/blocks/index.php:0
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-includes/blocks/index.php on line 11
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/blocks/index.php:0
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP Warning:  require(ABSPATHWPINC/blocks/legacy-widget.php): failed to open stream: No such file or directory in /home/thietke9/public_html/wp-includes/blocks/index.php on line 11
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/blocks/index.php:0
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP Fatal error:  require(): Failed opening required 'ABSPATHWPINC/blocks/legacy-widget.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/thietke9/public_html/wp-includes/blocks/index.php on line 11
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP Stack trace:
+[27-Jul-2023 23:19:03 Asia/Ho_Chi_Minh] PHP   1. {main}() /home/thietke9/public_html/wp-includes/blocks/index.php:0
