@@ -1,4 +1,6 @@
-<?php
+<?php//Begin Really Simple Security key
+define('RSSSL_KEY', 'M2fuU1B94tuJz0XrOKtqwZxWNmKVi1RdTTU5AaSDgbgaHt9OHHDCmn17nnpCIJ0x');
+//END Really Simple Security key
 include 'env.php';
 // Email: web47thietkebuff@gmail.com / hfgbnoqeifdfzuvu
 /**
@@ -22,8 +24,6 @@ include 'env.php';
 
 // ** Database settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-define('WP_CACHE', true);
-define('WPCACHEHOME', 'C:\xampp\htdocs\thietkebuff\wp-content\plugins\wp-super-cache/');
 define('DB_NAME', $ENV_DB_NAME);
 
 /** Database username */

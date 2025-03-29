@@ -2,7 +2,7 @@
 
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
-use Pods\Whatsit\Value_Field;
+use Pods\API\Whatsit\Value_Field;
 use Pod as Pod_Deprecated;
 
 /**
@@ -287,9 +287,7 @@ class PodsField {
 	 * @since 2.0.0
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		return $value;
-
+		return $this->maybe_sanitize_output( $value, $options );
 	}
 
 	/**
@@ -457,10 +455,24 @@ class PodsField {
 		$attributes = $this->build_dfv_field_attributes( $attributes, $args );
 		$attributes = array_map( 'esc_attr', $attributes );
 
-		$default_value = '';
+		$field_value = isset( $args->value ) ? $args->value : null;
 
-		if ( 'multi' === pods_v( $args->type . '_format_type' ) ) {
-			$default_value = [];
+		if ( empty( $field_value ) ) {
+			$default_value = '';
+
+			$is_multi = 'multi' === pods_v( $args->type . '_format_type', 'single' );
+
+			if ( $is_multi ) {
+				$default_value = [];
+			}
+
+			if ( null === $field_value || 1 === (int) pods_v( 'default_empty_fields', $options, 0 ) ) {
+				$field_value = PodsForm::default_value( $default_value, $args->type, pods_v( 'name', $options, $args->name ), $options, $args->pod, $args->id );
+
+				if ( $is_multi ) {
+					$field_value = explode( ',', $field_value );
+				}
+			}
 		}
 
 		// Build DFV field data.
@@ -475,7 +487,7 @@ class PodsField {
 			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'   => $this->build_dfv_field_config( $args ),
 			'fieldEmbed'    => true,
-			'fieldValue'    => isset( $args->value ) ? $args->value : PodsForm::default_value( $default_value, $args->type, pods_v( 'name', $options, $args->name ), $options, $args->pod, $args->id ),
+			'fieldValue'    => $field_value,
 		];
 
 		/**
@@ -573,18 +585,18 @@ class PodsField {
 	 * @return array
 	 */
 	public function build_dfv_field_config( $args ) {
-		if ( $args->options instanceof Field ) {
-			$config = $args->options->export();
-
-			$config['repeatable']                  = $args->options->is_repeatable();
-			$config['repeatable_add_new_label']    = $args->options->get_arg( 'repeatable_add_new_label', __( 'Add New', 'pods' ), true );
-			$config['repeatable_reorder']          = filter_var( $args->options->get_arg( 'repeatable_reorder', true ), FILTER_VALIDATE_BOOLEAN );
-			$config['repeatable_limit']            = $args->options->get_limit();
-			$config['repeatable_format']           = $args->options->get_arg( 'repeatable_format', 'default', true );
-			$config['repeatable_format_separator'] = $args->options->get_arg( 'repeatable_format_separator', ', ', true );
-		} else {
-			$config = (array) $args->options;
+		if ( ! $args->options instanceof Field ) {
+			$args->options = new Field( (array) $args->options );
 		}
+
+		$config = $args->options->export();
+
+		$config['repeatable']                  = $args->options->is_repeatable();
+		$config['repeatable_add_new_label']    = $args->options->get_arg( 'repeatable_add_new_label', __( 'Add New', 'pods' ), true );
+		$config['repeatable_reorder']          = filter_var( $args->options->get_arg( 'repeatable_reorder', true ), FILTER_VALIDATE_BOOLEAN );
+		$config['repeatable_limit']            = $args->options->get_limit();
+		$config['repeatable_format']           = $args->options->get_arg( 'repeatable_format', 'default', true );
+		$config['repeatable_format_separator'] = $args->options->get_arg( 'repeatable_format_separator', ', ', true );
 
 		// Backcompat readonly argument handling.
 		if ( isset( $config['readonly'] ) ) {
@@ -624,6 +636,9 @@ class PodsField {
 		if ( ! isset( $config['placeholder'] ) || ! is_string( $config['placeholder'] ) ) {
 			$config['placeholder'] = '';
 		}
+
+		$config['label']       = pods_kses_exclude_p( $config['label'] );
+		$config['description'] = pods_kses_exclude_p( $config['description'] );
 
 		return $config;
 
@@ -882,7 +897,7 @@ class PodsField {
 	 * @param string|array $value   Field value.
 	 * @param array|null   $options Field options.
 	 *
-	 * @return string
+	 * @return string|array The field value with HTML stripped (if the field supports it).
 	 */
 	public function strip_html( $value, $options = null ) {
 		if ( is_array( $value ) ) {
@@ -916,11 +931,47 @@ class PodsField {
 					}
 				}
 
-				return $value;
+				return $this->maybe_sanitize_output( $value, $options );
 			}
 		}
 
-		return strip_tags( $value );
+		return wp_strip_all_tags( $value );
+	}
+
+	/**
+	 * Determine whether the field value needs to be sanitized and sanitize it.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param mixed            $value   The field value.
+	 * @param null|array|Field $options The field options.
+	 *
+	 * @return mixed The sanitized field value if it needs to be sanitized.
+	 */
+	public function maybe_sanitize_output( $value, $options = null ) {
+		// Maybe check for a sanitize output option.
+		$should_sanitize = null === $options || 1 === (int) pods_v( static::$type . '_sanitize_html', $options, 0 );
+
+		/**
+		 * Allow filtering whether to sanitize the field value before output.
+		 *
+		 * @since 3.1.0
+		 *
+		 * @param bool             $should_sanitize Whether the field value should be sanitized.
+		 * @param mixed            $value           The field value.
+		 * @param null|array|Field $options         The field options.
+		 */
+		$should_sanitize = apply_filters( 'pods_field_maybe_sanitize_output', $should_sanitize, $value, $options );
+
+		if ( $should_sanitize ) {
+			if ( is_string( $value ) ) {
+				$value = wp_kses_post( $value );
+			} elseif ( is_array( $value ) || is_object( $value ) ) {
+				$value = wp_kses_post_deep( $value );
+			}
+		}
+
+		return $value;
 	}
 
 	/**
@@ -977,16 +1028,44 @@ class PodsField {
 			return $value;
 		}
 
+		$trim       = true;
+		$trim_p_brs = false;
+		$trim_lines = false;
+
 		if ( $options ) {
 			$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 			// Check if we should trim the content.
-			if ( 0 === (int) pods_v( static::$type . '_trim', $options, 1 ) ) {
-				return $value;
-			}
+			$trim = 1 === (int) pods_v( static::$type . '_trim', $options, 0 );
+
+			// Check if we should remove the "p" tags that are empty or that only contain whitespace and "br" tags.
+			$trim_p_brs = 1 === (int) pods_v( static::$type . '_trim_p_brs', $options, 0 );
+
+			// Check if we should remove whitespace at the end of lines.
+			$trim_lines = 1 === (int) pods_v( static::$type . '_trim_lines', $options, 0 );
 		}
 
-		return trim( $value );
+		if ( $trim_p_brs ) {
+			// Remove the "p" tags that are empty or that only contain whitespace and "br" tags.
+			$value = preg_replace( '/(<p[^>]*>\s*(\s|&nbsp;|<br\s*?\/?>)*\s*<\/?p>)/Umi', '', $value );
+
+			// Remove 3+ consecutive blank lines.
+			$value = preg_replace( '/([\n\r]\s*[\n\r]\s*[\n\r])+/', "\n", $value );
+		}
+
+		if ( $trim_lines ) {
+			// Trim whitespace at the end of lines.
+			$value = preg_replace( '/\h+$/m', '', $value );
+
+			// Remove 3+ consecutive blank lines.
+			$value = preg_replace( '/([\n\r]\s*[\n\r]\s*[\n\r])+/', "\n", $value );
+		}
+
+		if ( $trim ) {
+			$value = trim( $value );
+		}
+
+		return $value;
 	}
 
 	/**
@@ -1041,10 +1120,10 @@ class PodsField {
 	 *
 	 * @param array $properties Properties to export.
 	 *
-	 * @return void
+	 * @return self
 	 */
 	public static function __set_state( $properties ) {
-
+		return new PodsField();
 	}
 
 }

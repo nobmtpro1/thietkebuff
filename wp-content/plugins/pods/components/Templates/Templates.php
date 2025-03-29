@@ -175,7 +175,7 @@ class Pods_Templates extends PodsComponent {
 				'name'       => 'restrict_capability',
 				'label'      => __( 'Restrict access by Capability', 'pods' ),
 				'help'       => [
-					__( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
+					__( '<h3>Capabilities</h3> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
 					'http://codex.wordpress.org/Roles_and_Capabilities',
 				],
 				'default'    => 0,
@@ -420,7 +420,7 @@ class Pods_Templates extends PodsComponent {
 	 * @param $text
 	 * @param $post
 	 *
-	 * @return string|void
+	 * @return string
 	 */
 	public function set_title_text( $text, $post ) {
 		return __( 'Enter template name here', 'pods' );
@@ -523,11 +523,12 @@ class Pods_Templates extends PodsComponent {
 	 * @param string $code          Custom template code to use instead
 	 * @param object $obj           The Pods object
 	 * @param bool   $deprecated    Whether to use deprecated functionality based on old function usage
+	 * @param bool   $check_access  Whether to check access for Posts that are Password-protected.
 	 *
 	 * @return mixed|string|void
 	 * @since 2.0.0
 	 */
-	public static function template( $template_name, $code = null, $obj = null, $deprecated = false ) {
+	public static function template( $template_name, $code = null, $obj = null, $deprecated = false, $check_access = false ) {
 
 		if ( ! empty( $obj ) ) {
 			self::$obj =& $obj;
@@ -540,6 +541,8 @@ class Pods_Templates extends PodsComponent {
 		if ( empty( $obj ) || ! is_object( $obj ) ) {
 			return '';
 		}
+
+		/** @var Pods $obj */
 
 		$template = array(
 			'id'      => 0,
@@ -603,16 +606,43 @@ class Pods_Templates extends PodsComponent {
 		$code = apply_filters( 'pods_templates_pre_template', $code, $template, $obj );
 		$code = apply_filters( "pods_templates_pre_template_{$slug}", $code, $template, $obj );
 
+		$info = $check_access ? pods_info_from_args( [ 'pods' => $obj ] ) : [];
+
 		ob_start();
 
 		if ( ! empty( $code ) ) {
 			// Only detail templates need $this->id
 			if ( empty( $obj->id ) ) {
+				$obj->reset();
+
 				while ( $obj->fetch() ) {
+					$info['item_id'] = $obj->id();
+
+					// Ensure the post is not password protected.
+					if (
+						$check_access
+						&& (
+							pods_access_bypass_post_with_password( $info )
+							|| pods_access_bypass_private_post( $info )
+						)
+					) {
+						continue;
+					}
+
 					echo self::do_template( $code, $obj );
 				}
 			} else {
-				echo self::do_template( $code, $obj );
+				$info['item_id'] = $obj->id();
+
+				if (
+					! $check_access
+					|| (
+						! pods_access_bypass_post_with_password( $info )
+						&& ! pods_access_bypass_private_post( $info )
+					)
+				) {
+					echo self::do_template( $code, $obj );
+				}
 			}
 		} elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
 			$default_templates = array(
@@ -625,10 +655,33 @@ class Pods_Templates extends PodsComponent {
 
 			if ( empty( $obj->id ) ) {
 				while ( $obj->fetch() ) {
+					$info['item_id'] = $obj->id();
+
+					// Ensure the post is not password protected.
+					if (
+						$check_access
+						&& (
+							pods_access_bypass_post_with_password( $info )
+							|| pods_access_bypass_private_post( $info )
+						)
+					) {
+						continue;
+					}
+
 					pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
 				}
 			} else {
-				pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+				$info['item_id'] = $obj->id();
+
+				if (
+					! $check_access
+					|| (
+						! pods_access_bypass_post_with_password( $info )
+						&& ! pods_access_bypass_private_post( $info )
+					)
+				) {
+					pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+				}
 			}
 		}//end if
 
@@ -656,25 +709,34 @@ class Pods_Templates extends PodsComponent {
 			$obj =& self::$obj;
 		}
 
-		if ( empty( $obj ) || ! is_object( $obj ) ) {
+		if ( empty( $obj ) || ! is_object( $obj ) || ! is_string( $code ) ) {
 			return '';
 		}
 
-		if ( false !== strpos( $code, '<?' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
-			pods_deprecated( 'Pod Template PHP code has been deprecated, please use WP Templates instead of embedding PHP.', '2.3' );
+		$out = '';
 
-			$code = str_replace( '$this->', '$obj->', $code );
+		if ( false !== strpos( $code, '<?' ) ) {
+			// @todo Remove this code in Pods 3.3 and completely ignore any $code that starts with <? in the string.
+			_doing_it_wrong( 'Pods Templates', 'Pod Template PHP code is no longer actively supported and will be completely removed in Pods 3.3', '3.0' );
 
-			ob_start();
+			if ( ! PODS_DISABLE_EVAL ) {
+				pods_deprecated( 'Pod Template PHP code has been deprecated, please use WP Templates instead of embedding PHP.', '2.3' );
 
-			eval( "?>$code" );
+				$code = str_replace( '$this->', '$obj->', $code );
 
-			$out = ob_get_clean();
+				ob_start();
+
+				eval( "?>$code" );
+
+				$out = (string) ob_get_clean();
+			}
 		} else {
 			$out = $code;
 		}
 
-		$out = $obj->do_magic_tags( $out );
+		if ( '' !== trim( $out ) ) {
+			$out = $obj->do_magic_tags( $out );
+		}
 
 		// Prevent blank whitespace from being output if nothing came through.
 		if ( '' === trim( $out ) ) {

