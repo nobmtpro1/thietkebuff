@@ -54,7 +54,9 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 
 	$recurse_queue = array();
 
-	$image_sizes  = get_intermediate_image_sizes();
+	$image_sizes   = get_intermediate_image_sizes();
+	$image_sizes[] = 'full';
+
 	$media_fields = [
 		'title',
 		'caption',
@@ -67,6 +69,44 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 		'extension',
 		'mime_type',
 	];
+
+	$pod_fields = $pod->fields();
+
+	foreach ( $pod_fields as $name => $field ) {
+		// Field type specific handling
+		if ( 'file' === $field['type'] && 'attachment' === pods_v( 'file_uploader', $field ) ) {
+			// Add base field name
+			$fields[] = $prefix . $name;
+			$fields[] = $prefix . $name . '._src';
+			$fields[] = $prefix . $name . '._img';
+
+			foreach ( $media_fields as $media_field ) {
+				$fields[] = "{$prefix}{$name}._img.{$media_field}";
+			}
+
+			foreach ( $image_sizes as $image_size ) {
+				$fields[] = "{$prefix}{$name}._src.{$image_size}";
+
+				if ( 'multi' !== pods_v( 'file_format_type', $field ) ) {
+					$fields[] = "{$prefix}{$name}._src_relative.{$image_size}";
+					$fields[] = "{$prefix}{$name}._src_schemeless.{$image_size}";
+				}
+
+				$fields[] = "{$prefix}{$name}._img.{$image_size}";
+			}
+		} elseif ( ! empty( $field['table_info'] ) && ! empty( $field['table_info']['pod'] ) ) {
+			$linked_pod = $field['table_info']['pod']['name'];
+			if ( ! isset( $pods_visited[ $linked_pod ] ) || ! in_array( $name, $pods_visited[ $linked_pod ], true ) ) {
+				$pods_visited[ $linked_pod ][] = $name;
+				$recurse_queue[ $linked_pod ]  = "{$prefix}{$name}.";
+			}
+		} else {
+			// Add base field name
+			$fields[] = $prefix . $name;
+		}
+	}//end foreach
+
+	sort($fields);
 
 	if ( post_type_supports( $pod_name, 'thumbnail' ) ) {
 		$fields[] = "{$prefix}post_thumbnail";
@@ -82,40 +122,8 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 		}
 	}
 
-	$pod_fields = $pod->fields();
-
-	foreach ( $pod_fields as $name => $field ) {
-		// Add base field name
-		$fields[] = $prefix . $name;
-
-		// Field type specific handling
-		if ( 'file' === $field['type'] && 'attachment' === $field['options']['file_uploader'] ) {
-			$fields[] = $prefix . $name . '._src';
-			$fields[] = $prefix . $name . '._img';
-
-			foreach ( $media_fields as $media_field ) {
-				$fields[] = "{$prefix}{$name}._img.{$media_field}";
-			}
-
-			foreach ( $image_sizes as $image_size ) {
-				$fields[] = "{$prefix}{$name}._src.{$image_size}";
-
-				if ( 'multi' !== $field['options']['file_format_type'] ) {
-					$fields[] = "{$prefix}{$name}._src_relative.{$image_size}";
-					$fields[] = "{$prefix}{$name}._src_schemeless.{$image_size}";
-				}
-
-				$fields[] = "{$prefix}{$name}._img.{$image_size}";
-			}
-		} elseif ( ! empty( $field['table_info'] ) && ! empty( $field['table_info']['pod'] ) ) {
-			$linked_pod = $field['table_info']['pod']['name'];
-			if ( ! isset( $pods_visited[ $linked_pod ] ) || ! in_array( $name, $pods_visited[ $linked_pod ], true ) ) {
-				$pods_visited[ $linked_pod ][] = $name;
-				$recurse_queue[ $linked_pod ]  = "{$prefix}{$name}.";
-			}
-		}//end if
-	}//end foreach
 	foreach ( $recurse_queue as $recurse_name => $recurse_prefix ) {
+		$fields[] = trim( $recurse_prefix, '.' );
 		$fields = array_merge( $fields, pq_recurse_pod_fields( $recurse_name, $recurse_prefix, $pods_visited ) );
 	}
 

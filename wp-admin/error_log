@@ -205,3 +205,4 @@
 [22-Jul-2023 04:52:57 UTC] Connection refused
 [22-Jul-2023 04:52:57 UTC] Connection refused
 [22-Jul-2023 04:52:57 UTC] Connection refused
+[25-Aug-2024 13:28:25 UTC] PHP Warning:  Attempt to read property "post_type" on null in /home/thietk11/public_html/wp-content/plugins/wordpress-seo-premium/classes/premium-metabox.php on line 184

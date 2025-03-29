@@ -3,10 +3,11 @@
 namespace WebpConverter\Error\Detector;
 
 use WebpConverter\Conversion\Format\AvifFormat;
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Format\WebpFormat;
-use WebpConverter\Conversion\OutputPath;
+use WebpConverter\Conversion\OutputPathGenerator;
 use WebpConverter\Error\Notice\BypassingApacheNotice;
-use WebpConverter\Error\Notice\ErrorNotice;
+use WebpConverter\Error\Notice\NoticeInterface;
 use WebpConverter\Error\Notice\PassthruNotWorkingNotice;
 use WebpConverter\Error\Notice\RewritesCachedNotice;
 use WebpConverter\Error\Notice\RewritesNotExecutedNotice;
@@ -20,13 +21,11 @@ use WebpConverter\PluginData;
 use WebpConverter\PluginInfo;
 use WebpConverter\Service\FileLoader;
 use WebpConverter\Settings\Option\LoaderTypeOption;
-use WebpConverter\Settings\Option\OutputFormatsOption;
-use WebpConverter\Settings\Option\SupportedDirectoriesOption;
 
 /**
  * Checks for configuration errors about non-working HTTP rewrites.
  */
-class RewritesErrorsDetector implements ErrorDetector {
+class RewritesErrorsDetector implements DetectorInterface {
 
 	const PATH_SOURCE_FILE_PNG     = '/assets/img/icon-test.png';
 	const PATH_SOURCE_FILE_WEBP    = '/assets/img/icon-test.webp';
@@ -52,7 +51,7 @@ class RewritesErrorsDetector implements ErrorDetector {
 	private $file_loader;
 
 	/**
-	 * @var OutputPath
+	 * @var OutputPathGenerator
 	 */
 	private $output_path;
 
@@ -64,13 +63,14 @@ class RewritesErrorsDetector implements ErrorDetector {
 	public function __construct(
 		PluginInfo $plugin_info,
 		PluginData $plugin_data,
+		FormatFactory $format_factory,
 		FileLoader $file_loader = null,
-		OutputPath $output_path = null
+		OutputPathGenerator $output_path = null
 	) {
 		$this->plugin_info  = $plugin_info;
 		$this->plugin_data  = $plugin_data;
 		$this->file_loader  = $file_loader ?: new FileLoader();
-		$this->output_path  = $output_path ?: new OutputPath();
+		$this->output_path  = $output_path ?: new OutputPathGenerator( $format_factory );
 		$this->test_version = uniqid();
 	}
 
@@ -78,12 +78,6 @@ class RewritesErrorsDetector implements ErrorDetector {
 	 * {@inheritdoc}
 	 */
 	public function get_error() {
-		$plugin_settings = $this->plugin_data->get_plugin_settings();
-		if ( ! $plugin_settings[ SupportedDirectoriesOption::OPTION_NAME ]
-			|| ! $plugin_settings[ OutputFormatsOption::OPTION_NAME ] ) {
-			return null;
-		}
-
 		$this->convert_images_for_debug();
 
 		do_action( LoaderAbstract::ACTION_NAME, true, true );
@@ -94,7 +88,7 @@ class RewritesErrorsDetector implements ErrorDetector {
 	}
 
 	/**
-	 * @return ErrorNotice|null
+	 * @return NoticeInterface|null
 	 */
 	private function detect_rewrites_error() {
 		$settings    = $this->plugin_data->get_plugin_settings();
@@ -146,28 +140,47 @@ class RewritesErrorsDetector implements ErrorDetector {
 		$path_file_png     = $uploads_dir . self::PATH_OUTPUT_FILE_PNG;
 		$path_file_png2    = $uploads_dir . self::PATH_OUTPUT_FILE_PNG2;
 		$path_file_plugins = apply_filters( 'webpc_dir_path', '', 'plugins' ) . self::PATH_OUTPUT_FILE_PLUGINS;
+		$file_statuses     = [];
 
 		if ( ! file_exists( $path_file_png ) || ! file_exists( $path_file_png2 ) ) {
-			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_PNG, $path_file_png );
-			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_PNG, $path_file_png2 );
+			$file_statuses[] = copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_PNG, $path_file_png );
+			$file_statuses[] = copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_PNG, $path_file_png2 );
+		} else {
+			$file_statuses[] = true;
+			$file_statuses[] = true;
 		}
 
 		if ( ( $output_path = $this->output_path->get_path( $path_file_png, true, WebpFormat::FORMAT_EXTENSION ) )
 			&& ! file_exists( $output_path ) ) {
-			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_WEBP, $output_path );
+			$file_statuses[] = copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_WEBP, $output_path );
+		} else {
+			$file_statuses[] = true;
 		}
 		if ( ( $output_path = $this->output_path->get_path( $path_file_png, true, AvifFormat::FORMAT_EXTENSION ) )
 			&& ! file_exists( $output_path ) ) {
-			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_AVIF, $output_path );
+			$file_statuses[] = copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_AVIF, $output_path );
+		} else {
+			$file_statuses[] = true;
 		}
 		if ( ( $output_path = $this->output_path->get_path( $path_file_png2, true, WebpFormat::FORMAT_EXTENSION ) )
 			&& ! file_exists( $output_path ) ) {
-			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_WEBP, $output_path );
+			$file_statuses[] = copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_WEBP, $output_path );
+		} else {
+			$file_statuses[] = true;
 		}
 
 		if ( ( $output_path = $this->output_path->get_path( $path_file_plugins, true, WebpFormat::FORMAT_EXTENSION ) )
 			&& ! file_exists( $output_path ) ) {
-			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_WEBP, $output_path );
+			$file_statuses[] = copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_WEBP, $output_path );
+		} else {
+			$file_statuses[] = true;
+		}
+
+		if ( in_array( false, $file_statuses, true ) ) {
+			$GLOBALS[ FileLoader::GLOBAL_LOGS_VARIABLE ][] = [
+				'context' => __FUNCTION__,
+				'status'  => $file_statuses,
+			];
 		}
 	}
 
@@ -189,18 +202,31 @@ class RewritesErrorsDetector implements ErrorDetector {
 			$this->test_version,
 			__FUNCTION__
 		);
-
-		if ( $file_webp === 0 ) {
-			$file_status = $this->file_loader->get_file_status_by_url(
-				$uploads_url . self::PATH_OUTPUT_FILE_PNG,
-				false,
-				$this->test_version,
-				__FUNCTION__
-			);
-			return ( ! in_array( $file_status, [ 500 ] ) );
+		if ( $file_webp > 0 ) {
+			return ( $file_webp < $file_size );
 		}
 
-		return ( $file_webp < $file_size );
+		$file_png_status = $this->file_loader->get_file_status_by_url(
+			$uploads_url . self::PATH_OUTPUT_FILE_PNG,
+			false,
+			$this->test_version,
+			__FUNCTION__
+		);
+		if ( $file_png_status === 500 ) {
+			return false;
+		}
+
+		$file_webp_status = $this->file_loader->get_file_status_by_url(
+			$uploads_url . self::PATH_OUTPUT_FILE_PNG,
+			true,
+			$this->test_version,
+			__FUNCTION__
+		);
+		if ( ( $file_png_status === 200 ) && ( $file_webp_status === 404 ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

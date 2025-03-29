@@ -64,3 +64,615 @@ Stack trace:
   thrown in /home/thietke9/public_html/wp-includes/template-canvas.php on line 12
 [27-Jul-2023 23:18:38 Asia/Ho_Chi_Minh] PHP Stack trace:
 [27-Jul-2023 23:18:38 Asia/Ho_Chi_Minh] PHP   1. newrelic_exception_handler($"exception" = class Error { protected $message = 'Call to undefined function get_the_block_template_html()'; private $string = 'Error: Call to undefined function get_the_block_template_html() in /home/thietke9/public_html/wp-includes/template-canvas.php:12\nStack trace:\n#0 {main}'; protected $code = 0; protected $file = '/home/thietke9/public_html/wp-includes/template-canvas.php'; protected $line = 12; private $trace = []; private $previous = NULL; public $xdebug_message = '<tr><th align=\'left\' bgcolor=\'#f57900\' colspan="5"><span style=\'background-color: #cc0000; color: #fce94f; font-size: x-large;\'>( ! )</span> Error: Call to undefined function get_the_block_template_html() in /home/thietke9/public_html/wp-includes/template-canvas.php on line <i>12</i></th></tr>\n<tr><th align=\'left\' bgcolor=\'#e9b96e\' colspan=\'5\'>Call Stack</th></tr>\n<tr><th align=\'center\' bgcolor=\'#eeeeec\'>#</th><th align=\'left\' bgcolor=\'#eeeeec\'>Time</th><th align=\'left\' bgcolor=\'#eeeeec\'>Memory</th><th alig'... }) Unknown:0
+[21-May-2024 17:11:02 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[21-May-2024 17:11:12 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[21-May-2024 17:11:17 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[21-May-2024 17:11:56 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[21-May-2024 17:12:12 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[20-Aug-2024 17:06:13 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[20-Aug-2024 17:06:36 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[20-Aug-2024 17:06:42 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[20-Aug-2024 17:07:32 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[20-Aug-2024 17:07:46 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[21-Aug-2024 11:42:48 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[21-Aug-2024 11:43:19 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[21-Aug-2024 11:43:32 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[21-Aug-2024 11:46:21 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[21-Aug-2024 11:47:06 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[25-Aug-2024 03:18:13 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[25-Aug-2024 03:18:17 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[25-Aug-2024 03:18:31 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[25-Aug-2024 03:18:56 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[25-Aug-2024 03:19:03 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[25-Aug-2024 04:05:33 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[25-Aug-2024 04:05:40 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[25-Aug-2024 04:05:44 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[25-Aug-2024 04:06:25 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[25-Aug-2024 04:06:36 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[02-Sep-2024 18:35:57 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[02-Sep-2024 18:36:02 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[02-Sep-2024 18:36:06 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[02-Sep-2024 18:36:29 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[02-Sep-2024 18:36:35 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[09-Sep-2024 06:30:32 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[09-Sep-2024 06:30:33 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[09-Sep-2024 06:30:33 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[09-Sep-2024 06:30:38 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[09-Sep-2024 06:30:39 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[24-Sep-2024 00:52:46 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[24-Sep-2024 00:52:53 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[24-Sep-2024 00:52:56 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[24-Sep-2024 00:53:26 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[24-Sep-2024 00:53:38 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[04-Nov-2024 02:40:00 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function _deprecated_file() in /home/thietk11/public_html/wp-includes/class.wp-styles.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class.wp-styles.php on line 11
+[04-Nov-2024 02:40:02 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/wp-diff.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/wp-diff.php on line 13
+[04-Nov-2024 13:36:00 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[04-Nov-2024 13:36:02 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[04-Nov-2024 13:36:03 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[04-Nov-2024 13:36:14 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[04-Nov-2024 13:36:16 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[04-Nov-2024 22:40:25 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[04-Nov-2024 22:40:33 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[04-Nov-2024 22:40:38 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[04-Nov-2024 22:41:40 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[04-Nov-2024 22:42:04 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[05-Nov-2024 12:21:51 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function _deprecated_file() in /home/thietk11/public_html/wp-includes/class.wp-styles.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class.wp-styles.php on line 11
+[05-Nov-2024 12:21:54 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/wp-diff.php:13
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/wp-diff.php on line 13
+[16-Nov-2024 04:18:42 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[16-Nov-2024 04:18:58 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[16-Nov-2024 04:19:02 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[16-Nov-2024 04:20:06 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[16-Nov-2024 04:20:20 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[10-Dec-2024 21:31:51 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[10-Dec-2024 21:32:00 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[10-Dec-2024 21:32:06 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[10-Dec-2024 21:32:58 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[10-Dec-2024 21:33:17 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[14-Dec-2024 11:55:08 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[14-Dec-2024 11:55:09 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[14-Dec-2024 11:55:09 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[14-Dec-2024 11:55:16 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[14-Dec-2024 11:55:18 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[21-Dec-2024 04:54:36 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[21-Dec-2024 04:54:42 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[21-Dec-2024 04:54:44 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[21-Dec-2024 04:55:06 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[21-Dec-2024 04:55:13 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[23-Dec-2024 07:38:54 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[23-Dec-2024 07:38:57 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[23-Dec-2024 07:38:57 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[23-Dec-2024 07:39:25 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[23-Dec-2024 07:39:33 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[27-Jan-2025 02:19:14 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[27-Jan-2025 02:19:16 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[27-Jan-2025 02:19:16 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[27-Jan-2025 02:19:22 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[27-Jan-2025 02:19:23 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[05-Feb-2025 18:52:52 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[05-Feb-2025 18:52:54 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[05-Feb-2025 18:52:55 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[05-Feb-2025 18:53:04 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function add_filter() in /home/thietk11/public_html/wp-includes/navigation-fallback.php:53
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/navigation-fallback.php on line 53
+[05-Feb-2025 18:53:09 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[10-Feb-2025 23:54:27 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[10-Feb-2025 23:54:38 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[10-Feb-2025 23:54:40 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[10-Feb-2025 23:55:05 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[11-Feb-2025 08:42:22 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[11-Feb-2025 08:42:27 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[11-Feb-2025 08:42:28 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[11-Feb-2025 08:43:32 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[14-Feb-2025 19:04:33 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[14-Feb-2025 19:04:41 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[14-Feb-2025 19:04:44 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[14-Feb-2025 19:05:20 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[15-Feb-2025 15:45:54 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[15-Feb-2025 15:45:57 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[15-Feb-2025 15:45:57 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[15-Feb-2025 15:46:14 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[16-Feb-2025 06:54:39 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[16-Feb-2025 06:54:42 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[16-Feb-2025 06:54:42 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[16-Feb-2025 06:54:53 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[16-Feb-2025 20:38:50 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[16-Feb-2025 20:38:56 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[16-Feb-2025 20:38:57 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[16-Feb-2025 20:39:40 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[27-Feb-2025 06:01:28 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[27-Feb-2025 06:02:02 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[27-Feb-2025 06:02:08 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[27-Feb-2025 06:04:19 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[05-Mar-2025 18:11:42 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[05-Mar-2025 18:11:44 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[05-Mar-2025 18:11:46 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[05-Mar-2025 18:12:11 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[06-Mar-2025 00:30:19 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[06-Mar-2025 00:30:26 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[06-Mar-2025 00:30:27 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[06-Mar-2025 00:30:40 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[08-Mar-2025 02:11:38 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[08-Mar-2025 02:11:41 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[08-Mar-2025 02:11:42 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[08-Mar-2025 02:12:14 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[09-Mar-2025 03:45:03 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[09-Mar-2025 03:45:10 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[09-Mar-2025 03:45:12 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[09-Mar-2025 03:45:31 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[09-Mar-2025 15:24:02 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[09-Mar-2025 15:24:16 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[09-Mar-2025 15:24:19 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[09-Mar-2025 15:24:59 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[09-Mar-2025 16:10:46 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[09-Mar-2025 16:10:53 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[09-Mar-2025 16:10:54 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[09-Mar-2025 16:11:20 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[10-Mar-2025 15:46:00 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[10-Mar-2025 15:46:03 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[10-Mar-2025 15:46:03 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[10-Mar-2025 15:46:28 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[12-Mar-2025 09:19:28 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[12-Mar-2025 09:19:30 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[12-Mar-2025 09:19:31 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[12-Mar-2025 09:19:40 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[12-Mar-2025 21:38:50 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/thietk11/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-http.php on line 11
+[12-Mar-2025 21:38:54 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-scripts.php on line 18
+[12-Mar-2025 21:38:55 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/thietk11/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/class-wp-styles.php on line 18
+[12-Mar-2025 21:39:23 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/thietk11/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12

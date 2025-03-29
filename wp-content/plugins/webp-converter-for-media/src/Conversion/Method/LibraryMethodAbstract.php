@@ -2,11 +2,8 @@
 
 namespace WebpConverter\Conversion\Method;
 
-use WebpConverter\Conversion\SkipCrashed;
-use WebpConverter\Conversion\SkipLarger;
 use WebpConverter\Exception\ExceptionInterface;
 use WebpConverter\Exception\LargerThanOriginalException;
-use WebpConverter\Service\ServerConfigurator;
 use WebpConverter\Settings\Option\OutputFormatsOption;
 
 /**
@@ -15,39 +12,13 @@ use WebpConverter\Settings\Option\OutputFormatsOption;
 abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMethodInterface {
 
 	/**
-	 * @var SkipCrashed
-	 */
-	private $skip_crashed;
-
-	/**
-	 * @var SkipLarger
-	 */
-	private $skip_larger;
-
-	/**
-	 * @var ServerConfigurator
-	 */
-	private $server_configurator;
-
-	public function __construct(
-		SkipCrashed $skip_crashed,
-		SkipLarger $skip_larger,
-		ServerConfigurator $server_configurator
-	) {
-		parent::__construct();
-		$this->skip_crashed        = $skip_crashed;
-		$this->skip_larger         = $skip_larger;
-		$this->server_configurator = $server_configurator;
-	}
-
-	/**
 	 * {@inheritdoc}
 	 */
 	public function convert_paths( array $paths, array $plugin_settings, bool $regenerate_force ) {
 		$output_formats = $plugin_settings[ OutputFormatsOption::OPTION_NAME ];
 		foreach ( $output_formats as $output_format ) {
 			foreach ( $paths as $path ) {
-				$this->files_available[ $output_format ]++;
+				$this->files_statuses[ $output_format ][ $path ] = false;
 				$this->convert_path( $path, $output_format, $plugin_settings );
 			}
 		}
@@ -76,13 +47,13 @@ abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMe
 			$this->convert_image_to_output( $image, $source_path, $output_path, $format, $plugin_settings );
 			do_action( 'webpc_after_conversion', $output_path, $source_path );
 
-			$this->files_converted[ $format ]++;
-
 			$this->skip_crashed->delete_crashed_file( $output_path );
 			$this->skip_larger->remove_image_if_is_larger( $output_path, $source_path, $plugin_settings );
 			$this->update_conversion_stats( $source_path, $output_path, $format );
+
+			$this->files_statuses[ $format ][ $path ] = true;
 		} catch ( LargerThanOriginalException $e ) {
-			$this->files_converted[ $format ]--;
+			return;
 		} catch ( ExceptionInterface $e ) {
 			$this->save_conversion_error( $e->getMessage(), $plugin_settings );
 		} catch ( \Exception $e ) {

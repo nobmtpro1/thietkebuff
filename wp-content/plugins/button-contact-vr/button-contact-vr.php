@@ -3,7 +3,7 @@
  * Plugin Name: Button contact VR
  * Plugin URI: webvocuc.com
  * Description: Button contact call, zalo, whatsapp, messenger, popup form, popup showroom...
- * Version: 4.3
+ * Version: 4.7
  * Author: VirusTran
  * Author URI: virustran
  * License: GPLv2
@@ -31,6 +31,10 @@ function register_mysettings() {
     register_setting( 'pzf-settings-group', 'pzf_linkfanpage' ); //4.3
     register_setting( 'pzf-settings-group', 'pzf_whatsapp' );
     register_setting( 'pzf-settings-group', 'pzf_zalo' );
+    register_setting( 'pzf-settings-group', 'pzf_telegram' ); //4.4
+    register_setting( 'pzf-settings-group', 'pzf_instagram' ); //4.4
+    register_setting( 'pzf-settings-group', 'pzf_youtube' ); //4.4
+    register_setting( 'pzf-settings-group', 'pzf_tiktok' ); //4.7
     register_setting( 'pzf-settings-group', 'pzf_viber' );        
     register_setting( 'pzf-settings-group', 'pzf_contact_link' );
     register_setting( 'pzf-settings-group', 'pzf_color_contact' );
