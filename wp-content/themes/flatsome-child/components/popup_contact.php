@@ -6,7 +6,7 @@
         <div class="left">
             <div class="title">Kết nối ngay với Buff</div>
             <div class="description">Chúng tôi luôn sẵn sàng lắng nghe và đưa ra giải pháp phù hợp nhất cho vấn đề của bạn.</div>
-            <a href="https://zalo.me/0845000497" target="_blank" class="link">
+            <a href="https://zalo.me/3654573704967299186" target="_blank" class="link">
                 Liên hệ Zalo
             </a><br>
             <a href="https://www.facebook.com/thietkelogobuff" target="_blank" class="link">

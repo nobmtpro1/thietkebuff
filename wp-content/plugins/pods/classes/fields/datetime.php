@@ -245,7 +245,7 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function schema( $options = null ) {
 
-		$schema = 'DATETIME NOT NULL default "0000-00-00 00:00:00"';
+		$schema = 'DATETIME NOT NULL default \'0000-00-00 00:00:00\'';
 
 		return $schema;
 	}
@@ -271,10 +271,7 @@ class PodsField_DateTime extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		$value = $this->format_value_display( $value, $options, false );
-
-		return $value;
+		return $this->format_value_display( $value, $options, false );
 	}
 
 	/**

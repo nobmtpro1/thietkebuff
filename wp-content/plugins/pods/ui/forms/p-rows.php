@@ -1,4 +1,9 @@
 <?php
+// Don't load directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 /**
  * @var array         $fields
  * @var Pods          $pod
@@ -19,6 +24,8 @@ $pre_callback      = isset( $pre_callback ) ? $pre_callback : null;
 $post_callback     = isset( $post_callback ) ? $post_callback : null;
 
 foreach ( $fields as $field ) {
+	$field['name_prefix'] = $field_prefix;
+
 	$hidden_field = 'hidden' === $field['type'] || filter_var( pods_v( 'hidden', $field, false ), FILTER_VALIDATE_BOOLEAN );
 
 	if (

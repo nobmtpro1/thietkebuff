@@ -1,6 +1,7 @@
 <?php
 
 use Pods\Whatsit\Field;
+use Pods\API\Whatsit\Value_Field;
 
 /**
  * @package Pods
@@ -76,6 +77,7 @@ class PodsForm {
 	 *
 	 * @since 2.3.0
 	 */
+	#[\ReturnTypeWillChange]
 	private function __clone() {
 		// Hulk smash
 	}
@@ -99,6 +101,7 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function label( $name, $label, $help = '', $options = null ) {
+		$prefix = pods_v( 'name_prefix', $options );
 
 		if ( is_array( $label ) || is_object( $label ) ) {
 			$options = $label;
@@ -118,8 +121,8 @@ class PodsForm {
 
 		ob_start();
 
-		$name_clean      = self::clean( $name );
-		$name_more_clean = self::clean( $name, true );
+		$name_clean      = self::clean( $prefix . $name );
+		$name_more_clean = self::clean( $prefix . $name, true );
 
 		$type                = 'label';
 		$attributes          = array();
@@ -146,10 +149,11 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function comment( $name, $message = null, $options = null ) {
+		$prefix = pods_v( 'name_prefix', $options );
 
 		$options = self::options( null, $options );
 
-		$name_more_clean = self::clean( $name, true );
+		$name_more_clean = self::clean( $prefix . $name, true );
 
 		if ( ! empty( $options['description'] ) ) {
 			$message = $options['description'];
@@ -270,18 +274,9 @@ class PodsForm {
 			 * @deprecated 2.7.0
 			 */
 			do_action( "pods_form_ui_field_{$type}", $name, $value, $options, $pod, $id );
-		} elseif ( ! empty( $helper ) && 0 < strlen( (string) pods_v( 'code', $helper ) ) && false === strpos( $helper['code'], '$this->' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
-			/**
-			 * Input helpers are deprecated and not guaranteed to work properly.
-			 *
-			 * They will be entirely removed in Pods 3.0.
-			 *
-			 * @deprecated 2.7.0
-			 */
-			eval( '?>' . $helper['code'] );
-		} elseif ( method_exists( get_class(), 'field_' . $type ) ) {
+		} elseif ( method_exists( static::class, 'field_' . $type ) ) {
 			// @todo Move these custom field methods into real/faux field classes
-			echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
+			echo call_user_func( array( static::class, 'field_' . $type ), $name, $value, $options );
 		} elseif ( is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'input' ) ) {
 			// Force non-repeatable field types to be non-repeatable even if option is set to 1.
 			if ( ! empty( $options['repeatable'] ) && ! in_array( $type, $repeatable_field_types, true ) ) {
@@ -543,13 +538,19 @@ class PodsForm {
 	 */
 	public static function merge_attributes( $attributes, $name = null, $type = null, $options = null, $classes = '' ) {
 
+		if ( $options instanceof Field ) {
+			$options = $options->get_args();
+		}
+
 		$options = (array) $options;
 
+		$prefix = pods_v( 'name_prefix', $options );
+
 		if ( ! in_array( $type, array( 'label', 'comment' ) ) ) {
-			$name_clean                     = self::clean( $name );
-			$name_more_clean                = self::clean( $name, true );
+			$name_clean                     = self::clean( $prefix . $name );
+			$name_more_clean                = self::clean( $prefix . $name, true );
 			$_attributes                    = array();
-			$_attributes['name']            = $name;
+			$_attributes['name']            = $prefix . $name;
 			$_attributes['data-name-clean'] = $name_more_clean;
 
 			if ( 0 < strlen( (string) pods_v( 'label', $options, '' ) ) ) {
@@ -684,24 +685,25 @@ class PodsForm {
 	public static function options_setup( $type = null, $options = null ) {
 
 		$core_defaults = array(
-			'id'             => 0,
-			'name'           => '',
-			'label'          => '',
-			'description'    => '',
-			'help'           => '',
-			'default'        => null,
-			'attributes'     => array(),
-			'class'          => '',
-			'type'           => 'text',
-			'group'          => 0,
-			'grouped'        => 0,
-			'developer_mode' => false,
-			'dependency'     => false,
-			'depends-on'     => array(),
-			'depends-on-any' => array(),
-			'excludes-on'    => array(),
-			'wildcard-on'    => array(),
-			'options'        => array(),
+			'id'               => 0,
+			'name'             => '',
+			'label'            => '',
+			'description'      => '',
+			'help'             => '',
+			'default'          => null,
+			'attributes'       => array(),
+			'class'            => '',
+			'type'             => 'text',
+			'group'            => 0,
+			'grouped'          => 0,
+			'developer_mode'   => false,
+			'dependency'       => false,
+			'depends-on'       => array(),
+			'depends-on-any'   => array(),
+			'depends-on-multi' => array(),
+			'excludes-on'      => array(),
+			'wildcard-on'      => array(),
+			'options'          => array(),
 		);
 
 		if ( ! empty( $options ) && is_array( $options ) ) {
@@ -743,24 +745,25 @@ class PodsForm {
 	public static function ui_options( $type ) {
 
 		$core_defaults = array(
-			'id'             => 0,
-			'name'           => '',
-			'label'          => '',
-			'description'    => '',
-			'help'           => '',
-			'default'        => null,
-			'attributes'     => array(),
-			'class'          => '',
-			'type'           => 'text',
-			'group'          => 0,
-			'grouped'        => 0,
-			'developer_mode' => false,
-			'dependency'     => false,
-			'depends-on'     => array(),
-			'depends-on-any' => array(),
-			'excludes-on'    => array(),
-			'wildcard-on'    => array(),
-			'options'        => array(),
+			'id'               => 0,
+			'name'             => '',
+			'label'            => '',
+			'description'      => '',
+			'help'             => '',
+			'default'          => null,
+			'attributes'       => array(),
+			'class'            => '',
+			'type'             => 'text',
+			'group'            => 0,
+			'grouped'          => 0,
+			'developer_mode'   => false,
+			'dependency'       => false,
+			'depends-on'       => array(),
+			'depends-on-any'   => array(),
+			'depends-on-multi' => array(),
+			'excludes-on'      => array(),
+			'wildcard-on'      => array(),
+			'options'          => array(),
 		);
 
 		self::field_loader( $type );
@@ -796,24 +799,25 @@ class PodsForm {
 
 		if ( empty( $core_defaults ) ) {
 			$core_defaults = array(
-				'id'             => 0,
-				'name'           => '',
-				'label'          => '',
-				'description'    => '',
-				'help'           => '',
-				'default'        => null,
-				'attributes'     => array(),
-				'class'          => '',
-				'type'           => 'text',
-				'group'          => 0,
-				'grouped'        => 0,
-				'developer_mode' => false,
-				'dependency'     => false,
-				'depends-on'     => array(),
-				'depends-on-any' => array(),
-				'excludes-on'    => array(),
-				'wildcard-on'    => array(),
-				'options'        => array(),
+				'id'               => 0,
+				'name'             => '',
+				'label'            => '',
+				'description'      => '',
+				'help'             => '',
+				'default'          => null,
+				'attributes'       => array(),
+				'class'            => '',
+				'type'             => 'text',
+				'group'            => 0,
+				'grouped'          => 0,
+				'developer_mode'   => false,
+				'dependency'       => false,
+				'depends-on'       => array(),
+				'depends-on-any'   => array(),
+				'depends-on-multi' => array(),
+				'excludes-on'      => array(),
+				'wildcard-on'      => array(),
+				'options'          => array(),
 			);
 		}
 
@@ -855,24 +859,25 @@ class PodsForm {
 
 		if ( empty( $core_defaults ) ) {
 			$core_defaults = array(
-				'id'             => 0,
-				'name'           => '',
-				'label'          => '',
-				'description'    => '',
-				'help'           => '',
-				'default'        => null,
-				'attributes'     => array(),
-				'class'          => '',
-				'type'           => 'text',
-				'group'          => 0,
-				'grouped'        => 0,
-				'developer_mode' => false,
-				'dependency'     => false,
-				'depends-on'     => array(),
-				'depends-on-any' => array(),
-				'excludes-on'    => array(),
-				'wildcard-on'    => array(),
-				'options'        => array(),
+				'id'               => 0,
+				'name'             => '',
+				'label'            => '',
+				'description'      => '',
+				'help'             => '',
+				'default'          => null,
+				'attributes'       => array(),
+				'class'            => '',
+				'type'             => 'text',
+				'group'            => 0,
+				'grouped'          => 0,
+				'developer_mode'   => false,
+				'dependency'       => false,
+				'depends-on'       => array(),
+				'depends-on-any'   => array(),
+				'depends-on-multi' => array(),
+				'excludes-on'      => array(),
+				'wildcard-on'      => array(),
+				'options'          => array(),
 			);
 
 			if ( null !== $type ) {
@@ -952,6 +957,7 @@ class PodsForm {
 		$dependency_checks = [
 			'depends-on',
 			'depends-on-any',
+			'depends-on-multi',
 			'excludes-on',
 		];
 
@@ -1496,7 +1502,8 @@ class PodsForm {
 			 *
 			 * @since unknown
 			 *
-			 * @param string $file The file path to include for the field type.
+			 * @param string $file       The file path to include for the field type.
+			 * @param string $field_type The field type.
 			 */
 			$file = apply_filters( 'pods_form_field_include', $file, $field_type );
 
@@ -1947,6 +1954,53 @@ class PodsForm {
 		}
 
 		return $field_types;
+	}
+
+	/**
+	 * Get the list of revisionable field types.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return array The list of revisionable field types.
+	 */
+	public static function revisionable_field_types(): array {
+		$revisionable_field_types = pods_static_cache_get( __FUNCTION__, __CLASS__ );
+
+		if ( ! is_array( $revisionable_field_types ) ) {
+			$revisionable_field_types = [];
+		}
+
+		if ( $revisionable_field_types ) {
+			return $revisionable_field_types;
+		}
+
+		$field_types           = static::field_types_list();
+		$tableless_field_types = static::tableless_field_types();
+		$layout_field_types    = static::layout_field_types();
+
+		foreach ( $field_types as $field_type ) {
+			if (
+				in_array( $field_type, $tableless_field_types, true )
+				|| in_array( $field_type, $layout_field_types, true )
+			) {
+				continue;
+			}
+
+			$revisionable_field_types[] = $field_type;
+		}
+
+		/**
+		 * Allow filtering of the list of field types that can be revisioned.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param array $revisionable_field_types The listof field types that can be revisioned.
+		 */
+		$revisionable_field_types = apply_filters( 'pods_form_revisionable_field_types', $revisionable_field_types );
+
+		pods_static_cache_set( __FUNCTION__, $revisionable_field_types, __CLASS__ );
+
+		return $revisionable_field_types;
 	}
 
 	/**
