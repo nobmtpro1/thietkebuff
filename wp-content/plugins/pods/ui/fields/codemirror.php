@@ -1,11 +1,5 @@
 <?php
-// Don't load directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die( '-1' );
-}
-
 pods_form_enqueue_script( 'pods-codemirror' );
-pods_form_enqueue_style( 'pods-codemirror' );
 pods_form_enqueue_style( 'pods-styles' );
 pods_form_enqueue_script( 'pods-codemirror-loadmode' );
 

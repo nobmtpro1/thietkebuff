@@ -1,9 +1,3 @@
-<?php
-// Don't load directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die( '-1' );
-}
-?>
 <script type="text/javascript">
 	var pods_shortcode_first = true;
 

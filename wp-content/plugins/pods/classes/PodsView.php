@@ -8,21 +8,6 @@ use Pods\Static_Cache;
 class PodsView {
 
 	/**
-	 * List of keys that have been cached grouped by cache mode.
-	 *
-	 * @since 3.0
-	 *
-	 * @var array
-	 */
-	private static $cached_keys = [
-		'transient'      => [],
-		'site-transient' => [],
-		'cache'          => [],
-		'static-cache'   => [],
-		'option-cache'   => [],
-	];
-
-	/**
 	 * @var array $cache_modes Array of available cache modes
 	 */
 	public static $cache_modes = [
@@ -38,118 +23,8 @@ class PodsView {
 	 * @return \PodsView
 	 */
 	private function __construct() {
+
 		// !nope
-	}
-
-	/**
-	 * Add a cache key to keep track of for a cache mode.
-	 *
-	 * @since 3.0
-	 *
-	 * @param string      $cache_mode   The cache mode.
-	 * @param string      $cache_key    The cache key.
-	 * @param null|string $group        The cache group, if needed.
-	 * @param null|string $original_key The original cache key, if different from the cache key.
-	 */
-	public static function add_cached_key( $cache_mode, $cache_key, $group = null, $original_key = null ) {
-		if ( ! isset( self::$cached_keys[ $cache_mode ] ) ) {
-			self::$cached_keys[ $cache_mode ] = [];
-		}
-
-		if ( null === $original_key ) {
-			$original_key = $cache_key;
-		}
-
-		if ( $group ) {
-			if ( ! isset( self::$cached_keys[ $cache_mode ][ $group ] ) ) {
-				self::$cached_keys[ $cache_mode ][ $group ] = [];
-			}
-
-			self::$cached_keys[ $cache_mode ][ $group ][ $cache_key ] = $original_key;
-
-			return;
-		}
-
-		self::$cached_keys[ $cache_mode ][ $cache_key ] = $original_key;
-	}
-
-	/**
-	 * Remove a cache key from tracking for a cache mode.
-	 *
-	 * @since 3.0
-	 *
-	 * @param string      $cache_mode   The cache mode.
-	 * @param string      $cache_key    The cache key.
-	 * @param null|string $group        The cache group, if needed.
-	 */
-	public static function remove_cached_key( $cache_mode, $cache_key, $group = null ) {
-		if ( ! isset( self::$cached_keys[ $cache_mode ] ) ) {
-			return;
-		}
-
-		if ( $group ) {
-			if ( ! isset( self::$cached_keys[ $cache_mode ][ $group ] ) ) {
-				return;
-			}
-
-			unset( self::$cached_keys[ $cache_mode ][ $group ][ $cache_key ] );
-
-			return;
-		}
-
-		if ( ! isset( self::$cached_keys[ $cache_mode ][ $cache_key ] ) ) {
-			return;
-		}
-
-		unset( self::$cached_keys[ $cache_mode ][ $cache_key ] );
-	}
-
-	/**
-	 * Get the list of cache keys based on cache mode.
-	 *
-	 * @since 3.0
-	 *
-	 * @param string      $cache_mode The cache mode.
-	 * @param null|string $group      The cache group, if needed.
-	 */
-	public static function get_cached_keys( $cache_mode, $group = null ) : array {
-		if ( $group ) {
-			return self::$cached_keys[ $cache_mode ][ $group ] ?? [];
-		}
-
-		return self::$cached_keys[ $cache_mode ] ?? [];
-	}
-
-	/**
-	 * Reset cache keys based on cache mode.
-	 *
-	 * @since 3.0
-	 *
-	 * @param null|string $cache_mode The cache mode, null if resetting all.
-	 * @param null|string $group      The cache group, if needed.
-	 */
-	public static function reset_cached_keys( $cache_mode = null, $group = null ) {
-		if ( null === $cache_mode ) {
-			foreach ( self::$cache_modes as $cache_mode_to_reset => $unused ) {
-				if ( isset( self::$cached_keys[ $cache_mode_to_reset ] ) ) {
-					self::$cached_keys[ $cache_mode_to_reset ] = [];
-				}
-			}
-
-			return;
-		}
-
-		if ( $group ) {
-			if ( isset( self::$cached_keys[ $cache_mode ][ $group ] ) ) {
-				self::$cached_keys[ $cache_mode ][ $group ] = [];
-			}
-
-			return;
-		}
-
-		if ( isset( self::$cached_keys[ $cache_mode ] ) ) {
-			self::$cached_keys[ $cache_mode ] = [];
-		}
 	}
 
 	/**
@@ -159,27 +34,27 @@ class PodsView {
 	 * @param array|null     $data       (optional) Data to pass on to the template
 	 * @param bool|int|array $expires    (optional) Time in seconds for the cache to expire, if 0 no expiration.
 	 * @param string         $cache_mode (optional) Decides the caching method to use for the view.
-	 * @param bool           $limited    (optional) Whether to limit the view to only the theme directory, defaults to false
 	 *
 	 * @return bool|mixed|null|string|void
 	 *
 	 * @since 2.0.0
 	 */
-	public static function view( $view, $data = null, $expires = false, $cache_mode = 'cache', $limited = false ) {
+	public static function view( $view, $data = null, $expires = false, $cache_mode = 'cache' ) {
 
 		/**
-		 * Allow filtering the view before the logic runs.
+		 * Override the value of $view. For example, using Pods AJAX View.
+		 *
+		 * To use, set first param to true. If that param in not null, this method returns its value.
+		 *
+		 * @param null|bool      If          not set to null, this filter overrides the rest of the method.
+		 * @param string         $view       Path of the view file
+		 * @param array|null     $data       (optional) Data to pass on to the template
+		 * @param bool|int|array $expires    (optional) Time in seconds for the cache to expire, if 0 no expiration.
+		 * @param string         $cache_mode (optional) Decides the caching method to use for the view.
 		 *
 		 * @since 2.4.1
-		 *
-		 * @param null|false|string $filter_check The filter check. If not set to null, return the value as the output. Set to false to fail to load the view.
-		 * @param string            $view         Path of the view file.
-		 * @param array|null        $data         Data to pass on to the template.
-		 * @param bool|int|array    $expires      Time in seconds for the cache to expire, if 0 no expiration.
-		 * @param string            $cache_mode   Decides the caching method to use for the view.
-		 * @param bool              $limited      Whether to limit the view to only the theme directory, defaults to false.
 		 */
-		$filter_check = apply_filters( 'pods_view_alt_view', null, $view, $data, $expires, $cache_mode, $limited );
+		$filter_check = apply_filters( 'pods_view_alt_view', null, $view, $data, $expires, $cache_mode );
 
 		if ( null !== $filter_check ) {
 			return $filter_check;
@@ -216,18 +91,7 @@ class PodsView {
 			$view_id = pods_evaluate_tags( $view_id );
 		}
 
-		/**
-		 * Allow filtering the path of the view to use.
-		 *
-		 * @since unknown
-		 *
-		 * @param string            $view         Path of the view file.
-		 * @param array|null        $data         Data to pass on to the template.
-		 * @param bool|int|array    $expires      Time in seconds for the cache to expire, if 0 no expiration.
-		 * @param string            $cache_mode   Decides the caching method to use for the view.
-		 * @param bool              $limited      Whether to limit the view to only the theme directory, defaults to false.
-		 */
-		$view = apply_filters( 'pods_view_inc', $view, $data, $expires, $cache_mode, $limited );
+		$view = apply_filters( 'pods_view_inc', $view, $data, $expires, $cache_mode );
 
 		$view_key = $view;
 
@@ -265,82 +129,10 @@ class PodsView {
 			self::set( 'pods-view-' . $cache_key . $view_id, $output, $expires, $cache_mode, 'pods_view' );
 		}
 
-		/**
-		 * Allow filtering the path of the view to use based on the cache key.
-		 *
-		 * @since unknown
-		 *
-		 * @param string|false      $output       The view output. Returns as false if the view fails to load.
-		 * @param string            $view         Path of the view file.
-		 * @param array|null        $data         Data to pass on to the template.
-		 * @param bool|int|array    $expires      Time in seconds for the cache to expire, if 0 no expiration.
-		 * @param string            $cache_mode   Decides the caching method to use for the view.
-		 * @param bool              $limited      Whether to limit the view to only the theme directory, defaults to false.
-		 */
-		$output = apply_filters( "pods_view_output_{$cache_key}", $output, $view, $data, $expires, $cache_mode, $limited );
-
-		/**
-		 * Allow filtering the path of the view to use.
-		 *
-		 * @since unknown
-		 *
-		 * @param string|false      $output       The view output. Returns as false if the view fails to load.
-		 * @param string            $view         Path of the view file.
-		 * @param array|null        $data         Data to pass on to the template.
-		 * @param bool|int|array    $expires      Time in seconds for the cache to expire, if 0 no expiration.
-		 * @param string            $cache_mode   Decides the caching method to use for the view.
-		 * @param bool              $limited      Whether to limit the view to only the theme directory, defaults to false.
-		 */
-		$output = apply_filters( 'pods_view_output', $output, $view, $data, $expires, $cache_mode, $limited );
+		$output = apply_filters( "pods_view_output_{$cache_key}", $output, $view, $data, $expires, $cache_mode );
+		$output = apply_filters( 'pods_view_output', $output, $view, $data, $expires, $cache_mode );
 
 		return $output;
-	}
-
-	/**
-	 * Get the full path of the view if it exists.
-	 *
-	 * @since 3.1.0
-	 *
-	 * @param string $view    Path of the view file
-	 * @param bool   $limited (optional) Whether to limit the view to only the theme directory, defaults to false
-	 *
-	 * @return string|false The full path of the view if it exists.
-	 */
-	public static function view_get_path( $view, $limited = false ) {
-		// Support my-view.php?custom-key=X#hash keying for cache
-		if ( ! is_array( $view ) ) {
-			$view_q = explode( '?', $view );
-
-			if ( 1 < count( $view_q ) ) {
-				$view = $view_q[0];
-			}
-
-			$view_h = explode( '#', $view );
-
-			if ( 1 < count( $view_h ) ) {
-				$view = $view_h[0];
-			}
-		}
-
-		$view = apply_filters( 'pods_view_inc', $view, null, false, 'cache', $limited );
-
-		$view_key = $view;
-
-		if ( is_array( $view_key ) ) {
-			$view_key = implode( '-', $view_key ) . '.php';
-		}
-
-		if ( false !== realpath( $view_key ) ) {
-			$view_key = realpath( $view_key );
-		}
-
-		$view_path = self::locate_template( $view_key, $limited );
-
-		if ( empty( $view_path ) ) {
-			return false;
-		}
-
-		return $view_path;
 	}
 
 	/**
@@ -557,31 +349,18 @@ class PodsView {
 		$key = self::get_key( $key, $group_key );
 
 		if ( apply_filters( 'pods_view_cache_alt_set', false, $cache_mode, $group_key . $key, $original_key, $value, $expires, $group ) ) {
-			self::add_cached_key( $cache_mode, $group_key . $key, null, $original_key );
-
 			return $value;
 		} elseif ( 'transient' === $cache_mode ) {
-			self::add_cached_key( $cache_mode, $group_key . $key, null, $original_key );
-
 			set_transient( $group_key . $key, $value, $expires );
 		} elseif ( 'site-transient' === $cache_mode ) {
-			self::add_cached_key( $cache_mode, $group_key . $key, null, $original_key );
-
 			set_site_transient( $group_key . $key, $value, $expires );
 		} elseif ( 'cache' === $cache_mode && $object_cache_enabled ) {
-			$group = ( empty( $group ) ? 'pods_view' : $group );
-			$key   = ( empty( $key ) ? 'pods_view' : $key );
-
-			self::add_cached_key( $cache_mode, $key, $group, $original_key );
-
-			wp_cache_set( $key, $value, $group, $expires );
+			wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_view' : $group ), $expires );
 		} elseif ( 'option-cache' === $cache_mode ) {
-			$group = ( empty( $group ) ? 'pods_option_cache' : $group );
-
 			$value = apply_filters( "pre_set_transient_{$key}", $value );
 
 			if ( $external_object_cache ) {
-				$result = wp_cache_set( $key, $value, $group, $expires );
+				$result = wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_option_cache' : $group ), $expires );
 			} else {
 				$transient_timeout = '_pods_option_timeout_' . $key;
 				$key               = '_pods_option_' . $key;
@@ -601,8 +380,6 @@ class PodsView {
 				}
 			}//end if
 
-			self::add_cached_key( $cache_mode, $key, $group, $original_key );
-
 			if ( $result ) {
 				do_action( "set_transient_{$key}" );
 				do_action( 'setted_transient', $key );
@@ -611,11 +388,7 @@ class PodsView {
 			$static_cache = pods_container( Static_Cache::class );
 
 			if ( $static_cache ) {
-				$group = ( empty( $group ) ? __CLASS__ : $group );
-
-				self::add_cached_key( $cache_mode, $key, $group, $original_key );
-
-				$static_cache->set( $key, $value, $group );
+				$static_cache->set( $key, $value, ( empty( $group ) ? __CLASS__ : $group ) );
 			}
 		}//end if
 
@@ -671,8 +444,6 @@ class PodsView {
 		}
 
 		if ( apply_filters( 'pods_view_cache_alt_set', false, $cache_mode, $full_key, $original_key, '', 0, $group ) ) {
-			self::remove_cached_key( $cache_mode, $full_key );
-
 			return true;
 		} elseif ( 'transient' === $cache_mode ) {
 			if ( true === $key ) {
@@ -681,18 +452,10 @@ class PodsView {
 				$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_transient_{$group_key}%'" );
 
 				if ( $object_cache_enabled ) {
-					if ( $group && function_exists( 'wp_cache_flush_group' ) && wp_cache_supports( 'flush_group' ) ) {
-						wp_cache_flush_group( $group );
-					} else {
-						wp_cache_flush();
-					}
+					wp_cache_flush();
 				}
-
-				self::reset_cached_keys( $cache_mode );
 			} else {
 				delete_transient( $group_key . $key );
-
-				self::remove_cached_key( $cache_mode, $group_key . $key );
 			}
 		} elseif ( 'site-transient' === $cache_mode ) {
 			if ( true === $key ) {
@@ -701,47 +464,24 @@ class PodsView {
 				$wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_site_transient_{$group_key}%'" );
 
 				if ( $object_cache_enabled ) {
-					if ( $group && function_exists( 'wp_cache_flush_group' ) && wp_cache_supports( 'flush_group' ) ) {
-						wp_cache_flush_group( $group );
-					} else {
-						wp_cache_flush();
-					}
+					wp_cache_flush();
 				}
-
-				self::reset_cached_keys( $cache_mode );
 			} else {
 				delete_site_transient( $group_key . $key );
-
-				self::remove_cached_key( $cache_mode, $group_key . $key );
 			}
 		} elseif ( 'cache' === $cache_mode && $object_cache_enabled ) {
 			if ( true === $key ) {
-				if ( $group && function_exists( 'wp_cache_flush_group' ) && wp_cache_supports( 'flush_group' ) ) {
-					wp_cache_flush_group( $group );
-
-					self::reset_cached_keys( $cache_mode, $group );
-				} else {
-					wp_cache_flush();
-
-					self::reset_cached_keys( $cache_mode );
-				}
+				wp_cache_flush();
 			} else {
-				$group = ( empty( $group ) ? 'pods_view' : $group );
-				$key   = ( empty( $key ) ? 'pods_view' : $key );
-
-				wp_cache_delete( $key, $group );
-
-				self::remove_cached_key( $cache_mode, $key, $group );
+				wp_cache_delete( ( empty( $key ) ? 'pods_view' : $key ), ( empty( $group ) ? 'pods_view' : $group ) );
 			}
 		} elseif ( 'option-cache' === $cache_mode ) {
 			do_action( "delete_transient_{$key}", $key );
 
-			$group = ( empty( $group ) ? 'pods_option_cache' : $group );
-
 			if ( $external_object_cache ) {
-				$result = wp_cache_delete( $key, $group );
+				$result = wp_cache_delete( $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
 
-				wp_cache_delete( '_timeout_' . $key, $group );
+				wp_cache_delete( '_timeout_' . $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
 			} else {
 				$option_timeout = '_pods_option_timeout_' . $key;
 				$option         = '_pods_option_' . $key;
@@ -753,8 +493,6 @@ class PodsView {
 				}
 			}
 
-			self::remove_cached_key( $cache_mode, $key, $group );
-
 			if ( $result ) {
 				do_action( 'deleted_transient', $key );
 			}
@@ -762,16 +500,10 @@ class PodsView {
 			$static_cache = pods_container( Static_Cache::class );
 
 			if ( $static_cache ) {
-				$group = ( empty( $group ) ? __CLASS__ : $group );
-
 				if ( true === $key ) {
-					$static_cache->flush( $group );
-
-					self::reset_cached_keys( $cache_mode, $group );
+					$static_cache->flush( ( empty( $group ) ? 'pods_view' : $group ) );
 				} else {
-					$static_cache->delete( $key, $group );
-
-					self::remove_cached_key( $cache_mode, $key, $group );
+					$static_cache->delete( ( empty( $key ) ? 'pods_view' : $key ), ( empty( $group ) ? 'pods_view' : $group ) );
 				}
 			}
 		}//end if
@@ -786,11 +518,10 @@ class PodsView {
 	 *
 	 * @param            $_view
 	 * @param null|array $_data
-	 * @param bool       $limited (optional) Whether to limit the view to only the theme directory, defaults to false
 	 *
 	 * @return bool|mixed|string|void
 	 */
-	public static function get_template_part( $_view, $_data = null, $limited = false ) {
+	public static function get_template_part( $_view, $_data = null ) {
 
 		/*
 		To be reviewed later, should have more checks and restrictions like a whitelist etc.
@@ -807,7 +538,7 @@ class PodsView {
 		}
 		*/
 
-		$_view = self::locate_template( $_view, $limited );
+		$_view = self::locate_template( $_view );
 
 		if ( empty( $_view ) ) {
 			return $_view;
@@ -827,12 +558,11 @@ class PodsView {
 	/**
 	 * @static
 	 *
-	 * @param array|string $_view
-	 * @param bool         $limited (optional) Whether to limit the view to only the theme directory, defaults to false
+	 * @param $_view
 	 *
 	 * @return bool|mixed|string|void
 	 */
-	private static function locate_template( $_view, $limited = false ) {
+	private static function locate_template( $_view ) {
 		if ( is_array( $_view ) ) {
 			$_views = [];
 
@@ -861,15 +591,9 @@ class PodsView {
 			return $_view;
 		}//end if
 
-		$paths_to_check = [ 'plugins', 'pods', 'theme' ];
-
-		if ( $limited ) {
-			$paths_to_check = [ 'theme' ];
-		}
-
 		// Is the view's file somewhere within the plugin directory tree?
 		// Note: we include PODS_DIR for the case of symlinks (see issue #2945).
-		$located = pods_validate_safe_path( $_view, $paths_to_check );
+		$located = pods_validate_safe_path( $_view, [ 'plugins', 'pods', 'theme' ] );
 
 		/**
 		 * Allow filtering the validated view file path to use.

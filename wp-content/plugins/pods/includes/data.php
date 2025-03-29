@@ -3,7 +3,6 @@
  * @package Pods\Global\Functions\Data
  */
 
-use Pods\Whatsit;
 use Pods\Whatsit\Field;
 
 /**
@@ -661,8 +660,6 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 			case 'globals':
 				if ( isset( $GLOBALS[ $var ] ) ) {
 					$output = $GLOBALS[ $var ];
-
-					$output = pods_access_bleep_data( $output );
 				}
 				break;
 			case 'cookie':
@@ -684,9 +681,9 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( is_user_logged_in() ) {
 					$user = get_userdata( get_current_user_id() );
 
-					$user = pods_access_bleep_data( $user );
-
-					if ( isset( $user->{$var} ) ) {
+					if ( 'user_pass' === $var || 'user_activation_key' === $var ) {
+						$value = '';
+					} elseif ( isset( $user->{$var} ) ) {
 						$value = $user->{$var};
 					} elseif ( 'role' === $var ) {
 						$value = '';
@@ -1298,18 +1295,18 @@ function pods_cast( $value, $cast_from = null ) {
 }
 
 /**
- * Create a sanitized slug from a value.
+ * Create a slug from an input string
  *
- * @since 1.8.9
- *
- * @param string $value  The value to create the slug from.
+ * @param string $orig   Original string.
  * @param bool   $strict Whether to only support 0-9, a-z, A-Z, and dash characters.
  *
- * @return string The sanitized slug.
+ * @return string Sanitized slug
+ *
+ * @since 1.8.9
  */
-function pods_create_slug( $value, $strict = true ) {
-	$str = remove_accents( $value );
-	$str = preg_replace( '/([_ \\/])/', '-', trim( $str ) );
+function pods_create_slug( $orig, $strict = true ) {
+	$str = remove_accents( $orig );
+	$str = preg_replace( '/([_ \\/])/', '-', trim( $orig ) );
 
 	if ( $strict ) {
 		$str = preg_replace( '/([^0-9a-z\-])/', '', strtolower( $str ) );
@@ -1319,17 +1316,9 @@ function pods_create_slug( $value, $strict = true ) {
 
 	$str = preg_replace( '/(\-){2,}/', '-', $str );
 	$str = trim( $str, '-' );
+	$str = apply_filters( 'pods_create_slug', $str, $orig );
 
-	/**
-	 * Allow filtering the sanitized slug.
-	 *
-	 * @since 1.8.9
-	 *
-	 * @param string $str    The sanitized slug.
-	 * @param string $value  The value to create the slug from.
-	 * @param bool   $strict Whether to only support 0-9, a-z, A-Z, and dash characters.
-	 */
-	return (string) apply_filters( 'pods_create_slug', $str, $value );
+	return $str;
 }
 
 /**
@@ -1961,33 +1950,18 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 			$format = pods_v( 'repeatable_format', $params->field, 'default', true );
 
 			if ( 'default' !== $format ) {
+				$params->serial = false;
 
-				switch ( $format ) {
-					case 'ul':
-					case 'ol':
-						$value = '<' . $format . '><li>' . implode( '</li><li>', (array) $value ) . '</li></' . $format . '>';
-					break;
-					case 'br':
-						if ( is_array( $value ) ) {
-							$value = implode( '<br />', $value );
-						}
-					break;
-					case 'non_serial':
-						$params->serial = false;
-					break;
-					case 'custom':
-						$params->serial = false;
+				if ( 'custom' === $format ) {
+					$separator = pods_v( 'repeatable_format_separator', $params->field );
 
-						$separator = pods_v( 'repeatable_format_separator', $params->field );
+					// Default to comma separator.
+					if ( '' === $separator ) {
+						$separator = ', ';
+					}
 
-						// Default to comma separator.
-						if ( '' === $separator ) {
-							$separator = ', ';
-						}
-
-						$params->and       = $separator;
-						$params->separator = $separator;
-					break;
+					$params->and       = $separator;
+					$params->separator = $separator;
 				}
 			}
 		}
@@ -2021,7 +1995,15 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		return $value;
 	}
 
-	$value = pods_access_bleep_data( $value );
+	// If something happens with table info, and this is a single select relationship, avoid letting user pass through.
+	if ( isset( $value['user_pass'] ) ) {
+		unset( $value['user_pass'] );
+
+		// Since we know this is a single select, just pass display name through as the fallback.
+		if ( isset( $value['display_name'] ) ) {
+			$value = array( $value['display_name'] );
+		}
+	}
 
 	$original_value = $value;
 
@@ -2879,122 +2861,4 @@ function pods_get_item_object( $item_id, $object_type ) {
 	}
 
 	return null;
-}
-
-/**
- * Filters text content and strips out disallowed HTML.
- *
- * This function makes sure that only the allowed HTML element names, attribute
- * names, attribute values, and HTML entities will occur in the given text string.
- *
- * This function expects unslashed data.
- *
- * @see wp_kses() for the original code for this.
- *
- * @since 3.0
- *
- * @param string         $content              Text content to filter.
- * @param string|array[] $context              The context for which to retrieve tags. Allowed values are 'post',
- *                                             'strip', 'data', 'entities', or the name of a field filter such as
- *                                             'pre_user_description', or an array of allowed HTML elements and attributes.
- * @param array[]        $disallowed_html      An array of disallowed HTML elements and attributes,
- *                                             or a context name such as 'post'. See wp_kses_allowed_html()
- *                                             for the list of accepted context names.
- * @param string[]       $disallowed_protocols Optional. Array of disllowed URL protocols.
- *                                             Defaults allowing the result of wp_allowed_protocols().
- *
- * @return string Filtered content containing only the allowed HTML.
- */
-function pods_kses_exclude_tags( $content, $context = 'post', $disallowed_html = [], $disallowed_protocols = [] ) {
-	$allowed_protocols = wp_allowed_protocols();
-	$allowed_html      = wp_kses_allowed_html( $context );
-
-	// Maybe disallow some HTML tags / attributes.
-	if ( ! empty( $disallowed_html ) ) {
-		foreach ( $disallowed_html as $tag => $attributes ) {
-			// Check if the tag is allowed.
-			if ( ! isset( $allowed_html[ $tag ] ) ) {
-				continue;
-			}
-
-			// Check if we need to handle attributes or not.
-			if ( is_array( $attributes ) ) {
-				$attributes = array_keys( $attributes );
-
-				foreach ( $attributes as $attribute ) {
-					if ( isset( $allowed_html[ $tag ][ $attribute ] ) ) {
-						unset( $allowed_html[ $tag ][ $attribute ] );
-					}
-				}
-			} else {
-				// Disallow the whole tag.
-				unset( $allowed_html[ $tag ] );
-			}
-		}
-	}
-
-	// Maybe disallow some protocols.
-	if ( ! empty( $disallowed_protocols ) ) {
-		$allowed_protocols = array_values( array_diff( $disallowed_protocols, $allowed_protocols ) );
-	}
-
-	return wp_kses( $content, $allowed_html, $allowed_protocols );
-}
-
-/**
- * Filters text content and strips out disallowed HTML including the p tag.
- *
- * This function expects unslashed data.
- *
- * @since 3.0
- *
- * @param string $content Text content to filter.
- *
- * @return string Filtered content containing only the allowed HTML.
- */
-function pods_kses_exclude_p( $content ) {
-	return pods_kses_exclude_tags(
-		$content,
-		'post',
-		[
-			'p' => true,
-		]
-	);
-}
-
-/**
- * Key the list of objects by name.
- *
- * @since 3.1.4
- *
- * @param array<int|string, Whatsit|stdClass|WP_Post> $objects The list of objects.
- *
- * @return array<string, Whatsit|stdClass|WP_Post> The list objects keyed by name.
- */
-function pods_objects_keyed_by_name( $objects ) {
-	$new_list = [];
-
-	$objects = array_filter( $objects );
-
-	$names = wp_list_pluck( $objects, 'name' );
-
-	if ( count( $names ) === count( $objects ) ) {
-		$new_list = array_combine( $names, $objects );
-	} else {
-		foreach ( $objects as $object ) {
-			if ( $object instanceof Whatsit ) {
-				$name = $object->get_name();
-			} elseif ( $object instanceof WP_Post ) {
-				$name = $object->post_name;
-			} elseif ( is_object( $object ) && isset( $object->name ) ) {
-				$name = $object->name;
-			} else {
-				continue;
-			}
-
-			$new_list[ $name ] = $object;
-		}
-	}
-
-	return $new_list;
 }

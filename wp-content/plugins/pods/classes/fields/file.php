@@ -468,13 +468,7 @@ class PodsField_File extends PodsField {
 		// Enforce limit.
 		$file_limit = 1;
 
-		$format_type = pods_v( $args->type . '_format_type', $options, 'single', true );
-
-		if ( 'single' === $format_type ) {
-			if ( ! empty( $args->value ) && is_array( $args->value ) ) {
-				$args->value = reset( $args->value );
-			}
-		} elseif ( 'multi' === $format_type ) {
+		if ( 'multi' === pods_v( $args->type . '_format_type', $options, 'single' ) ) {
 			$file_limit = (int) pods_v( $args->type . '_limit', $options, 0 );
 
 			if ( $file_limit < 0 ) {

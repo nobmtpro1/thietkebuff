@@ -38,74 +38,56 @@ class PodsField_Text extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function options() {
-		return [
-			'output_options'                     => [
-				'label'         => __( 'Output Options', 'pods' ),
-				'type'          => 'boolean_group',
-				'boolean_group' => [
-					static::$type . '_trim'             => [
-						'label'   => __( 'Trim extra whitespace before/after contents', 'pods' ),
-						'default' => 1,
-						'type'    => 'boolean',
-					],
-					static::$type . '_trim_lines'       => [
-						'label'   => __( 'Trim whitespace at the end of lines', 'pods' ),
-						'default' => 0,
-						'type'    => 'boolean',
-					],
-					static::$type . '_trim_p_brs'       => [
-						'label'   => __( 'Remove blank lines including empty "p" tags and "br" tags', 'pods' ),
-						'default' => 0,
-						'type'    => 'boolean',
-					],
-					static::$type . '_trim_extra_lines' => [
-						'label'   => __( 'Remove extra blank lines (when there are 3+ blank lines, replace with a maximum of 2)', 'pods' ),
-						'default' => 0,
-						'type'    => 'boolean',
-					],
-					static::$type . '_allow_html'       => [
+
+		$options = array(
+			'output_options'                     => array(
+				'label' => __( 'Output Options', 'pods' ),
+				'type'  => 'boolean_group',
+				'boolean_group' => array(
+					static::$type . '_trim'      => array(
+						'label'      => __( 'Trim extra whitespace before/after contents', 'pods' ),
+						'default'    => 1,
+						'type'       => 'boolean',
+						'dependency' => true,
+					),
+					static::$type . '_allow_html'      => array(
 						'label'      => __( 'Allow HTML', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
-					],
-					static::$type . '_sanitize_html'    => [
-						'label'      => __( 'Sanitize HTML', 'pods' ),
-						'default'    => 1,
-						'help'       => __( 'This sanitizes things like script tags and other content not normally allowed in WordPress content. Disable this only if you trust users who will have access to enter content into this field.', 'pods' ),
-						'type'       => 'boolean',
-						'dependency' => true,
-					],
-					static::$type . '_allow_shortcode'  => [
+					),
+					static::$type . '_allow_shortcode' => array(
 						'label'      => __( 'Allow Shortcodes', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
 						'dependency' => true,
-					],
-				],
-			],
-			static::$type . '_allowed_html_tags' => [
+					),
+				),
+			),
+			static::$type . '_allowed_html_tags' => array(
 				'label'      => __( 'Allowed HTML Tags', 'pods' ),
-				'depends-on' => [ static::$type . '_allow_html' => true ],
+				'depends-on' => array( static::$type . '_allow_html' => true ),
 				'default'    => 'strong em a ul ol li b i',
 				'type'       => 'text',
-			],
-			static::$type . '_max_length'        => [
+			),
+			static::$type . '_max_length'        => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 255,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
-			],
-			static::$type . '_placeholder'       => [
+			),
+			static::$type . '_placeholder'       => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),
 				'default' => '',
 				'type'    => 'text',
-				'help'    => [
+				'help'    => array(
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
-				],
-			],
-		];
+				),
+			),
+		);
+
+		return $options;
 	}
 
 	/**

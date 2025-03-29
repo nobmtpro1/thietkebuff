@@ -1,9 +1,4 @@
 <?php
-// Don't load directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die( '-1' );
-}
-
 $attributes = array();
 
 $type = 'text';

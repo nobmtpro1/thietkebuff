@@ -107,8 +107,9 @@ class WPCF7_Stripe extends WPCF7_Service {
 				$this->reset_data();
 				$redirect_to = $this->menu_page_url( 'action=setup' );
 			} else {
-				$publishable = trim( $_POST['publishable'] ?? '' );
-				$secret = trim( $_POST['secret'] ?? '' );
+				$publishable = isset( $_POST['publishable'] ) ?
+					trim( $_POST['publishable'] ) : '';
+				$secret = isset( $_POST['secret'] ) ? trim( $_POST['secret'] ) : '';
 
 				if ( $publishable and $secret ) {
 					$this->api_keys = array(

@@ -10,7 +10,7 @@ class To_Be_Cleaned_Indexable_Bucket {
 	/**
 	 * All the to be cleaned indexable count objects.
 	 *
-	 * @var array<To_Be_Cleaned_Indexable_Count>
+	 * @var array<To_Be_Cleaned_Indexable_Count> $to_be_cleaned_indexable_counts
 	 */
 	private $to_be_cleaned_indexable_counts;
 
@@ -28,7 +28,7 @@ class To_Be_Cleaned_Indexable_Bucket {
 	 *
 	 * @return void
 	 */
-	public function add_to_be_cleaned_indexable_count( To_Be_Cleaned_Indexable_Count $to_be_cleaned_indexable_counts ) {
+	public function add_to_be_cleaned_indexable_count( To_Be_Cleaned_Indexable_Count $to_be_cleaned_indexable_counts ): void {
 		$this->to_be_cleaned_indexable_counts[] = $to_be_cleaned_indexable_counts;
 	}
 
@@ -37,12 +37,14 @@ class To_Be_Cleaned_Indexable_Bucket {
 	 *
 	 * @return array
 	 */
-	public function to_array() {
+	public function to_array(): array {
 		return \array_map(
-			static function ( $item ) {
+			function ( $item ) {
 				return $item->to_array();
 			},
 			$this->to_be_cleaned_indexable_counts
 		);
 	}
 }
+
+

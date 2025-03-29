@@ -4,7 +4,6 @@ namespace Pods;
 
 use Closure;
 use Exception;
-use Pods\Data\Conditional_Logic;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Group;
 use Pods\Whatsit\Object_Field;
@@ -234,7 +233,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return array Data for debugging with.
 	 */
-	public function __debugInfo(): array {
+	public function __debugInfo() {
 		return [
 			'args' => $this->args,
 		];
@@ -245,7 +244,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return self Object with state set.
 	 */
-	#[\ReturnTypeWillChange]
 	public static function __set_state( $data ) {
 		$args = [];
 
@@ -261,7 +259,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return array List of properties to serialize.
 	 */
-	public function __sleep(): array {
+	public function __sleep() {
 		// @todo If DB based config, return only name, id, parent, group
 		// @todo Maybe set up a variable with the custom array and implement Serializable::serialize/unserialize
 		/*
@@ -287,7 +285,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * On unserialization of this object, setup the object.
 	 */
-	public function __wakeup(): void {
+	public function __wakeup() {
 		// Setup the object.
 		$this->setup();
 	}
@@ -312,14 +310,15 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getArrayCopy(): array {
+	public function getArrayCopy() {
 		return array_values( $this->args );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function rewind(): void {
+	#[\ReturnTypeWillChange]
+	public function rewind() {
 		$this->position = 0;
 	}
 
@@ -344,14 +343,16 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function next(): void {
+	#[\ReturnTypeWillChange]
+	public function next() {
 		$this->position ++;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function valid(): bool {
+	#[\ReturnTypeWillChange]
+	public function valid() {
 		$args = $this->getArrayCopy();
 
 		return isset( $args[ $this->position ] );
@@ -362,7 +363,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return string Object identifier.
 	 */
-	public function __toString(): string {
+	public function __toString() {
 		return $this->get_identifier();
 	}
 
@@ -373,7 +374,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return bool Whether the offset exists.
 	 */
-	public function offsetExists( $offset ): bool {
+	#[\ReturnTypeWillChange]
+	public function offsetExists( $offset ) {
 		return $this->__isset( $offset );
 	}
 
@@ -398,7 +400,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @param mixed $offset Offset name.
 	 * @param mixed $value  Offset value.
 	 */
-	public function offsetSet( $offset, $value ): void {
+	#[\ReturnTypeWillChange]
+	public function offsetSet( $offset, $value ) {
 		if ( null === $offset ) {
 			// Do not allow $object[] additions.
 			return;
@@ -412,22 +415,23 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @param mixed $offset Offset name.
 	 */
-	public function offsetUnset( $offset ): void {
+	#[\ReturnTypeWillChange]
+	public function offsetUnset( $offset ) {
 		$this->__unset( $offset );
 	}
 
 	/**
 	 * Check if offset exists.
 	 *
-	 * @param mixed $name Offset name.
+	 * @param mixed $offset Offset name.
 	 *
 	 * @return bool Whether the offset exists.
 	 */
-	public function __isset( $name ): bool {
-		if ( is_int( $name ) ) {
+	public function __isset( $offset ) {
+		if ( is_int( $offset ) ) {
 			$args = $this->getArrayCopy();
 
-			return isset( $args[ $name ] );
+			return isset( $args[ $offset ] );
 		}
 
 		$special_args = [
@@ -438,11 +442,11 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'options'       => 'get_args',
 		];
 
-		if ( isset( $special_args[ $name ] ) ) {
+		if ( isset( $special_args[ $offset ] ) ) {
 			return true;
 		}
 
-		$value = $this->get_arg( $name, null );
+		$value = $this->get_arg( $offset, null );
 
 		return ( null !== $value );
 	}
@@ -450,38 +454,37 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	/**
 	 * Get offset value.
 	 *
-	 * @param mixed $name Offset name.
+	 * @param mixed $offset Offset name.
 	 *
 	 * @return mixed|null Offset value, or null if not set.
 	 */
-	#[\ReturnTypeWillChange]
-	public function __get( $name ) {
-		if ( is_int( $name ) ) {
+	public function __get( $offset ) {
+		if ( is_int( $offset ) ) {
 			$args = $this->getArrayCopy();
 
-			return isset( $args[ $name ] );
+			return isset( $args[ $offset ] );
 		}
 
-		return $this->get_arg( $name );
+		return $this->get_arg( $offset );
 	}
 
 	/**
 	 * Set offset value.
 	 *
-	 * @param mixed $name Offset name.
+	 * @param mixed $offset Offset name.
 	 * @param mixed $value  Offset value.
 	 */
-	public function __set( $name, $value ): void {
-		$this->set_arg( $name, $value );
+	public function __set( $offset, $value ) {
+		$this->set_arg( $offset, $value );
 	}
 
 	/**
 	 * Unset offset value.
 	 *
-	 * @param mixed $name Offset name.
+	 * @param mixed $offset Offset name.
 	 */
-	public function __unset( $name ): void {
-		$this->set_arg( $name, null );
+	public function __unset( $offset ) {
+		$this->set_arg( $offset, null );
 	}
 
 	/**
@@ -509,14 +512,14 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$this->_table_info    = null;
 
 		$defaults = [
-			'object_type'         => $this->get_arg( 'object_type' ),
+			'object_type'  => $this->get_arg( 'object_type' ),
 			'object_storage_type' => $this->get_arg( 'object_storage_type', 'collection' ),
-			'name'                => '',
-			'id'                  => '',
-			'parent'              => '',
-			'group'               => '',
-			'label'               => '',
-			'description'         => '',
+			'name'         => '',
+			'id'           => '',
+			'parent'       => '',
+			'group'        => '',
+			'label'        => '',
+			'description'  => '',
 		];
 
 		$args = array_merge( $defaults, $args );
@@ -554,7 +557,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		 *
 		 * @since 2.9.8
 		 *
-		 * @param Whatsit $object      Whatsit object.
+		 * @param Whatsit $object     Whatsit object.
 		 * @param string  $object_type The Whatsit object type.
 		 */
 		do_action( "pods_whatsit_setup_{$class_hook}", $this, static::$type );
@@ -621,28 +624,22 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @param string     $arg     Argument name.
 	 * @param mixed|null $default Default to use if not set.
 	 * @param bool       $strict  Whether to check only normal arguments and not special arguments.
-	 * @param bool       $raw     Whether only get the raw value.
 	 *
 	 * @return null|mixed Argument value, or null if not set.
 	 */
-	public function get_arg( $arg, $default = null, $strict = false, $raw = false ) {
+	public function get_arg( $arg, $default = null, $strict = false ) {
 		$arg = (string) $arg;
 
-		if ( $raw ) {
-			return $this->args[ $arg ] ?? $default;
-		}
-
 		$special_args = [
-			'identifier'        => 'get_identifier',
-			'label'             => 'get_label',
-			'description'       => 'get_description',
-			'fields'            => 'get_fields',
-			'object_fields'     => 'get_object_fields',
-			'all_fields'        => 'get_all_fields',
-			'groups'            => 'get_groups',
-			'table_info'        => 'get_table_info',
-			'options'           => 'get_args',
-			'conditional_logic' => 'get_conditional_logic',
+			'identifier'    => 'get_identifier',
+			'label'         => 'get_label',
+			'description'   => 'get_description',
+			'fields'        => 'get_fields',
+			'object_fields' => 'get_object_fields',
+			'all_fields'    => 'get_all_fields',
+			'groups'        => 'get_groups',
+			'table_info'    => 'get_table_info',
+			'options'       => 'get_args',
 		];
 
 		if ( isset( $special_args[ $arg ] ) ) {
@@ -694,6 +691,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 					return $table_info[ $arg ];
 				}
 			}
+
 		}//end if
 
 		$value = $is_set ? $this->args[ $arg ] : $default;
@@ -885,16 +883,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 * @return array List of object arguments.
 	 */
 	public function get_args() {
-		$this->maybe_migrate_dependency();
-
-		if ( isset( $this->args['conditional_logic'] ) && is_string( $this->args['conditional_logic'] ) ) {
-			$this->args['conditional_logic'] = json_decode( $this->args['conditional_logic'], true );
-
-			if ( empty( $this->args['conditional_logic'] ) || ! is_array( $this->args['conditional_logic'] ) ) {
-				unset( $this->args['conditional_logic'] );
-			}
-		}
-
 		/**
 		 * Allow filtering the object arguments.
 		 *
@@ -1023,7 +1011,10 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			return $objects;
 		}
 
-		return pods_objects_keyed_by_name( $objects );
+		$objects = array_filter( $objects );
+		$names   = wp_list_pluck( $objects, 'name' );
+
+		return array_combine( $names, $objects );
 	}
 
 	/**
@@ -1184,8 +1175,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$filtered_args = array_filter( $filtered_args );
 
 		$args = array_merge( [
-			'orderby' => 'menu_order title',
-			'order'   => 'ASC',
+			'orderby'           => 'menu_order title',
+			'order'             => 'ASC',
 		], $filtered_args, $args );
 
 		try {
@@ -1356,8 +1347,8 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$filtered_args = array_filter( $filtered_args );
 
 		$args = array_merge( [
-			'orderby' => 'menu_order title',
-			'order'   => 'ASC',
+			'orderby'           => 'menu_order title',
+			'order'             => 'ASC',
 		], $filtered_args, $args );
 
 		try {
@@ -1516,123 +1507,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	}
 
 	/**
-	 * Determine whether conditional logic is enabled.
-	 *
-	 * @since 3.0
-	 *
-	 * @return bool Whether conditional logic is enabled.
-	 */
-	public function is_conditional_logic_enabled(): bool {
-		return (
-			filter_var( $this->get_arg( 'enable_conditional_logic', false ), FILTER_VALIDATE_BOOLEAN )
-			|| $this->maybe_migrate_dependency()
-		);
-	}
-
-	/**
-	 * Get the conditional logic.
-	 *
-	 * @since 3.0
-	 *
-	 * @return array|null The conditional logic or null if not set.
-	 */
-	public function get_conditional_logic(): ?Conditional_Logic {
-		if ( ! $this->is_conditional_logic_enabled() ) {
-			return null;
-		}
-
-		if ( empty( $this->args['conditional_logic'] ) && ! $this->maybe_migrate_dependency() ) {
-			return null;
-		}
-
-		return Conditional_Logic::maybe_setup_from_object( $this );
-	}
-
-	/**
-	 * Get the conditional logic configuration array.
-	 *
-	 * @since 3.0
-	 *
-	 * @return array|null The conditional logic configuration array or null if not set.
-	 */
-	public function get_conditional_logic_config(): ?array {
-		$conditional_logic = $this->args['conditional_logic'];
-
-		if ( is_string( $conditional_logic ) ) {
-			$conditional_logic = 0 === strpos( $conditional_logic, '{' ) ? json_decode( $conditional_logic, true ) : null;
-
-			if ( empty( $conditional_logic ) || ! is_array( $conditional_logic ) ) {
-				unset( $this->args['conditional_logic'] );
-
-				return null;
-			}
-		}
-
-		if ( empty( $conditional_logic['rules'] ) ) {
-			return null;
-		}
-
-		if ( empty( $conditional_logic['action'] ) ) {
-			$conditional_logic['action'] = 'show';
-		}
-
-		if ( empty( $conditional_logic['logic'] ) ) {
-			$conditional_logic['logic'] = 'any';
-		}
-
-		return $conditional_logic;
-	}
-
-	/**
-	 * Determine whether the conditional logic allows this object to be visible.
-	 *
-	 * @since 3.0
-	 *
-	 * @return bool Whether the conditional logic allows this object to be visible.
-	 */
-	public function is_visible( array $values ): bool {
-		$conditional_logic = $this->get_conditional_logic();
-
-		if ( ! $conditional_logic ) {
-			return true;
-		}
-
-		return $conditional_logic->is_field_visible( $values );
-	}
-
-	/**
-	 * Maybe migrate dependency logic into the newer conditional logic.
-	 *
-	 * @return bool Whether the migration was done.
-	 */
-	public function maybe_migrate_dependency(): bool {
-		if ( ! empty( $this->args['conditional_logic'] ) ) {
-			return false;
-		}
-
-		if (
-			! isset( $this->args['depends-on'] )
-			&& ! isset( $this->args['depends-on-any'] )
-			&& ! isset( $this->args['depends-on-multi'] )
-			&& ! isset( $this->args['excludes-on'] )
-			&& ! isset( $this->args['wildcard-on'] )
-		) {
-			return false;
-		}
-
-		$conditional_logic_object = Conditional_Logic::maybe_setup_from_old_syntax( $this );
-
-		if ( ! $conditional_logic_object ) {
-			return false;
-		}
-
-		$this->args['enable_conditional_logic'] = true;
-		$this->args['conditional_logic']        = $conditional_logic_object->to_array();
-
-		return true;
-	}
-
-	/**
 	 * Get the full data from the object.
 	 *
 	 * @param array $args List of arguments.
@@ -1649,8 +1523,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 			'include_table_info'    => false,
 			'build_default_group'   => false,
 			'assoc_keys'            => false,
-			'bypass_cache'          => false,
-			'ref_id'                => null,
 		];
 
 		$args = array_merge( $defaults, $args );
@@ -1658,35 +1530,21 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		$data = $this->get_args();
 
 		if ( $args['include_groups'] ) {
-			$data['groups'] = $this->get_export_for_items(
-				$this->get_groups( [
-					'bypass_cache' => $args['bypass_cache'],
-					'ref_id'       => $args['ref_id'],
-				] ),
-				[
-					'include_groups'     => false,
-					'include_fields'     => $args['include_group_fields'],
-					'include_field_data' => $args['include_field_data'],
-					'assoc_keys'         => $args['assoc_keys'],
-					'bypass_cache'       => $args['bypass_cache'],
-					'ref_id'             => $args['ref_id'],
-				]
-			);
+			$data['groups'] = $this->get_export_for_items( $this->get_groups(), [
+				'include_groups'     => false,
+				'include_fields'     => $args['include_group_fields'],
+				'include_field_data' => $args['include_field_data'],
+				'assoc_keys'         => $args['assoc_keys'],
+			] );
 
 			// If there are no groups, see if we need to build the default one.
 			if ( $args['build_default_group'] && empty( $data['groups'] ) ) {
 				$fields = [];
 
 				if ( $args['include_group_fields'] ) {
-					$fields = $this->get_args_for_items(
-						$this->get_fields( [
-							'bypass_cache' => $args['bypass_cache'],
-							'ref_id'       => $args['ref_id'],
-						] ),
-						[
-							'include_field_data' => $args['include_field_data'],
-						]
-					);
+					$fields = $this->get_args_for_items( $this->get_fields(), [
+						'include_field_data' => $args['include_field_data'],
+					] );
 
 					if ( ! $args['assoc_keys'] ) {
 						$fields = array_values( $fields );
@@ -1706,7 +1564,7 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 				 */
 				$group_title = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $this, $fields, $this->get_type(), $this->get_name() );
 
-				$group_name = sanitize_key( pods_js_name( sanitize_title( $group_title ) ) );
+				$group_name  = sanitize_key( pods_js_name( sanitize_title( $group_title ) ) );
 
 				$data['groups'][ $group_name ] = [
 					'name'   => $group_name,
@@ -1721,15 +1579,9 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 		}
 
 		if ( $args['include_fields'] ) {
-			$data['fields'] = $this->get_args_for_items(
-				$this->get_fields( [
-					'bypass_cache' => $args['bypass_cache'],
-					'ref_id'       => $args['ref_id'],
-				] ),
-				[
-					'include_field_data' => $args['include_field_data'],
-				]
-			);
+			$data['fields'] = $this->get_args_for_items( $this->get_fields(), [
+				'include_field_data' => $args['include_field_data'],
+			] );
 
 			if ( ! $args['assoc_keys'] ) {
 				$data['fields'] = array_values( $data['fields'] );
@@ -1805,7 +1657,6 @@ abstract class Whatsit implements \ArrayAccess, \JsonSerializable, \Iterator {
 	 *
 	 * @return mixed|null
 	 */
-	#[\ReturnTypeWillChange]
 	public function __call( $name, $arguments ) {
 		$object = null;
 		$method = null;

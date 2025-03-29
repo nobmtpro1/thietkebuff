@@ -4,7 +4,6 @@ namespace WPMailSMTP\Providers\Gmail;
 
 use WPMailSMTP\Admin\ConnectionSettings;
 use WPMailSMTP\ConnectionInterface;
-use WPMailSMTP\Helpers\UI;
 use WPMailSMTP\Providers\OptionsAbstract;
 
 /**
@@ -38,9 +37,10 @@ class Options extends OptionsAbstract {
 				'title'       => esc_html__( 'Google / Gmail', 'wp-mail-smtp' ),
 				'description' => sprintf(
 					wp_kses( /* translators: %s - URL to our Gmail doc. */
-						__( 'Our Gmail mailer works with any Gmail or Google Workspace account via the Google API. You can send WordPress emails from your main email address or a Gmail alias, and it\'s more secure than connecting to Gmail using SMTP credentials. We now have a One-Click Setup, which simply asks you to authorize your Google account to use our app and takes care of everything for you. Alternatively, you can connect manually, which involves several steps that are more technical than other mailer options, so we created a detailed guide to walk you through the process.<br><br>To get started, read our <a href="%s" target="_blank" rel="noopener noreferrer">Gmail documentation</a>.', 'wp-mail-smtp' ),
+						__( 'Our Gmail mailer works with any Gmail or Google Workspace account via the Google API. You can send WordPress emails from your main email address or a Gmail alias, and it\'s more secure than connecting to Gmail using SMTP credentials. The setup steps are more technical than other options, so we created a detailed guide to walk you through the process.<br><br>To get started, read our <a href="%s" target="_blank" rel="noopener noreferrer">Gmail documentation</a>.', 'wp-mail-smtp' ),
 						[
 							'br' => [],
+							'b'  => [],
 							'a'  => [
 								'href'   => [],
 								'rel'    => [],
@@ -83,28 +83,6 @@ class Options extends OptionsAbstract {
 			return;
 		}
 		?>
-
-		<?php if ( ! wp_mail_smtp()->is_pro() ) : ?>
-			<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-one_click_setup_enabled-lite" class="wp-mail-smtp-setting-row">
-				<div class="wp-mail-smtp-setting-label">
-					<label for="wp-mail-smtp-setting-<?php echo esc_attr( $this->get_slug() ); ?>-one_click_setup_enabled-lite">
-						<?php esc_html_e( 'One-Click Setup', 'wp-mail-smtp' ); ?>
-					</label>
-				</div>
-				<div class="wp-mail-smtp-setting-field">
-					<?php
-					UI::toggle(
-						[
-							'id' => 'wp-mail-smtp-setting-' . esc_attr( $this->get_slug() ) . '-one_click_setup_enabled-lite',
-						]
-					);
-					?>
-					<p class="desc">
-						<?php esc_html_e( 'Provides a quick and easy way to connect to Google that doesn\'t require creating your own app.', 'wp-mail-smtp' ); ?>
-					</p>
-				</div>
-			</div>
-		<?php endif; ?>
 
 		<!-- Client ID -->
 		<div id="wp-mail-smtp-setting-row-<?php echo esc_attr( $this->get_slug() ); ?>-client_id"
@@ -264,7 +242,7 @@ class Options extends OptionsAbstract {
 	 */
 	public function process_provider_remove() {
 
-		if ( ! current_user_can( wp_mail_smtp()->get_capability_manage_options() ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
@@ -281,10 +259,12 @@ class Options extends OptionsAbstract {
 
 		$old_opt = $this->connection_options->get_all_raw();
 
-		unset( $old_opt[ $this->get_slug() ]['access_token'] );
-		unset( $old_opt[ $this->get_slug() ]['refresh_token'] );
-		unset( $old_opt[ $this->get_slug() ]['user_details'] );
-		unset( $old_opt[ $this->get_slug() ]['auth_code'] );
+		foreach ( $old_opt[ $this->get_slug() ] as $key => $value ) {
+			// Unset everything except Client ID and Secret.
+			if ( ! in_array( $key, array( 'client_id', 'client_secret' ), true ) ) {
+				unset( $old_opt[ $this->get_slug() ][ $key ] );
+			}
+		}
 
 		$this->connection_options->set( $old_opt );
 	}

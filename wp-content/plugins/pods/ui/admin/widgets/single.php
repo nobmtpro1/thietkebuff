@@ -1,9 +1,3 @@
-<?php
-// Don't load directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die( '-1' );
-}
-?>
 <style type="text/css">
     ol.pods_single_widget_form {
         list-style: none;

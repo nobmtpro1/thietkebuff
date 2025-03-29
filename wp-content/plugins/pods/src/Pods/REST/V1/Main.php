@@ -2,7 +2,7 @@
 
 namespace Pods\REST\V1;
 
-use Pods\REST\Abstracts\Main_Abstract;
+use Tribe__REST__Main as REST__Main;
 
 /**
  * Class Main
@@ -13,7 +13,7 @@ use Pods\REST\Abstracts\Main_Abstract;
  *
  * @since 2.8.0
  */
-class Main extends Main_Abstract {
+class Main extends REST__Main {
 
 	/**
 	 * REST API URL prefix.

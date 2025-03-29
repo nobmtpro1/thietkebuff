@@ -52,27 +52,12 @@
                     <input id="pzf_phone_bar" name="pzf_phone_bar" type="checkbox" value="1" <?php echo get_option('pzf_phone_bar') == '1' ? 'checked="checked"' : '' ?> />
                 </label>
             </td>
-        </tr>
+        </tr>  
+  
         <tr valign="top">
             <th scope="row">Zalo</th>
             <td><input placeholder="0123 456 789" type="text" name="pzf_zalo" value="<?php echo get_option('pzf_zalo'); ?>" /></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row">Telegram</th>
-            <td><input placeholder="Link telegram" type="text" name="pzf_telegram" value="<?php echo get_option('pzf_telegram'); ?>" /></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row">Instagram</th>
-            <td><input placeholder="Link instagram" type="text" name="pzf_instagram" value="<?php echo get_option('pzf_instagram'); ?>" /></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row">Youtube</th>
-            <td><input placeholder="Link youtube" type="text" name="pzf_youtube" value="<?php echo get_option('pzf_youtube'); ?>" /></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row">Tiktok</th>
-            <td><input placeholder="Link tiktok" type="text" name="pzf_tiktok" value="<?php echo get_option('pzf_tiktok'); ?>" /></td>
-        </tr>
+        </tr>  
         <tr valign="top">
             <th scope="row">Link fanpage</th>
             <td><input placeholder="Link fanpage" type="text" name="pzf_linkfanpage" value="<?php echo get_option('pzf_linkfanpage'); ?>" /></td>

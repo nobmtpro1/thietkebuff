@@ -3,12 +3,12 @@
 namespace Pods\REST\V1\Endpoints;
 
 use PodsForm;
-use Pods\REST\Interfaces\Endpoints\CREATE_Interface;
-use Pods\REST\Interfaces\Endpoints\READ_Interface;
-use Pods\REST\Interfaces\Swagger\Provider_Interface;
+use Tribe__Documentation__Swagger__Provider_Interface as Swagger_Interface;
+use Tribe__REST__Endpoints__CREATE_Endpoint_Interface as CREATE_Interface;
+use Tribe__REST__Endpoints__READ_Endpoint_Interface as READ_Interface;
 use WP_REST_Request;
 
-class Fields extends Base implements READ_Interface, CREATE_Interface, Provider_Interface {
+class Fields extends Base implements READ_Interface, CREATE_Interface, Swagger_Interface {
 
 	/**
 	 * {@inheritdoc}
@@ -42,7 +42,7 @@ class Fields extends Base implements READ_Interface, CREATE_Interface, Provider_
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => '', // @todo Fill this out
+						'description' => __( 'Returns all the tickets matching the search criteria.', 'pods' ),
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -61,9 +61,9 @@ class Fields extends Base implements READ_Interface, CREATE_Interface, Provider_
 											'type'        => 'integer',
 											'description' => __( 'The total number of result pages matching the search criteria.', 'pods' ),
 										],
-										'fields'     => [
+										'tickets'     => [
 											'type'  => 'array',
-											'items' => [ '$ref' => '#/components/schemas/Field' ],
+											'items' => [ '$ref' => '#/components/schemas/Ticket' ],
 										],
 									],
 								],

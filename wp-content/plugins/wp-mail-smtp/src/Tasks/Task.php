@@ -87,15 +87,6 @@ class Task {
 	private $interval;
 
 	/**
-	 * Whether this task is unique.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @var bool
-	 */
-	private $unique = false;
-
-	/**
 	 * Task constructor.
 	 *
 	 * @since 2.1.0
@@ -164,20 +155,6 @@ class Task {
 
 		$this->type      = self::TYPE_ONCE;
 		$this->timestamp = (int) $timestamp;
-
-		return $this;
-	}
-
-	/**
-	 * Set this task as unique.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return Task
-	 */
-	public function unique() {
-
-		$this->unique = true;
 
 		return $this;
 	}
@@ -272,8 +249,7 @@ class Task {
 		return as_enqueue_async_action(
 			$this->action,
 			[ $this->meta_id ],
-			Tasks::GROUP,
-			$this->unique
+			Tasks::GROUP
 		);
 	}
 
@@ -295,8 +271,7 @@ class Task {
 			$this->interval,
 			$this->action,
 			[ $this->meta_id ],
-			Tasks::GROUP,
-			$this->unique
+			Tasks::GROUP
 		);
 	}
 
@@ -317,8 +292,7 @@ class Task {
 			$this->timestamp,
 			$this->action,
 			[ $this->meta_id ],
-			Tasks::GROUP,
-			$this->unique
+			Tasks::GROUP
 		);
 	}
 
@@ -341,16 +315,5 @@ class Task {
 		as_unschedule_all_actions( $this->action );
 
 		return true;
-	}
-
-	/**
-	 * Cancel all occurrences of this task,
-	 * preventing it from re-registering itself.
-	 *
-	 * @since 4.0.0
-	 */
-	public function cancel_force() { // phpcs:ignore WPForms.PHP.HooksMethod.InvalidPlaceForAddingHooks
-
-		add_action( 'shutdown', [ $this, 'cancel' ], PHP_INT_MAX );
 	}
 }

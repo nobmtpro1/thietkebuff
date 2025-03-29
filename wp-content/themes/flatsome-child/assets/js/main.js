@@ -8,9 +8,7 @@ function closePopupContact() {
   popup?.classList?.remove("active");
 }
 
-var buttonOpenPopupContact = document.querySelectorAll(
-  `.open_popup_contact, a[href="#open_popup_contact"]`
-);
+var buttonOpenPopupContact = document.querySelectorAll(".open_popup_contact");
 buttonOpenPopupContact?.forEach((e) => {
   e?.addEventListener("click", openPopupContact);
 });

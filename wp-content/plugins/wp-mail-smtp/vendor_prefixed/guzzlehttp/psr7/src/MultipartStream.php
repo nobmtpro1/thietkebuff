@@ -43,7 +43,7 @@ final class MultipartStream implements \WPMailSMTP\Vendor\Psr\Http\Message\Strea
     /**
      * Get the headers needed before transferring the content of a POST file
      *
-     * @param string[] $headers
+     * @param array<string, string> $headers
      */
     private function getHeaders(array $headers) : string
     {
@@ -61,7 +61,7 @@ final class MultipartStream implements \WPMailSMTP\Vendor\Psr\Http\Message\Strea
         $stream = new \WPMailSMTP\Vendor\GuzzleHttp\Psr7\AppendStream();
         foreach ($elements as $element) {
             if (!\is_array($element)) {
-                throw new \UnexpectedValueException('An array is expected');
+                throw new \UnexpectedValueException("An array is expected");
             }
             $this->addElement($stream, $element);
         }
@@ -88,40 +88,34 @@ final class MultipartStream implements \WPMailSMTP\Vendor\Psr\Http\Message\Strea
         $stream->addStream($body);
         $stream->addStream(\WPMailSMTP\Vendor\GuzzleHttp\Psr7\Utils::streamFor("\r\n"));
     }
-    /**
-     * @param string[] $headers
-     *
-     * @return array{0: StreamInterface, 1: string[]}
-     */
     private function createElement(string $name, \WPMailSMTP\Vendor\Psr\Http\Message\StreamInterface $stream, ?string $filename, array $headers) : array
     {
         // Set a default content-disposition header if one was no provided
-        $disposition = self::getHeader($headers, 'content-disposition');
+        $disposition = $this->getHeader($headers, 'content-disposition');
         if (!$disposition) {
             $headers['Content-Disposition'] = $filename === '0' || $filename ? \sprintf('form-data; name="%s"; filename="%s"', $name, \basename($filename)) : "form-data; name=\"{$name}\"";
         }
         // Set a default content-length header if one was no provided
-        $length = self::getHeader($headers, 'content-length');
+        $length = $this->getHeader($headers, 'content-length');
         if (!$length) {
             if ($length = $stream->getSize()) {
                 $headers['Content-Length'] = (string) $length;
             }
         }
         // Set a default Content-Type if one was not supplied
-        $type = self::getHeader($headers, 'content-type');
+        $type = $this->getHeader($headers, 'content-type');
         if (!$type && ($filename === '0' || $filename)) {
-            $headers['Content-Type'] = \WPMailSMTP\Vendor\GuzzleHttp\Psr7\MimeType::fromFilename($filename) ?? 'application/octet-stream';
+            if ($type = \WPMailSMTP\Vendor\GuzzleHttp\Psr7\MimeType::fromFilename($filename)) {
+                $headers['Content-Type'] = $type;
+            }
         }
         return [$stream, $headers];
     }
-    /**
-     * @param string[] $headers
-     */
-    private static function getHeader(array $headers, string $key) : ?string
+    private function getHeader(array $headers, string $key)
     {
         $lowercaseHeader = \strtolower($key);
         foreach ($headers as $k => $v) {
-            if (\strtolower((string) $k) === $lowercaseHeader) {
+            if (\strtolower($k) === $lowercaseHeader) {
                 return $v;
             }
         }

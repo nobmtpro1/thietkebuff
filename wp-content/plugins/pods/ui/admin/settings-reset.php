@@ -1,10 +1,6 @@
 <?php
-use Pods\Tools\Reset;
 
-// Don't load directly.
-if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods_settings' ) ) {
-	die( '-1' );
-}
+use Pods\Tools\Reset;
 
 /** @var $pods_init PodsInit */
 global $pods_init, $wpdb;

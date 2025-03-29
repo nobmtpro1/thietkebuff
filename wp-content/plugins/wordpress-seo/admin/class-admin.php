@@ -19,7 +19,7 @@ class WPSEO_Admin {
 	 *
 	 * @var string
 	 */
-	public const PAGE_IDENTIFIER = 'wpseo_dashboard';
+	const PAGE_IDENTIFIER = 'wpseo_dashboard';
 
 	/**
 	 * Array of classes that add admin functionality.
@@ -86,8 +86,7 @@ class WPSEO_Admin {
 		}
 
 		$this->admin_features = [
-			'dashboard_widget'         => new Yoast_Dashboard_Widget(),
-			'wincher_dashboard_widget' => new Wincher_Dashboard_Widget(),
+			'dashboard_widget' => new Yoast_Dashboard_Widget(),
 		];
 
 		if ( WPSEO_Metabox::is_post_overview( $pagenow ) || WPSEO_Metabox::is_post_edit( $pagenow ) ) {
@@ -117,8 +116,6 @@ class WPSEO_Admin {
 
 	/**
 	 * Schedules a rewrite flush to happen at shutdown.
-	 *
-	 * @return void
 	 */
 	public function schedule_rewrite_flush() {
 		// Bail if this is a multisite installation and the site has been switched.
@@ -140,8 +137,6 @@ class WPSEO_Admin {
 
 	/**
 	 * Register assets needed on admin pages.
-	 *
-	 * @return void
 	 */
 	public function enqueue_assets() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form data.
@@ -161,15 +156,13 @@ class WPSEO_Admin {
 		/**
 		 * Filter: 'wpseo_manage_options_capability' - Allow changing the capability users need to view the settings pages.
 		 *
-		 * @param string $capability The capability.
+		 * @api string unsigned The capability.
 		 */
 		return apply_filters( 'wpseo_manage_options_capability', 'wpseo_manage_options' );
 	}
 
 	/**
 	 * Maps the manage_options cap on saving an options page to wpseo_manage_options.
-	 *
-	 * @return void
 	 */
 	public function map_manage_options_cap() {
 		// phpcs:ignore WordPress.Security -- The variable is only used in strpos and thus safe to not unslash or sanitize.
@@ -183,8 +176,6 @@ class WPSEO_Admin {
 	/**
 	 * Adds the ability to choose how many posts are displayed per page
 	 * on the bulk edit pages.
-	 *
-	 * @return void
 	 */
 	public function bulk_edit_options() {
 		$option = 'per_page';
@@ -222,7 +213,7 @@ class WPSEO_Admin {
 	 * @return array
 	 */
 	public function add_action_link( $links, $file ) {
-		$first_time_configuration_notice_helper = YoastSEO()->helpers->first_time_configuration_notice;
+		$first_time_configuration_notice_helper = \YoastSEO()->helpers->first_time_configuration_notice;
 
 		if ( $file === WPSEO_BASENAME && WPSEO_Capability_Utils::current_user_can( 'wpseo_manage_options' ) ) {
 			if ( is_network_admin() ) {
@@ -246,6 +237,7 @@ class WPSEO_Admin {
 			$ftc_link = '<a href="' . esc_url( admin_url( 'admin.php?page=wpseo_dashboard#top#first-time-configuration' ) ) . '" target="_blank">' . $message . '</a>';
 			array_unshift( $links, $ftc_link );
 		}
+
 
 		$addon_manager = new WPSEO_Addon_Manager();
 		if ( YoastSEO()->helpers->product->is_premium() ) {
@@ -280,8 +272,6 @@ class WPSEO_Admin {
 
 	/**
 	 * Enqueues the (tiny) global JS needed for the plugin.
-	 *
-	 * @return void
 	 */
 	public function config_page_scripts() {
 		$asset_manager = new WPSEO_Admin_Asset_Manager();
@@ -291,8 +281,6 @@ class WPSEO_Admin {
 
 	/**
 	 * Enqueues the (tiny) global stylesheet needed for the plugin.
-	 *
-	 * @return void
 	 */
 	public function enqueue_global_style() {
 		$asset_manager = new WPSEO_Admin_Asset_Manager();
@@ -325,8 +313,6 @@ class WPSEO_Admin {
 
 	/**
 	 * Log the updated timestamp for user profiles when theme is changed.
-	 *
-	 * @return void
 	 */
 	public function switch_theme() {
 
@@ -365,8 +351,6 @@ class WPSEO_Admin {
 
 	/**
 	 * Sets the upsell notice.
-	 *
-	 * @return void
 	 */
 	protected function set_upsell_notice() {
 		$upsell = new WPSEO_Product_Upsell_Notice();

@@ -3,9 +3,9 @@ Contributors: VirusTran
 Tags: Button contact call, zalo, whatsapp, messenger, popup, showroom
 Donate link: paypal.me/virustran
 Requires at least: 5.0
-Tested up to: 6.4
+Tested up to: 6.2
 Requires PHP: 5.6
-License: 4.7.1
+License: 4.3
 Developer: https://github.com/virustran/button-contact-vr/tree/develops
 License URI: http://www.gnu.org/licenses/gpl.html
 
@@ -93,13 +93,3 @@ Tested up to wordpress: 6.2
 * Turn off effects
 * Add link map
 * Add link fanpage
-
-= 4.4 =
-* Add youtube, instagram, telegram
-* Minify Css= 4.4 =
-
-=4.7
-* Add tiktok
-
-=4.7.1
-*Tested up to: 6.4

@@ -1,11 +1,9 @@
 <?php
 
-declare (strict_types=1);
 namespace WPMailSMTP\Vendor\ParagonIE\ConstantTime;
 
-use TypeError;
 /**
- *  Copyright (c) 2016 - 2022 Paragon Initiative Enterprises.
+ *  Copyright (c) 2016 - 2017 Paragon Initiative Enterprises.
  *  Copyright (c) 2014 Steve "Sc00bz" Thomas (steve at tobtu dot com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -37,9 +35,8 @@ abstract class Encoding
      *
      * @param string $str
      * @return string
-     * @throws TypeError
      */
-    public static function base32Encode(string $str) : string
+    public static function base32Encode($str)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base32::encode($str);
     }
@@ -48,9 +45,8 @@ abstract class Encoding
      *
      * @param string $str
      * @return string
-     * @throws TypeError
      */
-    public static function base32EncodeUpper(string $str) : string
+    public static function base32EncodeUpper($str)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base32::encodeUpper($str);
     }
@@ -59,9 +55,8 @@ abstract class Encoding
      *
      * @param string $str
      * @return string
-     * @throws TypeError
      */
-    public static function base32Decode(string $str) : string
+    public static function base32Decode($str)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base32::decode($str);
     }
@@ -70,9 +65,8 @@ abstract class Encoding
      *
      * @param string $str
      * @return string
-     * @throws TypeError
      */
-    public static function base32DecodeUpper(string $str) : string
+    public static function base32DecodeUpper($str)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base32::decodeUpper($str);
     }
@@ -81,42 +75,38 @@ abstract class Encoding
      *
      * @param string $str
      * @return string
-     * @throws TypeError
      */
-    public static function base32HexEncode(string $str) : string
+    public static function base32HexEncode($str)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base32Hex::encode($str);
     }
     /**
-     * RFC 4648 Base32Hex encoding
+     * RFC 4648 Base32 encoding
      *
      * @param string $str
      * @return string
-     * @throws TypeError
      */
-    public static function base32HexEncodeUpper(string $str) : string
+    public static function base32HexEncodeUpper($str)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base32Hex::encodeUpper($str);
     }
     /**
-     * RFC 4648 Base32Hex decoding
+     * RFC 4648 Base32 decoding
      *
      * @param string $str
      * @return string
-     * @throws TypeError
      */
-    public static function base32HexDecode(string $str) : string
+    public static function base32HexDecode($str)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base32Hex::decode($str);
     }
     /**
-     * RFC 4648 Base32Hex decoding
+     * RFC 4648 Base32 decoding
      *
      * @param string $str
      * @return string
-     * @throws TypeError
      */
-    public static function base32HexDecodeUpper(string $str) : string
+    public static function base32HexDecodeUpper($str)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base32Hex::decodeUpper($str);
     }
@@ -125,20 +115,18 @@ abstract class Encoding
      *
      * @param string $str
      * @return string
-     * @throws TypeError
      */
-    public static function base64Encode(string $str) : string
+    public static function base64Encode($str)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base64::encode($str);
     }
     /**
-     * RFC 4648 Base64 decoding
+     * RFC 4648 Base32 decoding
      *
      * @param string $str
      * @return string
-     * @throws TypeError
      */
-    public static function base64Decode(string $str) : string
+    public static function base64Decode($str)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base64::decode($str);
     }
@@ -146,53 +134,49 @@ abstract class Encoding
      * Encode into Base64
      *
      * Base64 character set "./[A-Z][a-z][0-9]"
-     * @param string $str
+     * @param string $src
      * @return string
-     * @throws TypeError
      */
-    public static function base64EncodeDotSlash(string $str) : string
+    public static function base64EncodeDotSlash($src)
     {
-        return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base64DotSlash::encode($str);
+        return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base64DotSlash::encode($src);
     }
     /**
      * Decode from base64 to raw binary
      *
      * Base64 character set "./[A-Z][a-z][0-9]"
      *
-     * @param string $str
+     * @param string $src
      * @return string
      * @throws \RangeException
-     * @throws TypeError
      */
-    public static function base64DecodeDotSlash(string $str) : string
+    public static function base64DecodeDotSlash($src)
     {
-        return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base64DotSlash::decode($str);
+        return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base64DotSlash::decode($src);
     }
     /**
      * Encode into Base64
      *
      * Base64 character set "[.-9][A-Z][a-z]" or "./[0-9][A-Z][a-z]"
-     * @param string $str
+     * @param string $src
      * @return string
-     * @throws TypeError
      */
-    public static function base64EncodeDotSlashOrdered(string $str) : string
+    public static function base64EncodeDotSlashOrdered($src)
     {
-        return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base64DotSlashOrdered::encode($str);
+        return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base64DotSlashOrdered::encode($src);
     }
     /**
      * Decode from base64 to raw binary
      *
      * Base64 character set "[.-9][A-Z][a-z]" or "./[0-9][A-Z][a-z]"
      *
-     * @param string $str
+     * @param string $src
      * @return string
      * @throws \RangeException
-     * @throws TypeError
      */
-    public static function base64DecodeDotSlashOrdered(string $str) : string
+    public static function base64DecodeDotSlashOrdered($src)
     {
-        return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base64DotSlashOrdered::decode($str);
+        return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Base64DotSlashOrdered::decode($src);
     }
     /**
      * Convert a binary string into a hexadecimal string without cache-timing
@@ -200,9 +184,8 @@ abstract class Encoding
      *
      * @param string $bin_string (raw binary)
      * @return string
-     * @throws TypeError
      */
-    public static function hexEncode(string $bin_string) : string
+    public static function hexEncode($bin_string)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Hex::encode($bin_string);
     }
@@ -214,7 +197,7 @@ abstract class Encoding
      * @return string (raw binary)
      * @throws \RangeException
      */
-    public static function hexDecode(string $hex_string) : string
+    public static function hexDecode($hex_string)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Hex::decode($hex_string);
     }
@@ -224,9 +207,8 @@ abstract class Encoding
      *
      * @param string $bin_string (raw binary)
      * @return string
-     * @throws TypeError
      */
-    public static function hexEncodeUpper(string $bin_string) : string
+    public static function hexEncodeUpper($bin_string)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Hex::encodeUpper($bin_string);
     }
@@ -237,7 +219,7 @@ abstract class Encoding
      * @param string $bin_string (raw binary)
      * @return string
      */
-    public static function hexDecodeUpper(string $bin_string) : string
+    public static function hexDecodeUpper($bin_string)
     {
         return \WPMailSMTP\Vendor\ParagonIE\ConstantTime\Hex::decode($bin_string);
     }

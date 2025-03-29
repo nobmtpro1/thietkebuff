@@ -2,6 +2,7 @@
 
 namespace Yoast\WP\SEO;
 
+use Exception;
 use Throwable;
 use WP_CLI;
 use YoastSEO_Vendor\Symfony\Component\DependencyInjection\ContainerInterface;
@@ -278,15 +279,16 @@ class Loader {
 	/**
 	 * Gets a class from the container.
 	 *
-	 * @param string $class_name The class name.
+	 * @param string $class The class name.
 	 *
 	 * @return object|null The class or, in production environments, null if it does not exist.
 	 *
 	 * @throws Throwable If the class does not exist in development environments.
+	 * @throws Exception If the class does not exist in development environments.
 	 */
-	protected function get_class( $class_name ) {
+	protected function get_class( $class ) {
 		try {
-			return $this->container->get( $class_name );
+			return $this->container->get( $class );
 		} catch ( Throwable $e ) {
 			// In production environments do not fatal if the class could not be constructed but log and fail gracefully.
 			if ( \YOAST_ENVIRONMENT === 'production' ) {

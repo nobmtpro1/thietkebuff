@@ -271,7 +271,10 @@ class PodsField_DateTime extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-		return $this->format_value_display( $value, $options, false );
+
+		$value = $this->format_value_display( $value, $options, false );
+
+		return $value;
 	}
 
 	/**

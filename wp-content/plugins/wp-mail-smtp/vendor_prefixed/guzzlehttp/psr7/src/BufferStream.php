@@ -109,6 +109,8 @@ final class BufferStream implements \WPMailSMTP\Vendor\Psr\Http\Message\StreamIn
         return \strlen($string);
     }
     /**
+     * {@inheritdoc}
+     *
      * @return mixed
      */
     public function getMetadata($key = null)

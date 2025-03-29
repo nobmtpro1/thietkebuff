@@ -15,14 +15,7 @@ class Upgrade {
 	 *
 	 * @since 1.1.0
 	 */
-	public function __construct() {}
-
-	/**
-	 * Run upgrades.
-	 *
-	 * @since 4.0.0
-	 */
-	public function run() {
+	public function __construct() {
 
 		$upgrades = $this->upgrades();
 

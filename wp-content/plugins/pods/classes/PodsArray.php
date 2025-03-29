@@ -35,12 +35,16 @@ class PodsArray implements ArrayAccess {
 	 * @return mixed
 	 * @since 2.0.0
 	 */
-	public function offsetSet( $offset, $value ): void {
+	#[\ReturnTypeWillChange]
+	public function offsetSet( $offset, $value ) {
+
 		if ( is_array( $this->__container ) ) {
 			$this->__container[ $offset ] = $value;
 		} else {
 			$this->__container->{$offset} = $value;
 		}
+
+		return $value;
 	}
 
 	/**
@@ -53,6 +57,7 @@ class PodsArray implements ArrayAccess {
 	 */
 	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
+
 		if ( is_array( $this->__container ) ) {
 			if ( isset( $this->__container[ $offset ] ) ) {
 				return $this->__container[ $offset ];
@@ -72,7 +77,9 @@ class PodsArray implements ArrayAccess {
 	 * @return bool
 	 * @since 2.0.0
 	 */
-	public function offsetExists( $offset ): bool {
+	#[\ReturnTypeWillChange]
+	public function offsetExists( $offset ) {
+
 		if ( is_array( $this->__container ) ) {
 			return isset( $this->__container[ $offset ] );
 		}
@@ -87,7 +94,9 @@ class PodsArray implements ArrayAccess {
 	 *
 	 * @since 2.0.0
 	 */
-	public function offsetUnset( $offset ): void {
+	#[\ReturnTypeWillChange]
+	public function offsetUnset( $offset ) {
+
 		if ( is_array( $this->__container ) ) {
 			unset( $this->__container[ $offset ] );
 		} else {
@@ -196,49 +205,52 @@ class PodsArray implements ArrayAccess {
 	/**
 	 * Mapping >> offsetSet
 	 *
-	 * @param mixed $name Property name.
+	 * @param mixed $offset Property name.
 	 * @param mixed $value  Property value.
 	 *
 	 * @return mixed
 	 * @since 2.0.0
 	 */
-	public function __set( $name, $value ): void {
-		$this->offsetSet( $name, $value );
+	public function __set( $offset, $value ) {
+
+		return $this->offsetSet( $offset, $value );
 	}
 
 	/**
 	 * Mapping >> offsetGet
 	 *
-	 * @param mixed $name Property name.
+	 * @param mixed $offset Property name.
 	 *
 	 * @return mixed|null
 	 * @since 2.0.0
 	 */
-	#[\ReturnTypeWillChange]
-	public function __get( $name ) {
-		return $this->offsetGet( $name );
+	public function __get( $offset ) {
+
+		return $this->offsetGet( $offset );
 	}
 
 	/**
 	 * Mapping >> offsetExists
 	 *
-	 * @param mixed $name Property name.
+	 * @param mixed $offset Property name.
 	 *
 	 * @return bool
 	 * @since 2.0.0
 	 */
-	public function __isset( $name ): bool {
-		return $this->offsetExists( $name );
+	public function __isset( $offset ) {
+
+		return $this->offsetExists( $offset );
 	}
 
 	/**
 	 * Mapping >> offsetUnset
 	 *
-	 * @param mixed $name Property name.
+	 * @param mixed $offset Property name.
 	 *
 	 * @since 2.0.0
 	 */
-	public function __unset( $name ): void {
-		$this->offsetUnset( $name );
+	public function __unset( $offset ) {
+
+		$this->offsetUnset( $offset );
 	}
 }

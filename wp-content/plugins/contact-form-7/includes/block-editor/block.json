@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 3,
+	"apiVersion": 2,
 	"name": "contact-form-7/contact-form-selector",
 	"title": "Contact Form 7",
 	"category": "widgets",
@@ -10,9 +10,6 @@
 	"attributes": {
 		"id": {
 			"type": "integer"
-		},
-		"hash": {
-			"type": "string"
 		},
 		"title": {
 			"type": "string"

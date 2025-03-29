@@ -19,7 +19,7 @@ add_action(
 			wpcf7_plugin_url( 'includes/swv/js/index.js' ),
 			$assets['dependencies'],
 			$assets['version'],
-			array( 'in_footer' => true )
+			true
 		);
 	},
 	10, 0

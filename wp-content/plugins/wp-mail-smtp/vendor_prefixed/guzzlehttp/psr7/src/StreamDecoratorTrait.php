@@ -60,7 +60,7 @@ trait StreamDecoratorTrait
     {
         /** @var callable $callable */
         $callable = [$this->stream, $method];
-        $result = $callable(...$args);
+        $result = \call_user_func_array($callable, $args);
         // Always return the wrapped object if the result is a return $this
         return $result === $this->stream ? $this : $result;
     }
@@ -69,6 +69,8 @@ trait StreamDecoratorTrait
         $this->stream->close();
     }
     /**
+     * {@inheritdoc}
+     *
      * @return mixed
      */
     public function getMetadata($key = null)

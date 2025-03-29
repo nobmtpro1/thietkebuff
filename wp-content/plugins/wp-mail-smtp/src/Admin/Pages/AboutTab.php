@@ -2,10 +2,9 @@
 
 namespace WPMailSMTP\Admin\Pages;
 
-use Plugin_Upgrader;
 use WPMailSMTP\Admin\PageAbstract;
 use WPMailSMTP\Admin\PluginsInstallSkin;
-use WPMailSMTP\Helpers\Helpers;
+use WPMailSMTP\Admin\PluginsInstallUpgrader;
 
 /**
  * About tab.
@@ -604,14 +603,7 @@ class AboutTab extends PageAbstract {
 			)
 		);
 
-		/*
-		 * The `request_filesystem_credentials` function will output a credentials form in case of failure.
-		 * We don't want that, since it will break AJAX response. So just hide output with a buffer.
-		 */
-		ob_start();
-		// phpcs:ignore WPForms.Formatting.EmptyLineAfterAssigmentVariables.AddEmptyLine
 		$creds = request_filesystem_credentials( $url, '', false, false, null );
-		ob_end_clean();
 
 		// Check for file system permissions.
 		if ( false === $creds ) {
@@ -625,11 +617,8 @@ class AboutTab extends PageAbstract {
 		// Do not allow WordPress to search/download translations, as this will break JS output.
 		remove_action( 'upgrader_process_complete', [ 'Language_Pack_Upgrader', 'async_upgrade' ], 20 );
 
-		// Import the plugin upgrader.
-		Helpers::include_plugin_upgrader();
-
 		// Create the plugin upgrader with our custom skin.
-		$installer = new Plugin_Upgrader( new PluginsInstallSkin() );
+		$installer = new PluginsInstallUpgrader( new PluginsInstallSkin() );
 
 		// Error check.
 		if ( ! method_exists( $installer, 'install' ) ) {
@@ -644,10 +633,6 @@ class AboutTab extends PageAbstract {
 		if ( $installer->plugin_info() ) {
 
 			$plugin_basename = $installer->plugin_info();
-
-			if ( $plugin_basename === 'wpforms-lite/wpforms.php' ) {
-				add_option( 'wpforms_installation_source', 'wp-mail-smtp-about-us' );
-			}
 
 			// Activate the plugin silently.
 			$activated = activate_plugin( $plugin_basename );

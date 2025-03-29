@@ -1,9 +1,4 @@
 <?php
-// Don't load directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die( '-1' );
-}
-
 pods_form_enqueue_style( 'pods-form' );
 
 /**
@@ -192,7 +187,7 @@ pods_form_enqueue_style( 'pods-form' );
 					}
 
 					/** This filter is documented in classes/PodsMeta.php */
-					$title = apply_filters( 'pods_meta_default_box_title', $title, $pod->pod_data, $fields, $pod->pod_data['type'], $pod->pod );
+					$title = apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->pod_data['type'], $pod->pod );
 					?>
 					<div id="normal-sortables" class="meta-box-sortables ui-sortable">
 						<div id="pods-meta-box" class="postbox" style="">

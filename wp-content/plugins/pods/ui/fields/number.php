@@ -1,9 +1,4 @@
 <?php
-// Don't load directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die( '-1' );
-}
-
 $field_number = PodsForm::field_loader( 'number' );
 
 $attributes             = array();

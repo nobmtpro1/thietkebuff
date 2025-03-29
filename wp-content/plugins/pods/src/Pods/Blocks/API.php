@@ -2,8 +2,6 @@
 
 namespace Pods\Blocks;
 
-use Pods;
-use Pods\Pod_Manager;
 use Pods\Whatsit\Block;
 
 /**
@@ -25,32 +23,7 @@ class API {
 			return;
 		}
 
-		// The 'block_categories' filter has been deprecated in WordPress 5.8+ and replaced by 'block_categories_all'.
-		if ( pods_version_check( 'wp', '5.8-beta0' ) ) {
-			add_filter( 'block_categories_all', [ $this, 'register_block_collections' ] );
-		} else {
-			add_filter( 'block_categories', [ $this, 'register_block_collections' ] );
-		}
-
-		$blocks = $this->get_blocks();
-
-		foreach ( $blocks as $block ) {
-			$block_name = $block['blockName'];
-
-			unset( $block['blockName'], $block['fields'] );
-
-			register_block_type( $block_name, $block );
-		}
-
-		add_action( 'admin_enqueue_scripts', [ $this, 'register_assets' ], 15 );
-
-		$registered = true;
-	}
-
-	/**
-	 * @return void
-	 */
-	public function register_assets() {
+		$blocks    = $this->get_blocks();
 		$js_blocks = $this->get_js_blocks();
 
 		// The Pods Blocks JS API.
@@ -73,80 +46,28 @@ class API {
 
 		wp_set_script_translations( 'pods-blocks-api', 'pods' );
 
-		$blocks_config = [
+		wp_localize_script( 'pods-blocks-api', 'podsBlocksConfig', [
 			'blocks'      => $js_blocks,
-			'commands'    => [],
 			// No custom collections to register directly with JS right now.
 			'collections' => [],
-		];
+		] );
 
-		$is_admin = is_admin();
-		$screen   = ( $is_admin && function_exists( 'get_current_screen' ) ) ? get_current_screen() : null;
-
-		// Maybe add commands if the person has the right access.
-		if ( $screen && 'post' === $screen->base && $screen->post_type && pods_is_admin( 'pods' ) ) {
-			// Check if this is a Pod or not.
-			$api = pods_api();
-
-			$pod = false;
-
-			try {
-				$pod = $api->load_pod( [
-					'name'       => $screen->post_type,
-					'auto_setup' => false,
-				] );
-
-				// Check if this was auto-setup before and isn't a full pod.
-				if ( $pod && true === $pod->get_arg( 'adhoc' ) ) {
-					$pod = false;
-				}
-			} catch ( \Exception $exception ) {
-				// Nothing to do here.
-			}
-
-			if ( $pod ) {
-				$blocks_config['commands'][] = [
-					'name'         => 'pods/edit',
-					'label'        => __( 'Edit this Pod configuration', 'pods' ),
-					'searchLabel'  => __( 'Edit this Pod configuration > Manage Field Groups, Custom Fields, and other Custom Post Type settings in the Pods Admin', 'pods' ),
-					'icon'         => 'pods',
-					'callbackUrl'  => admin_url(
-						sprintf(
-							'admin.php?page=pods&action=edit&id=%d',
-							$pod->get_id()
-						)
-					),
-				];
-			} else {
-				$nonce = wp_create_nonce( 'pods_extend_post_type_' . $screen->post_type );
-
-				$blocks_config['commands'][] = [
-					'name'         => 'pods/extend',
-					'label'        => __( 'Extend this Post Type with Pods to add custom fields', 'pods' ),
-					'icon'         => 'pods',
-					'callbackUrl'  => admin_url(
-						sprintf(
-							'admin.php?page=pods-add-new&pods_extend_post_type=%1$s&pods_extend_post_type_nonce=%2$s',
-							$screen->post_type,
-							$nonce
-						)
-					),
-				];
-			}
+		// The 'block_categories' filter has been deprecated in WordPress 5.8+ and replaced by 'block_categories_all'.
+		if ( pods_version_check( 'wp', '5.8-beta0' ) ) {
+			add_filter( 'block_categories_all', [ $this, 'register_block_collections' ] );
+		} else {
+			add_filter( 'block_categories', [ $this, 'register_block_collections' ] );
 		}
 
-		/**
-		 * Allow filtering the blocks API config data.
-		 *
-		 * @since 3.0.0
-		 *
-		 * @param array $blocks_config The blocks API config data.
-		 */
-		$blocks_config = (array) apply_filters( 'pods_blocks_api_config', $blocks_config );
+		foreach ( $blocks as $block ) {
+			$block_name = $block['blockName'];
 
-		wp_localize_script( 'pods-blocks-api', 'podsBlocksConfig', $blocks_config );
+			unset( $block['blockName'], $block['fields'] );
 
-		wp_enqueue_style( 'pods-styles' );
+			register_block_type( $block_name, $block );
+		}
+
+		$registered = true;
 	}
 
 	/**
@@ -169,24 +90,12 @@ class API {
 		do_action( 'pods_blocks_api_pre_init' );
 
 		pods_container( 'pods.blocks.collection.pods' );
-
-		// Check if the feature is enabled.
-		if ( pods_can_use_dynamic_feature( 'display' ) ) {
-			pods_container( 'pods.blocks.field' );
-			pods_container( 'pods.blocks.list' );
-			pods_container( 'pods.blocks.single' );
-			pods_container( 'pods.blocks.single-list-fields' );
-		}
-
-		// Check if the feature is enabled.
-		if ( pods_can_use_dynamic_feature( 'form' ) ) {
-			pods_container( 'pods.blocks.form' );
-		}
-
-		// Check if the feature is enabled.
-		if ( pods_can_use_dynamic_feature( 'view' ) ) {
-			pods_container( 'pods.blocks.view' );
-		}
+		pods_container( 'pods.blocks.field' );
+		pods_container( 'pods.blocks.form' );
+		pods_container( 'pods.blocks.list' );
+		pods_container( 'pods.blocks.single' );
+		pods_container( 'pods.blocks.single-list-fields' );
+		pods_container( 'pods.blocks.view' );
 
 		/**
 		 * Allow custom blocks to be registered with Pods.

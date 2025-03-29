@@ -1,9 +1,4 @@
 <?php
-// Don't load directly.
-if ( ! defined( 'ABSPATH' ) || ! pods_is_admin( 'pods' ) ) {
-	die( '-1' );
-}
-
 wp_enqueue_media();
 wp_enqueue_editor();
 

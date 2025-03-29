@@ -61,18 +61,13 @@ class ExportTab extends PageAbstract {
 	 */
 	public function display() {
 
-		$top_upgrade_button_url    = wp_mail_smtp()->get_upgrade_link(
-			[
-				'medium'  => 'tools-export',
-				'content' => 'upgrade-to-wp-mail-smtp-pro-button-top',
-			]
-		);
-		$bottom_upgrade_button_url = wp_mail_smtp()->get_upgrade_link(
+		$button_upgrade_link = wp_mail_smtp()->get_upgrade_link(
 			[
 				'medium'  => 'tools-export',
 				'content' => 'upgrade-to-wp-mail-smtp-pro-button',
 			]
 		);
+
 		?>
 		<div id="wp-mail-smtp-tools-export-email-logs-product-education" class="wp-mail-smtp-product-education">
 			<div class="wp-mail-smtp-product-education__row">
@@ -81,13 +76,28 @@ class ExportTab extends PageAbstract {
 				</h4>
 				<p class="wp-mail-smtp-product-education__description">
 					<?php
-					esc_html_e( 'Easily export your logs to CSV or Excel. Filter the logs before you export and only download the data you need. This feature lets you easily create your own deliverability reports. You can also use the data in 3rd party dashboards to track deliverability along with your other website statistics.', 'wp-mail-smtp' );
+					echo wp_kses(
+						sprintf( /* translators: %s - WPMailSMTP.com Upgrade page URL. */
+							__( 'Easily export your logs to CSV or Excel. Filter the logs before you export and only download the data you need. This feature lets you easily create your own deliverability reports. You can also use the data in 3rd party dashboards to track deliverability along with your other website statistics. <a href="%s" target="_blank" rel="noopener noreferrer">Upgrade to WP Mail SMTP Pro!</a>', 'wp-mail-smtp' ),
+							esc_url(
+								wp_mail_smtp()->get_upgrade_link(
+									[
+										'medium'  => 'tools-export',
+										'content' => 'upgrade-to-wp-mail-smtp-pro-text-link',
+									]
+								)
+							)
+						),
+						[
+							'a' => [
+								'href'   => [],
+								'rel'    => [],
+								'target' => [],
+							],
+						]
+					);
 					?>
 				</p>
-
-				<a href="<?php echo esc_url( $top_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--top wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
-					<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
-				</a>
 			</div>
 
 			<div class="wp-mail-smtp-product-education__row wp-mail-smtp-product-education__row--inactive">
@@ -142,7 +152,7 @@ class ExportTab extends PageAbstract {
 				</section>
 			</div>
 
-			<a href="<?php echo esc_url( $bottom_upgrade_button_url ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-product-education__upgrade-btn wp-mail-smtp-product-education__upgrade-btn--bottom wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
+			<a href="<?php echo esc_url( $button_upgrade_link ); ?>" target="_blank" rel="noopener noreferrer" class="wp-mail-smtp-btn wp-mail-smtp-btn-upgrade wp-mail-smtp-btn-orange">
 				<?php esc_html_e( 'Upgrade to WP Mail SMTP Pro', 'wp-mail-smtp' ); ?>
 			</a>
 		</div>

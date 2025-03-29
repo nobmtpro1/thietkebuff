@@ -53,7 +53,7 @@ function wpcf7_recaptcha_enqueue_scripts() {
 		),
 		array(),
 		'3.0',
-		array( 'in_footer' => true )
+		true
 	);
 
 	$assets = array();
@@ -79,7 +79,7 @@ function wpcf7_recaptcha_enqueue_scripts() {
 			)
 		),
 		$assets['version'],
-		array( 'in_footer' => true )
+		true
 	);
 
 	wp_enqueue_script( 'wpcf7-recaptcha' );
@@ -135,7 +135,8 @@ function wpcf7_recaptcha_verify_response( $spam, $submission ) {
 		return $spam;
 	}
 
-	$token = trim( $_POST['_wpcf7_recaptcha_response'] ?? '' );
+	$token = isset( $_POST['_wpcf7_recaptcha_response'] )
+		? trim( $_POST['_wpcf7_recaptcha_response'] ) : '';
 
 	if ( $service->verify( $token ) ) { // Human
 		$spam = false;

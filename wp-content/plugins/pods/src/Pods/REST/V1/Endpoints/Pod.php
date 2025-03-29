@@ -2,13 +2,13 @@
 
 namespace Pods\REST\V1\Endpoints;
 
-use Pods\REST\Interfaces\Endpoints\DELETE_Interface;
-use Pods\REST\Interfaces\Endpoints\READ_Interface;
-use Pods\REST\Interfaces\Endpoints\UPDATE_Interface;
-use Pods\REST\Interfaces\Swagger\Provider_Interface;
+use Tribe__Documentation__Swagger__Provider_Interface as Swagger_Interface;
+use Tribe__REST__Endpoints__DELETE_Endpoint_Interface as DELETE_Interface;
+use Tribe__REST__Endpoints__READ_Endpoint_Interface as READ_Interface;
+use Tribe__REST__Endpoints__UPDATE_Endpoint_Interface as UPDATE_Interface;
 use WP_REST_Request;
 
-class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Interface, Provider_Interface {
+class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Interface, Swagger_Interface {
 
 	/**
 	 * {@inheritdoc}
@@ -54,21 +54,21 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 
 		return [
 			'get' => [
-				'summary'    => '', // @todo Fill this out
+				'summary'    => __( 'Returns a single ticket data.', 'pods' ),
 				'parameters' => $this->swaggerize_args( $this->READ_args(), $GET_defaults ),
 				'responses'  => [
 					'200' => [
-						'description' => '', // @todo Fill this out
+						'description' => __( 'Returns the data of the ticket with the specified post ID.', 'pods' ),
 						'content'     => [
 							'application/json' => [
 								'schema' => [
-									'$ref' => '#/components/schemas/Pod',
+									'$ref' => '#/components/schemas/Ticket',
 								],
 							],
 						],
 					],
 					'400' => [
-						'description' => '', // @todo Fill this out
+						'description' => __( 'The ticket post ID is invalid.', 'pods' ),
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -78,7 +78,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 						],
 					],
 					'401' => [
-						'description' => '', // @todo Fill this out
+						'description' => __( 'The ticket with the specified ID is not accessible.', 'pods' ),
 						'content'     => [
 							'application/json' => [
 								'schema' => [
@@ -88,7 +88,7 @@ class Pod extends Base implements READ_Interface, UPDATE_Interface, DELETE_Inter
 						],
 					],
 					'404' => [
-						'description' => '', // @todo Fill this out
+						'description' => __( 'A ticket with the specified ID does not exist.', 'pods' ),
 						'content'     => [
 							'application/json' => [
 								'schema' => [

@@ -56,7 +56,7 @@ final class PZF {
 					<div class="phone-vr">
 						<div class="phone-vr-circle-fill"></div>
 						<div class="phone-vr-img-circle">			
-							<img alt="Phone" src="<?php echo PZF_URL.'img/icon'.get_option('pzf_icon_contact_form').'.png'; ?>" />
+							<img src="<?php echo PZF_URL.'img/icon'.get_option('pzf_icon_contact_form').'.png'; ?>" />
 						</div>
 					</div>	
 				</div>					
@@ -73,10 +73,10 @@ final class PZF {
 						<div class="phone-vr-img-circle">
 							<?php if(get_option('pzf_link_showroom')){ ?>
 								<a href="<?php echo get_option('pzf_link_showroom'); ?>" <?php echo get_option('pzf_link_newtab_showroom')?'target="_blank"':''; ?>>	
-									<img alt="Showroom" src="<?php echo PZF_URL.'img/showroom'.get_option('pzf_icon_showroom').'.png'; ?>" />
+									<img src="<?php echo PZF_URL.'img/showroom'.get_option('pzf_icon_showroom').'.png'; ?>" />
 								</a>
 							<?php }else{ ?>
-								<img alt="showroom" src="<?php echo PZF_URL.'img/icon'.get_option('pzf_icon_showroom').'.png'; ?>" />
+								<img src="<?php echo PZF_URL.'img/icon'.get_option('pzf_icon_showroom').'.png'; ?>" />
 							<?php }; ?>
 						</div>
 					</div>	
@@ -93,7 +93,7 @@ final class PZF {
 						<div class="phone-vr-circle-fill"></div>
 						<div class="phone-vr-img-circle">
 							<a target="_blank" href="<?php echo get_option('pzf_linkggmap'); ?>">				
-								<img alt="google map" src="<?php echo PZF_URL.'img/showroom4.png'; ?>" />
+								<img src="<?php echo PZF_URL.'img/showroom4.png'; ?>" />
 							</a>
 						</div>
 					</div>
@@ -110,7 +110,7 @@ final class PZF {
 						<div class="phone-vr-circle-fill"></div>
 						<div class="phone-vr-img-circle">
 							<a href="<?php echo get_option('pzf_contact_link'); ?>">				
-								<img alt="Liên hệ" src="<?php echo PZF_URL.'img/contact.png'; ?>" />
+								<img src="<?php echo PZF_URL.'img/contact.png'; ?>" />
 							</a>
 						</div>
 					</div>
@@ -127,7 +127,7 @@ final class PZF {
 						<div class="phone-vr-circle-fill"></div>
 						<div class="phone-vr-img-circle">
 							<a target="_blank" href="viber://add?number=<?php echo preg_replace( '/\D/', '',get_option('pzf_viber')); ?>">				
-								<img alt="Viber" src="<?php echo PZF_URL.'img/viber.png'; ?>" />
+								<img src="<?php echo PZF_URL.'img/viber.png'; ?>" />
 							</a>
 						</div>
 					</div>
@@ -144,80 +144,12 @@ final class PZF {
 						<div class="phone-vr-circle-fill"></div>
 						<div class="phone-vr-img-circle">
 							<a target="_blank" href="<?php echo get_option('pzf_linkfanpage'); ?>">				
-								<img alt="Fanpage" src="<?php echo PZF_URL.'img/Facebook.png'; ?>" />
+								<img src="<?php echo PZF_URL.'img/Facebook.png'; ?>" />
 							</a>
 						</div>
 					</div>
 					</div>
 				<!-- end fanpage -->
-				<?php }; ?>
-
-				<?php
-				if(get_option('pzf_tiktok')){
-				?>
-				<!-- tiktok -->
-				<div id="tiktok-vr" class="button-contact">
-					<div class="phone-vr">
-						<div class="phone-vr-circle-fill"></div>
-						<div class="phone-vr-img-circle">
-							<a target="_blank" href="<?php echo get_option('pzf_tiktok'); ?>">				
-								<img alt="tiktok" src="<?php echo PZF_URL.'img/tiktok.png'; ?>" />
-							</a>
-						</div>
-					</div>
-					</div>
-				<!-- end tiktok -->
-				<?php }; ?>
-				
-				<?php
-				if(get_option('pzf_telegram')){
-				?>
-				<!-- telegram -->
-				<div id="telegram-vr" class="button-contact">
-					<div class="phone-vr">
-						<div class="phone-vr-circle-fill"></div>
-						<div class="phone-vr-img-circle">
-							<a target="_blank" href="<?php echo get_option('pzf_telegram'); ?>">				
-								<img alt="telegram" src="<?php echo PZF_URL.'img/telegram.png'; ?>" />
-							</a>
-						</div>
-					</div>
-					</div>
-				<!-- end telegam -->
-				<?php }; ?>
-				
-				<?php
-				if(get_option('pzf_instagram')){
-				?>
-				<!-- instagram -->
-				<div id="instagram-vr" class="button-contact">
-					<div class="phone-vr">
-						<div class="phone-vr-circle-fill"></div>
-						<div class="phone-vr-img-circle">
-							<a target="_blank" href="<?php echo get_option('pzf_instagram'); ?>">				
-								<img  alt="Instagram" src="<?php echo PZF_URL.'img/instagram.png'; ?>" />
-							</a>
-						</div>
-					</div>
-					</div>
-				<!-- end instagram -->
-				<?php }; ?>
-				
-				<?php
-				if(get_option('pzf_youtube')){
-				?>
-				<!-- youtube -->
-				<div id="youtube-vr" class="button-contact">
-					<div class="phone-vr">
-						<div class="phone-vr-circle-fill"></div>
-						<div class="phone-vr-img-circle">
-							<a target="_blank" href="<?php echo get_option('pzf_youtube'); ?>">				
-								<img alt="youtube" src="<?php echo PZF_URL.'img/youtube.png'; ?>" />
-							</a>
-						</div>
-					</div>
-					</div>
-				<!-- end youtube -->
 				<?php }; ?>
 
 				<?php
@@ -229,7 +161,7 @@ final class PZF {
 						<div class="phone-vr-circle-fill"></div>
 						<div class="phone-vr-img-circle">
 							<a target="_blank" href="https://zalo.me/<?php echo preg_replace( '/\D/', '',get_option('pzf_zalo')); ?>">				
-								<img alt="Zalo" src="<?php echo PZF_URL.'img/zalo.png'; ?>" />
+								<img src="<?php echo PZF_URL.'img/zalo.png'; ?>" />
 							</a>
 						</div>
 					</div>
@@ -246,7 +178,7 @@ final class PZF {
 						<div class="phone-vr-circle-fill"></div>
 						<div class="phone-vr-img-circle">
 							<a target="_blank" href=" https://wa.me/<?php echo preg_replace( '/\D/', '',get_option('pzf_whatsapp')); ?>">				
-								<img alt="Whatsapp" src="<?php echo PZF_URL.'img/whatsapp.png'; ?>" />
+								<img src="<?php echo PZF_URL.'img/whatsapp.png'; ?>" />
 							</a>
 						</div>
 					</div>
@@ -263,7 +195,7 @@ final class PZF {
 						<div class="phone-vr-circle-fill"></div>
 						<div class="phone-vr-img-circle">
 							<a href="tel:<?php echo preg_replace( '/\D/', '',get_option('pzf_phone')); ?>">				
-								<img alt="Phone" src="<?php echo PZF_URL.'img/phone.png'; ?>" />
+								<img src="<?php echo PZF_URL.'img/phone.png'; ?>" />
 							</a>
 						</div>
 					</div>
@@ -288,7 +220,7 @@ final class PZF {
 						<div class="phone-vr-circle-fill"></div>
 						<div class="phone-vr-img-circle">
 							<a href="tel:<?php echo preg_replace( '/\D/', '',get_option('pzf_phone2')); ?>">				
-								<img  alt="phone" src="<?php echo PZF_URL.'img/phone.png'; ?>" />
+								<img src="<?php echo PZF_URL.'img/phone.png'; ?>" />
 							</a>
 						</div>
 					</div>
@@ -313,7 +245,7 @@ final class PZF {
 						<div class="phone-vr-circle-fill"></div>
 						<div class="phone-vr-img-circle">
 							<a href="tel:<?php echo preg_replace( '/\D/', '',get_option('pzf_phone3')); ?>">				
-								<img alt="Phone" src="<?php echo PZF_URL.'img/phone.png'; ?>" />
+								<img src="<?php echo PZF_URL.'img/phone.png'; ?>" />
 							</a>
 						</div>
 					</div>
@@ -337,7 +269,7 @@ final class PZF {
 					<div class="phone-vr">
 						<div class="phone-vr-circle-fill"></div>
 						<div class="phone-vr-img-circle">			
-							<img alt="All in one" src="<?php echo PZF_URL.'img/icon'.get_option('pzf_icon_all_in_one').'.png'; ?>" />
+							<img src="<?php echo PZF_URL.'img/icon'.get_option('pzf_icon_all_in_one').'.png'; ?>" />
 						</div>
 					</div>					
 					<?php 

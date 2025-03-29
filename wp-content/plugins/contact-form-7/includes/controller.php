@@ -54,7 +54,7 @@ add_action(
 				array( 'swv' )
 			),
 			$assets['version'],
-			array( 'in_footer' => true )
+			true
 		);
 
 		wp_register_script(
@@ -62,7 +62,7 @@ add_action(
 			wpcf7_plugin_url( 'includes/js/html5-fallback.js' ),
 			array( 'jquery-ui-datepicker' ),
 			WPCF7_VERSION,
-			array( 'in_footer' => true )
+			true
 		);
 
 		if ( wpcf7_load_js() ) {

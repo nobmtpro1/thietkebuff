@@ -76,7 +76,6 @@ class PodsForm {
 	 *
 	 * @since 2.3.0
 	 */
-	#[\ReturnTypeWillChange]
 	private function __clone() {
 		// Hulk smash
 	}
@@ -100,7 +99,6 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function label( $name, $label, $help = '', $options = null ) {
-		$prefix = pods_v( 'name_prefix', $options );
 
 		if ( is_array( $label ) || is_object( $label ) ) {
 			$options = $label;
@@ -120,8 +118,8 @@ class PodsForm {
 
 		ob_start();
 
-		$name_clean      = self::clean( $prefix . $name );
-		$name_more_clean = self::clean( $prefix . $name, true );
+		$name_clean      = self::clean( $name );
+		$name_more_clean = self::clean( $name, true );
 
 		$type                = 'label';
 		$attributes          = array();
@@ -148,11 +146,10 @@ class PodsForm {
 	 * @since 2.0.0
 	 */
 	public static function comment( $name, $message = null, $options = null ) {
-		$prefix = pods_v( 'name_prefix', $options );
 
 		$options = self::options( null, $options );
 
-		$name_more_clean = self::clean( $prefix . $name, true );
+		$name_more_clean = self::clean( $name, true );
 
 		if ( ! empty( $options['description'] ) ) {
 			$message = $options['description'];
@@ -282,9 +279,9 @@ class PodsForm {
 			 * @deprecated 2.7.0
 			 */
 			eval( '?>' . $helper['code'] );
-		} elseif ( method_exists( static::class, 'field_' . $type ) ) {
+		} elseif ( method_exists( get_class(), 'field_' . $type ) ) {
 			// @todo Move these custom field methods into real/faux field classes
-			echo call_user_func( array( static::class, 'field_' . $type ), $name, $value, $options );
+			echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
 		} elseif ( is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'input' ) ) {
 			// Force non-repeatable field types to be non-repeatable even if option is set to 1.
 			if ( ! empty( $options['repeatable'] ) && ! in_array( $type, $repeatable_field_types, true ) ) {
@@ -546,19 +543,13 @@ class PodsForm {
 	 */
 	public static function merge_attributes( $attributes, $name = null, $type = null, $options = null, $classes = '' ) {
 
-		if ( $options instanceof Field ) {
-			$options = $options->get_args();
-		}
-
 		$options = (array) $options;
 
-		$prefix = pods_v( 'name_prefix', $options );
-
 		if ( ! in_array( $type, array( 'label', 'comment' ) ) ) {
-			$name_clean                     = self::clean( $prefix . $name );
-			$name_more_clean                = self::clean( $prefix . $name, true );
+			$name_clean                     = self::clean( $name );
+			$name_more_clean                = self::clean( $name, true );
 			$_attributes                    = array();
-			$_attributes['name']            = $prefix . $name;
+			$_attributes['name']            = $name;
 			$_attributes['data-name-clean'] = $name_more_clean;
 
 			if ( 0 < strlen( (string) pods_v( 'label', $options, '' ) ) ) {
@@ -693,25 +684,24 @@ class PodsForm {
 	public static function options_setup( $type = null, $options = null ) {
 
 		$core_defaults = array(
-			'id'               => 0,
-			'name'             => '',
-			'label'            => '',
-			'description'      => '',
-			'help'             => '',
-			'default'          => null,
-			'attributes'       => array(),
-			'class'            => '',
-			'type'             => 'text',
-			'group'            => 0,
-			'grouped'          => 0,
-			'developer_mode'   => false,
-			'dependency'       => false,
-			'depends-on'       => array(),
-			'depends-on-any'   => array(),
-			'depends-on-multi' => array(),
-			'excludes-on'      => array(),
-			'wildcard-on'      => array(),
-			'options'          => array(),
+			'id'             => 0,
+			'name'           => '',
+			'label'          => '',
+			'description'    => '',
+			'help'           => '',
+			'default'        => null,
+			'attributes'     => array(),
+			'class'          => '',
+			'type'           => 'text',
+			'group'          => 0,
+			'grouped'        => 0,
+			'developer_mode' => false,
+			'dependency'     => false,
+			'depends-on'     => array(),
+			'depends-on-any' => array(),
+			'excludes-on'    => array(),
+			'wildcard-on'    => array(),
+			'options'        => array(),
 		);
 
 		if ( ! empty( $options ) && is_array( $options ) ) {
@@ -753,25 +743,24 @@ class PodsForm {
 	public static function ui_options( $type ) {
 
 		$core_defaults = array(
-			'id'               => 0,
-			'name'             => '',
-			'label'            => '',
-			'description'      => '',
-			'help'             => '',
-			'default'          => null,
-			'attributes'       => array(),
-			'class'            => '',
-			'type'             => 'text',
-			'group'            => 0,
-			'grouped'          => 0,
-			'developer_mode'   => false,
-			'dependency'       => false,
-			'depends-on'       => array(),
-			'depends-on-any'   => array(),
-			'depends-on-multi' => array(),
-			'excludes-on'      => array(),
-			'wildcard-on'      => array(),
-			'options'          => array(),
+			'id'             => 0,
+			'name'           => '',
+			'label'          => '',
+			'description'    => '',
+			'help'           => '',
+			'default'        => null,
+			'attributes'     => array(),
+			'class'          => '',
+			'type'           => 'text',
+			'group'          => 0,
+			'grouped'        => 0,
+			'developer_mode' => false,
+			'dependency'     => false,
+			'depends-on'     => array(),
+			'depends-on-any' => array(),
+			'excludes-on'    => array(),
+			'wildcard-on'    => array(),
+			'options'        => array(),
 		);
 
 		self::field_loader( $type );
@@ -807,25 +796,24 @@ class PodsForm {
 
 		if ( empty( $core_defaults ) ) {
 			$core_defaults = array(
-				'id'               => 0,
-				'name'             => '',
-				'label'            => '',
-				'description'      => '',
-				'help'             => '',
-				'default'          => null,
-				'attributes'       => array(),
-				'class'            => '',
-				'type'             => 'text',
-				'group'            => 0,
-				'grouped'          => 0,
-				'developer_mode'   => false,
-				'dependency'       => false,
-				'depends-on'       => array(),
-				'depends-on-any'   => array(),
-				'depends-on-multi' => array(),
-				'excludes-on'      => array(),
-				'wildcard-on'      => array(),
-				'options'          => array(),
+				'id'             => 0,
+				'name'           => '',
+				'label'          => '',
+				'description'    => '',
+				'help'           => '',
+				'default'        => null,
+				'attributes'     => array(),
+				'class'          => '',
+				'type'           => 'text',
+				'group'          => 0,
+				'grouped'        => 0,
+				'developer_mode' => false,
+				'dependency'     => false,
+				'depends-on'     => array(),
+				'depends-on-any' => array(),
+				'excludes-on'    => array(),
+				'wildcard-on'    => array(),
+				'options'        => array(),
 			);
 		}
 
@@ -867,25 +855,24 @@ class PodsForm {
 
 		if ( empty( $core_defaults ) ) {
 			$core_defaults = array(
-				'id'               => 0,
-				'name'             => '',
-				'label'            => '',
-				'description'      => '',
-				'help'             => '',
-				'default'          => null,
-				'attributes'       => array(),
-				'class'            => '',
-				'type'             => 'text',
-				'group'            => 0,
-				'grouped'          => 0,
-				'developer_mode'   => false,
-				'dependency'       => false,
-				'depends-on'       => array(),
-				'depends-on-any'   => array(),
-				'depends-on-multi' => array(),
-				'excludes-on'      => array(),
-				'wildcard-on'      => array(),
-				'options'          => array(),
+				'id'             => 0,
+				'name'           => '',
+				'label'          => '',
+				'description'    => '',
+				'help'           => '',
+				'default'        => null,
+				'attributes'     => array(),
+				'class'          => '',
+				'type'           => 'text',
+				'group'          => 0,
+				'grouped'        => 0,
+				'developer_mode' => false,
+				'dependency'     => false,
+				'depends-on'     => array(),
+				'depends-on-any' => array(),
+				'excludes-on'    => array(),
+				'wildcard-on'    => array(),
+				'options'        => array(),
 			);
 
 			if ( null !== $type ) {
@@ -965,7 +952,6 @@ class PodsForm {
 		$dependency_checks = [
 			'depends-on',
 			'depends-on-any',
-			'depends-on-multi',
 			'excludes-on',
 		];
 

@@ -15,35 +15,35 @@ class WPSEO_Rank {
 	 *
 	 * @var string
 	 */
-	public const BAD = 'bad';
+	const BAD = 'bad';
 
 	/**
 	 * Constant used for determining an OK SEO rating.
 	 *
 	 * @var string
 	 */
-	public const OK = 'ok';
+	const OK = 'ok';
 
 	/**
 	 * Constant used for determining a good SEO rating.
 	 *
 	 * @var string
 	 */
-	public const GOOD = 'good';
+	const GOOD = 'good';
 
 	/**
 	 * Constant used for determining that no focus keyphrase is set.
 	 *
 	 * @var string
 	 */
-	public const NO_FOCUS = 'na';
+	const NO_FOCUS = 'na';
 
 	/**
 	 * Constant used for determining that this content is not indexed.
 	 *
 	 * @var string
 	 */
-	public const NO_INDEX = 'noindex';
+	const NO_INDEX = 'noindex';
 
 	/**
 	 * All possible ranks.
@@ -223,33 +223,6 @@ class WPSEO_Rank {
 	}
 
 	/**
-	 * Gets the drop down labels for the inclusive language score.
-	 *
-	 * @return string The inclusive language rank label.
-	 */
-	public function get_drop_down_inclusive_language_labels() {
-		$labels = [
-			self::BAD => sprintf(
-			/* translators: %s expands to the inclusive language score */
-				__( 'Inclusive language: %s', 'wordpress-seo' ),
-				__( 'Needs improvement', 'wordpress-seo' )
-			),
-			self::OK => sprintf(
-			/* translators: %s expands to the inclusive language score */
-				__( 'Inclusive language: %s', 'wordpress-seo' ),
-				__( 'Potentially non-inclusive', 'wordpress-seo' )
-			),
-			self::GOOD => sprintf(
-			/* translators: %s expands to the inclusive language score */
-				__( 'Inclusive language: %s', 'wordpress-seo' ),
-				__( 'Good', 'wordpress-seo' )
-			),
-		];
-
-		return $labels[ $this->rank ];
-	}
-
-	/**
 	 * Get the starting score for this rank.
 	 *
 	 * @return int The start score.
@@ -313,15 +286,6 @@ class WPSEO_Rank {
 	 * @return WPSEO_Rank[]
 	 */
 	public static function get_all_readability_ranks() {
-		return array_map( [ 'WPSEO_Rank', 'create_rank' ], [ self::BAD, self::OK, self::GOOD ] );
-	}
-
-	/**
-	 * Returns a list of all possible Inclusive Language Ranks.
-	 *
-	 * @return WPSEO_Rank[]
-	 */
-	public static function get_all_inclusive_language_ranks() {
 		return array_map( [ 'WPSEO_Rank', 'create_rank' ], [ self::BAD, self::OK, self::GOOD ] );
 	}
 

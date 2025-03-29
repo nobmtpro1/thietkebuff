@@ -3,6 +3,10 @@
 namespace WPMailSMTP\Providers\Sendinblue;
 
 use WPMailSMTP\ConnectionInterface;
+use WPMailSMTP\Vendor\SendinBlue\Client\Api\AccountApi;
+use WPMailSMTP\Vendor\SendinBlue\Client\Api\SendersApi;
+use WPMailSMTP\Vendor\SendinBlue\Client\Api\TransactionalEmailsApi;
+use WPMailSMTP\Vendor\SendinBlue\Client\Configuration;
 
 /**
  * Class Api is a wrapper for Sendinblue library with handy methods.
@@ -51,54 +55,51 @@ class Api {
 	 * Configure API key authorization: api-key.
 	 *
 	 * @since 1.6.0
-	 * @deprecated 3.9.0 We are no longer using the Sendinblue SDK.
 	 *
-	 * @return null
+	 * @return Configuration
 	 */
 	protected function get_api_config() {
 
-		_deprecated_function( __METHOD__, '3.9.0' );
-
-		return null;
+		return Configuration::getDefaultConfiguration()->setApiKey( 'api-key', isset( $this->options['api_key'] ) ? $this->options['api_key'] : '' );
 	}
 
 	/**
 	 * Get the mailer client instance for Account API.
 	 *
 	 * @since 1.6.0
-	 * @deprecated 3.9.0 We are no longer using the Sendinblue SDK.
 	 */
 	public function get_account_client() {
 
-		_deprecated_function( __METHOD__, '3.9.0' );
+		// Include the library.
+		require_once wp_mail_smtp()->plugin_path . '/vendor/autoload.php';
 
-		return null;
+		return new AccountApi( null, $this->get_api_config() );
 	}
 
 	/**
 	 * Get the mailer client instance for Sender API.
 	 *
 	 * @since 1.6.0
-	 * @deprecated 3.9.0 We are no longer using the Sendinblue SDK.
 	 */
 	public function get_sender_client() {
 
-		_deprecated_function( __METHOD__, '3.9.0' );
+		// Include the library.
+		require_once wp_mail_smtp()->plugin_path . '/vendor/autoload.php';
 
-		return null;
+		return new SendersApi( null, $this->get_api_config() );
 	}
 
 	/**
 	 * Get the mailer client instance for SMTP API.
 	 *
 	 * @since 1.6.0
-	 * @deprecated 3.9.0 We are no longer using the Sendinblue SDK.
 	 */
 	public function get_smtp_client() {
 
-		_deprecated_function( __METHOD__, '3.9.0' );
+		// Include the library.
+		require_once wp_mail_smtp()->plugin_path . '/vendor/autoload.php';
 
-		return null;
+		return new TransactionalEmailsApi( null, $this->get_api_config() );
 	}
 
 	/**

@@ -1,4 +1,7 @@
 <?php
+if ( class_exists( 'Pods_PFAT_Frontend' ) ) {
+	return;
+}
 
 /**
  * Class Pods_Templates_Auto_Template_Front_End
@@ -52,7 +55,7 @@ class Pods_Templates_Auto_Template_Front_End {
 		foreach ( $possible_pods as $pod_name => $pod ) {
 			$filter = pods_v( 'archive_filter', $pod, '', true );
 			if ( $filter ) {
-				$this->filtered_content[ $filter ] = 10;
+				$this->filtered_content[ $filter ] = 10.5;
 			}
 		}
 
@@ -75,7 +78,7 @@ class Pods_Templates_Auto_Template_Front_End {
 			// No need to check for default hooks, this is already done in auto_pods().
 			$filter = pods_v( 'single_filter', $possible_pods[ $pod ], '', true );
 			if ( $filter ) {
-				$this->filtered_content[ $filter ] = 10;
+				$this->filtered_content[ $filter ] = 10.5;
 			}
 		}
 

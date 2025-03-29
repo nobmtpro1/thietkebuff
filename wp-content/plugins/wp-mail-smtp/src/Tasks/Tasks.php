@@ -5,9 +5,6 @@ namespace WPMailSMTP\Tasks;
 use ActionScheduler_Action;
 use ActionScheduler_DataController;
 use ActionScheduler_DBStore;
-use WPMailSMTP\Tasks\Queue\CleanupQueueTask;
-use WPMailSMTP\Tasks\Queue\ProcessQueueTask;
-use WPMailSMTP\Tasks\Queue\SendEnqueuedEmailTask;
 use WPMailSMTP\Tasks\Reports\SummaryEmailTask;
 
 /**
@@ -80,9 +77,6 @@ class Tasks {
 		$tasks = [
 			SummaryEmailTask::class,
 			DebugEventsCleanupTask::class,
-			ProcessQueueTask::class,
-			CleanupQueueTask::class,
-			SendEnqueuedEmailTask::class,
 		];
 
 		/**
@@ -253,8 +247,7 @@ class Tasks {
 	 */
 	public static function is_scheduled( $hook ) {
 
-		// If ActionScheduler wasn't loaded, then no tasks are scheduled.
-		if ( ! function_exists( 'as_next_scheduled_action' ) ) {
+		if ( ! function_exists( 'as_has_scheduled_action' ) ) {
 			return null;
 		}
 
@@ -267,12 +260,7 @@ class Tasks {
 		}
 
 		// Action is not in the array, so it is not scheduled or belongs to another group.
-		if ( function_exists( 'as_has_scheduled_action' ) ) {
-			// This function more performant than `as_next_scheduled_action`, but it is available only since AS 3.3.0.
-			return as_has_scheduled_action( $hook );
-		} else {
-			return as_next_scheduled_action( $hook ) !== false;
-		}
+		return as_has_scheduled_action( $hook );
 	}
 
 	/**

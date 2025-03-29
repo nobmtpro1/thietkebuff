@@ -41,11 +41,7 @@ class Legacy_Object extends Whatsit {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_arg( $arg, $default = null, $strict = false, $raw = false ) {
-		if ( $raw ) {
-			return parent::get_arg( $arg, $default, $strict, $raw );
-		}
-
+	public function get_arg( $arg, $default = null, $strict = false ) {
 		$old_mapping = [
 			'name' => 'label',
 			'slug' => 'name',

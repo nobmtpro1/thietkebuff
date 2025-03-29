@@ -1,9 +1,4 @@
 <?php
-// Don't load directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die( '-1' );
-}
-
 pods_form_enqueue_style( 'pods-form' );
 
 /**

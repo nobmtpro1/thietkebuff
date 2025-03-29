@@ -151,7 +151,6 @@ class Pod {
 	 *
 	 * @return array|bool|int|mixed|PodsData
 	 */
-	#[\ReturnTypeWillChange]
 	public function __get( $name ) {
 		$name = (string) $name;
 
@@ -195,11 +194,15 @@ class Pod {
 	 *
 	 * @param string $name  Property name.
 	 * @param mixed  $value Property value to set.
+	 *
+	 * @return mixed
 	 */
-	public function __set( $name, $value ): void {
+	public function __set( $name, $value ) {
 		$name = (string) $name;
 
 		$this->new->{$name} = $value;
+
+		return $value;
 	}
 
 	/**
@@ -208,15 +211,14 @@ class Pod {
 	 * @since 2.0.0
 	 *
 	 * @param string $name Call name.
-	 * @param array  $arguments Call arguments.
+	 * @param array  $args Call arguments.
 	 *
 	 * @return mixed
 	 */
-	#[\ReturnTypeWillChange]
-	public function __call( $name, $arguments ) {
+	public function __call( $name, $args ) {
 		$name = (string) $name;
 
-		return call_user_func_array( array( $this->new, $name ), $arguments );
+		return call_user_func_array( array( $this->new, $name ), $args );
 	}
 
 	/**
@@ -228,7 +230,7 @@ class Pod {
 	 *
 	 * @return bool
 	 */
-	public function __isset( $name ): bool {
+	public function __isset( $name ) {
 		$name = (string) $name;
 
 		if ( in_array( $name, array( '_data', 'data', 'total', 'total_rows', 'zebra' ), true ) ) {
@@ -277,7 +279,6 @@ class PodAPI {
 	 *
 	 * @return null|mixed
 	 */
-	#[\ReturnTypeWillChange]
 	public function __get( $name ) {
 		$name = (string) $name;
 
@@ -292,15 +293,14 @@ class PodAPI {
 	 * @since 2.0.0
 	 *
 	 * @param string $name Call name.
-	 * @param array  $arguments Call arguments.
+	 * @param array  $args Call arguments.
 	 *
 	 * @return mixed
 	 */
-	#[\ReturnTypeWillChange]
-	public function __call( $name, $arguments ) {
+	public function __call( $name, $args ) {
 		$name = (string) $name;
 
-		return call_user_func_array( array( $this->new, $name ), $arguments );
+		return call_user_func_array( array( $this->new, $name ), $args );
 	}
 }
 

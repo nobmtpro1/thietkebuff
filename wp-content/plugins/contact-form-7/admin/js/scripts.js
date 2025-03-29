@@ -80,15 +80,9 @@
 			var data = [];
 
 			$( this ).closest( 'form' ).find( '[data-config-field]' ).each( function() {
-				var val = $( this ).val();
-
-				if ( $( this ).is( '[type=checkbox]' ) ) {
-					val = $( this ).is( ':checked' ) ? 1 : 0;
-				}
-
 				data.push( {
 					'name': $( this ).attr( 'name' ).replace( /^wpcf7-/, '' ).replace( /-/g, '_' ),
-					'value': val
+					'value': $( this ).val()
 				} );
 			} );
 
