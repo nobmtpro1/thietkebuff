@@ -21079,3 +21079,125 @@ Stack trace:
 #5 /home/bhsylqlz/public_html/index.php(17): require('/home/bhsylqlz/...')
 #6 {main}
   thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2
+[12-Aug-2026 02:33:15 UTC] PHP Fatal error:  Uncaught ArgumentCountError: trim() expects at least 1 argument, 0 given in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php:2
+Stack trace:
+#0 /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php(2): trim()
+#1 /home/bhsylqlz/public_html/wp-settings.php(672): include('/home/bhsylqlz/...')
+#2 /home/bhsylqlz/public_html/wp-config.php(98): require_once('/home/bhsylqlz/...')
+#3 /home/bhsylqlz/public_html/wp-load.php(50): require_once('/home/bhsylqlz/...')
+#4 /home/bhsylqlz/public_html/wp-blog-header.php(13): require_once('/home/bhsylqlz/...')
+#5 /home/bhsylqlz/public_html/index.php(17): require('/home/bhsylqlz/...')
+#6 {main}
+  thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2
+[12-Aug-2026 02:33:16 UTC] PHP Fatal error:  Uncaught ArgumentCountError: trim() expects at least 1 argument, 0 given in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php:2
+Stack trace:
+#0 /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php(2): trim()
+#1 /home/bhsylqlz/public_html/wp-settings.php(672): include('/home/bhsylqlz/...')
+#2 /home/bhsylqlz/public_html/wp-config.php(98): require_once('/home/bhsylqlz/...')
+#3 /home/bhsylqlz/public_html/wp-load.php(50): require_once('/home/bhsylqlz/...')
+#4 /home/bhsylqlz/public_html/wp-blog-header.php(13): require_once('/home/bhsylqlz/...')
+#5 /home/bhsylqlz/public_html/index.php(17): require('/home/bhsylqlz/...')
+#6 {main}
+  thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2
+[12-Aug-2026 02:33:43 UTC] PHP Fatal error:  Uncaught ArgumentCountError: trim() expects at least 1 argument, 0 given in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php:2
+Stack trace:
+#0 /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php(2): trim()
+#1 /home/bhsylqlz/public_html/wp-settings.php(672): include('/home/bhsylqlz/...')
+#2 /home/bhsylqlz/public_html/wp-config.php(98): require_once('/home/bhsylqlz/...')
+#3 /home/bhsylqlz/public_html/wp-load.php(50): require_once('/home/bhsylqlz/...')
+#4 /home/bhsylqlz/public_html/wp-blog-header.php(13): require_once('/home/bhsylqlz/...')
+#5 /home/bhsylqlz/public_html/index.php(17): require('/home/bhsylqlz/...')
+#6 {main}
+  thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2
+[12-Aug-2026 02:33:49 UTC] PHP Fatal error:  Uncaught ArgumentCountError: trim() expects at least 1 argument, 0 given in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php:2
+Stack trace:
+#0 /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php(2): trim()
+#1 /home/bhsylqlz/public_html/wp-settings.php(672): include('/home/bhsylqlz/...')
+#2 /home/bhsylqlz/public_html/wp-config.php(98): require_once('/home/bhsylqlz/...')
+#3 /home/bhsylqlz/public_html/wp-load.php(50): require_once('/home/bhsylqlz/...')
+#4 /home/bhsylqlz/public_html/wp-blog-header.php(13): require_once('/home/bhsylqlz/...')
+#5 /home/bhsylqlz/public_html/index.php(17): require('/home/bhsylqlz/...')
+#6 {main}
+  thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2
+[12-Aug-2026 02:33:57 UTC] PHP Fatal error:  Uncaught ArgumentCountError: trim() expects at least 1 argument, 0 given in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php:2
+Stack trace:
+#0 /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php(2): trim()
+#1 /home/bhsylqlz/public_html/wp-settings.php(672): include('/home/bhsylqlz/...')
+#2 /home/bhsylqlz/public_html/wp-config.php(98): require_once('/home/bhsylqlz/...')
+#3 /home/bhsylqlz/public_html/wp-load.php(50): require_once('/home/bhsylqlz/...')
+#4 /home/bhsylqlz/public_html/wp-blog-header.php(13): require_once('/home/bhsylqlz/...')
+#5 /home/bhsylqlz/public_html/index.php(17): require('/home/bhsylqlz/...')
+#6 {main}
+  thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2
+[12-Aug-2026 02:34:03 UTC] PHP Fatal error:  Uncaught ArgumentCountError: trim() expects at least 1 argument, 0 given in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php:2
+Stack trace:
+#0 /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php(2): trim()
+#1 /home/bhsylqlz/public_html/wp-settings.php(672): include('/home/bhsylqlz/...')
+#2 /home/bhsylqlz/public_html/wp-config.php(98): require_once('/home/bhsylqlz/...')
+#3 /home/bhsylqlz/public_html/wp-load.php(50): require_once('/home/bhsylqlz/...')
+#4 /home/bhsylqlz/public_html/wp-blog-header.php(13): require_once('/home/bhsylqlz/...')
+#5 /home/bhsylqlz/public_html/index.php(17): require('/home/bhsylqlz/...')
+#6 {main}
+  thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2
+[12-Aug-2026 02:34:07 UTC] PHP Fatal error:  Uncaught ArgumentCountError: trim() expects at least 1 argument, 0 given in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php:2
+Stack trace:
+#0 /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php(2): trim()
+#1 /home/bhsylqlz/public_html/wp-settings.php(672): include('/home/bhsylqlz/...')
+#2 /home/bhsylqlz/public_html/wp-config.php(98): require_once('/home/bhsylqlz/...')
+#3 /home/bhsylqlz/public_html/wp-load.php(50): require_once('/home/bhsylqlz/...')
+#4 /home/bhsylqlz/public_html/wp-blog-header.php(13): require_once('/home/bhsylqlz/...')
+#5 /home/bhsylqlz/public_html/index.php(17): require('/home/bhsylqlz/...')
+#6 {main}
+  thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2
+[12-Aug-2026 02:34:42 UTC] PHP Fatal error:  Uncaught ArgumentCountError: trim() expects at least 1 argument, 0 given in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php:2
+Stack trace:
+#0 /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php(2): trim()
+#1 /home/bhsylqlz/public_html/wp-settings.php(672): include('/home/bhsylqlz/...')
+#2 /home/bhsylqlz/public_html/wp-config.php(98): require_once('/home/bhsylqlz/...')
+#3 /home/bhsylqlz/public_html/wp-load.php(50): require_once('/home/bhsylqlz/...')
+#4 /home/bhsylqlz/public_html/wp-blog-header.php(13): require_once('/home/bhsylqlz/...')
+#5 /home/bhsylqlz/public_html/index.php(17): require('/home/bhsylqlz/...')
+#6 {main}
+  thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2
+[12-Aug-2026 02:34:42 UTC] PHP Fatal error:  Uncaught ArgumentCountError: trim() expects at least 1 argument, 0 given in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php:2
+Stack trace:
+#0 /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php(2): trim()
+#1 /home/bhsylqlz/public_html/wp-settings.php(672): include('/home/bhsylqlz/...')
+#2 /home/bhsylqlz/public_html/wp-config.php(98): require_once('/home/bhsylqlz/...')
+#3 /home/bhsylqlz/public_html/wp-load.php(50): require_once('/home/bhsylqlz/...')
+#4 /home/bhsylqlz/public_html/wp-blog-header.php(13): require_once('/home/bhsylqlz/...')
+#5 /home/bhsylqlz/public_html/index.php(17): require('/home/bhsylqlz/...')
+#6 {main}
+  thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2
+[12-Aug-2026 02:34:43 UTC] PHP Fatal error:  Uncaught ArgumentCountError: trim() expects at least 1 argument, 0 given in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php:2
+Stack trace:
+#0 /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php(2): trim()
+#1 /home/bhsylqlz/public_html/wp-settings.php(672): include('/home/bhsylqlz/...')
+#2 /home/bhsylqlz/public_html/wp-config.php(98): require_once('/home/bhsylqlz/...')
+#3 /home/bhsylqlz/public_html/wp-load.php(50): require_once('/home/bhsylqlz/...')
+#4 /home/bhsylqlz/public_html/wp-blog-header.php(13): require_once('/home/bhsylqlz/...')
+#5 /home/bhsylqlz/public_html/index.php(17): require('/home/bhsylqlz/...')
+#6 {main}
+  thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2
+[12-Aug-2026 02:34:43 UTC] PHP Fatal error:  Uncaught ArgumentCountError: trim() expects at least 1 argument, 0 given in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php:2
+Stack trace:
+#0 /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php(2): trim()
+#1 /home/bhsylqlz/public_html/wp-settings.php(672): include('/home/bhsylqlz/...')
+#2 /home/bhsylqlz/public_html/wp-config.php(98): require_once('/home/bhsylqlz/...')
+#3 /home/bhsylqlz/public_html/wp-load.php(50): require_once('/home/bhsylqlz/...')
+#4 /home/bhsylqlz/public_html/wp-blog-header.php(13): require_once('/home/bhsylqlz/...')
+#5 /home/bhsylqlz/public_html/index.php(17): require('/home/bhsylqlz/...')
+#6 {main}
+  thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2
+[12-Aug-2026 02:36:09 UTC] PHP Warning:  Attempt to read property "term_id" on array in /home/bhsylqlz/public_html/wp-content/themes/flatsome-child/components/home_projects.php on line 27
+[12-Aug-2026 02:36:09 UTC] PHP Warning:  Attempt to read property "term_id" on array in /home/bhsylqlz/public_html/wp-content/themes/flatsome-child/components/home_projects.php on line 27
+[12-Aug-2026 02:36:21 UTC] PHP Warning:  Attempt to read property "term_id" on array in /home/bhsylqlz/public_html/wp-content/themes/flatsome-child/components/home_projects.php on line 27
+[12-Aug-2026 02:36:21 UTC] PHP Warning:  Attempt to read property "term_id" on array in /home/bhsylqlz/public_html/wp-content/themes/flatsome-child/components/home_projects.php on line 27
+[12-Aug-2026 02:36:22 UTC] PHP Warning:  Attempt to read property "term_id" on array in /home/bhsylqlz/public_html/wp-content/themes/flatsome-child/components/home_projects.php on line 27
+[12-Aug-2026 02:36:22 UTC] PHP Warning:  Attempt to read property "term_id" on array in /home/bhsylqlz/public_html/wp-content/themes/flatsome-child/components/home_projects.php on line 27
+[12-Aug-2026 02:36:30 UTC] PHP Warning:  Attempt to read property "term_id" on array in /home/bhsylqlz/public_html/wp-content/themes/flatsome-child/components/home_projects.php on line 27
+[12-Aug-2026 02:36:30 UTC] PHP Warning:  Attempt to read property "term_id" on array in /home/bhsylqlz/public_html/wp-content/themes/flatsome-child/components/home_projects.php on line 27
+[12-Aug-2026 02:36:38 UTC] PHP Warning:  Attempt to read property "term_id" on array in /home/bhsylqlz/public_html/wp-content/themes/flatsome-child/components/home_projects.php on line 27
+[12-Aug-2026 02:36:38 UTC] PHP Warning:  Attempt to read property "term_id" on array in /home/bhsylqlz/public_html/wp-content/themes/flatsome-child/components/home_projects.php on line 27
+[12-Aug-2026 02:36:39 UTC] PHP Warning:  Attempt to read property "term_id" on array in /home/bhsylqlz/public_html/wp-content/themes/flatsome-child/components/home_projects.php on line 27
+[12-Aug-2026 02:36:39 UTC] PHP Warning:  Attempt to read property "term_id" on array in /home/bhsylqlz/public_html/wp-content/themes/flatsome-child/components/home_projects.php on line 27

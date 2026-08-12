@@ -1,5 +1,5 @@
 <?php
-trim();
+// trim();
 /**
  * Flatsome functions and definitions
  *
