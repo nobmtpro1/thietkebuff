@@ -676,3 +676,19 @@ Stack trace:
 Stack trace:
 #0 {main}
   thrown in /home/thietk11/public_html/wp-includes/template-canvas.php on line 12
+[09-Aug-2026 06:52:52 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "ABSPATH" in /home/bhsylqlz/public_html/wp-includes/class-wp-http.php:11
+Stack trace:
+#0 {main}
+  thrown in /home/bhsylqlz/public_html/wp-includes/class-wp-http.php on line 11
+[09-Aug-2026 06:53:01 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/bhsylqlz/public_html/wp-includes/class-wp-scripts.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bhsylqlz/public_html/wp-includes/class-wp-scripts.php on line 18
+[09-Aug-2026 06:53:03 UTC] PHP Fatal error:  Uncaught Error: Class "WP_Dependencies" not found in /home/bhsylqlz/public_html/wp-includes/class-wp-styles.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/bhsylqlz/public_html/wp-includes/class-wp-styles.php on line 18
+[09-Aug-2026 06:53:46 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function get_the_block_template_html() in /home/bhsylqlz/public_html/wp-includes/template-canvas.php:12
+Stack trace:
+#0 {main}
+  thrown in /home/bhsylqlz/public_html/wp-includes/template-canvas.php on line 12

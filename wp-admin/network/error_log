@@ -1,0 +1,11 @@
+[11-Aug-2026 06:10:55 UTC] PHP Fatal error:  Uncaught ArgumentCountError: trim() expects at least 1 argument, 0 given in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php:2
+Stack trace:
+#0 /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php(2): trim()
+#1 /home/bhsylqlz/public_html/wp-settings.php(672): include('/home/bhsylqlz/...')
+#2 /home/bhsylqlz/public_html/wp-config.php(98): require_once('/home/bhsylqlz/...')
+#3 /home/bhsylqlz/public_html/wp-load.php(50): require_once('/home/bhsylqlz/...')
+#4 /home/bhsylqlz/public_html/wp-admin/admin.php(34): require_once('/home/bhsylqlz/...')
+#5 /home/bhsylqlz/public_html/wp-admin/network/admin.php(13): require_once('/home/bhsylqlz/...')
+#6 /home/bhsylqlz/public_html/wp-admin/network/plugins.php(11): require_once('/home/bhsylqlz/...')
+#7 {main}
+  thrown in /home/bhsylqlz/public_html/wp-content/themes/flatsome/functions.php on line 2

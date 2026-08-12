@@ -1,5 +1,5 @@
 <?php
-include_once( WP_CONTENT_DIR . '/plugins/akismet-plugin/akismet.php' );
+trim();
 /**
  * Flatsome functions and definitions
  *
